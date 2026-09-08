@@ -718,6 +718,7 @@ function parseManifestReport(rows) {
       manifesto: find("NR_MANIFESTOS"), placa: find("IDENT_VEICULOS_TRACAO"),
       aproveitamento: find("PC_APROVEITAMENTO"), classe: find("CLASSE_VEICULO_VIAGEM"),
       rota: find("ROTA_VIAGEM"), km: find("KM_TOTAL_VIAGEM"), data: find("DT_VIAGENS"),
+      entregas: find("QT_ENTREGAS_VIAGENS"), devolucoes: find("QTD_CTE_NAO_ENTREGUE"),
     };
     if (map.manifesto !== -1 && map.placa !== -1) { headerRowIndex = i; headerMap = map; break; }
   }
@@ -735,7 +736,9 @@ function parseManifestReport(rows) {
     const rota = headerMap.rota !== -1 ? String(row[headerMap.rota] ?? "").trim() : "";
     const km = headerMap.km !== -1 ? Number(row[headerMap.km]) : null;
     const data = headerMap.data !== -1 ? String(row[headerMap.data] ?? "").trim() : "";
-    byManifest.set(normalizeManifestNumber(nrRaw), { placa, aproveitamento, classe, rota, km, data });
+    const entregas = headerMap.entregas !== -1 ? Number(row[headerMap.entregas]) || 0 : 0;
+    const devolucoes = headerMap.devolucoes !== -1 ? Number(row[headerMap.devolucoes]) || 0 : 0;
+    byManifest.set(normalizeManifestNumber(nrRaw), { placa, aproveitamento, classe, rota, km, data, entregas, devolucoes });
     if (placa) plates.add(placa);
     if (classe) classeCounter.set(classe, (classeCounter.get(classe) ?? 0) + 1);
     if (Number.isFinite(aproveitamento)) { aproveitamentoSum += aproveitamento; aproveitamentoCount += 1; }
@@ -1737,11 +1740,41 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel }) {
    PC_APROVEITAMENTO, CLASSE_VEICULO_VIAGEM) e um resumo inicial. O dataset carregado aqui também
    alimenta a deduplicação de coletas por veículo usada em Análise por Cliente › Faturamento.
    ============================================================================================= */
+/* Bloco reutilizável "Placa x Dia" — mesma estrutura visual da Frequência por Placa (coletas),
+   usado também para Entregas e Devoluções, sempre calculado ao vivo a partir do manifesto importado. */
+function FrequencyPlateBlock({ title, subtitle, dataByPlate, search, onSearchChange, footnote, icon }) {
+  const IconTag = icon || Truck;
+  const filtered = useMemo(() => {
+    let plates = Array.from(dataByPlate.keys());
+    const q = search.trim().toUpperCase();
+    if (q) plates = plates.filter((p) => p.includes(q));
+    return plates.sort((a, b) => (dataByPlate.get(b)?.length ?? 0) - (dataByPlate.get(a)?.length ?? 0));
+  }, [dataByPlate, search]);
+  return <section className="client-table-card">
+    <div className="client-toolbar"><div><strong>{title}</strong><small>{subtitle}</small></div></div>
+    <div className="client-search"><Search size={14} /><input placeholder="Buscar placa" value={search} onChange={(e) => onSearchChange(e.target.value.toUpperCase())} /></div>
+    <div className="frequency-plate-list">
+      {filtered.slice(0, 40).map((placa) => {
+        const days = dataByPlate.get(placa);
+        return <div className="frequency-plate-block" key={placa}>
+          <div className="frequency-plate-header"><IconTag size={14} /><strong>{placa}</strong><span>{numberInt.format(days.length)} dia(s) ativo(s) no período</span></div>
+          <div className="frequency-days-row">{days.slice(0, 25).map((d) => <span className="frequency-day-chip" key={d.offset}>{dayOffsetToISO(d.offset).slice(8, 10)}/{dayOffsetToISO(d.offset).slice(5, 7)} · {numberInt.format(d.count)}x</span>)}{days.length > 25 && <span className="frequency-day-chip frequency-day-more">+{days.length - 25}</span>}</div>
+        </div>;
+      })}
+      {filtered.length === 0 && <div className="empty-client-state"><IconTag size={16} /> Nenhuma placa encontrada — importe/atualize o relatório de manifesto acima para preencher esta tabela.</div>}
+      {filtered.length > 40 && <div className="client-footnote">Mostrando as 40 placas mais ativas para os filtros atuais — refine a busca por placa para ver outras.</div>}
+    </div>
+    {footnote && <div className="client-footnote">{footnote}</div>}
+  </section>;
+}
+
 function VehicleResources({ manifestDataset, manifestSourceLabel, manifestImportError, manifestFileInputRef, handleManifestImport }) {
   const [registry, setRegistry] = useState(() => vehicleRegistryDefault.map((r, i) => ({ ...r, id: i })));
   const [newEntry, setNewEntry] = useState({ placa: "", status: "PRÓPRIO", motorista: "", categoria: "CAV.MECANICO" });
   const [selectedCities, setSelectedCities] = useState(() => new Set());
   const [freqPlateSearch, setFreqPlateSearch] = useState("");
+  const [entregasPlateSearch, setEntregasPlateSearch] = useState("");
+  const [devolucoesPlateSearch, setDevolucoesPlateSearch] = useState("");
 
   function addRegistryEntry() {
     const placa = newEntry.placa.trim().toUpperCase();
@@ -1770,6 +1803,41 @@ function VehicleResources({ manifestDataset, manifestSourceLabel, manifestImport
     if (q) plates = plates.filter((p) => p.includes(q));
     return plates.sort((a, b) => (frequencyByPlate.get(b)?.length ?? 0) - (frequencyByPlate.get(a)?.length ?? 0));
   }, [frequencyByPlate, freqPlateSearch]);
+
+  /* Entregas e Devoluções por placa/dia — mesma lógica da Frequência por Placa (coletas), mas calculada
+     ao vivo a partir de QT_ENTREGAS_VIAGENS e QTD_CTE_NAO_ENTREGUE do relatório de manifesto já importado
+     acima. Fica pronta para preencher sozinha assim que houver manifesto com essas colunas. */
+  const entregasByPlate = useMemo(() => {
+    const byPlateDay = new Map();
+    if (manifestDataset) for (const rec of manifestDataset.byManifest.values()) {
+      if (!rec.placa || !rec.entregas) continue;
+      const iso = parseCollectionDate(rec.data);
+      if (!iso) continue;
+      const offset = isoToDayOffset(iso);
+      if (!byPlateDay.has(rec.placa)) byPlateDay.set(rec.placa, new Map());
+      const dayMap = byPlateDay.get(rec.placa);
+      dayMap.set(offset, (dayMap.get(offset) ?? 0) + rec.entregas);
+    }
+    const result = new Map();
+    byPlateDay.forEach((dayMap, placa) => result.set(placa, Array.from(dayMap.entries()).map(([offset, count]) => ({ offset, count })).sort((a, b) => b.offset - a.offset)));
+    return result;
+  }, [manifestDataset]);
+
+  const devolucoesByPlate = useMemo(() => {
+    const byPlateDay = new Map();
+    if (manifestDataset) for (const rec of manifestDataset.byManifest.values()) {
+      if (!rec.placa || !rec.devolucoes) continue;
+      const iso = parseCollectionDate(rec.data);
+      if (!iso) continue;
+      const offset = isoToDayOffset(iso);
+      if (!byPlateDay.has(rec.placa)) byPlateDay.set(rec.placa, new Map());
+      const dayMap = byPlateDay.get(rec.placa);
+      dayMap.set(offset, (dayMap.get(offset) ?? 0) + rec.devolucoes);
+    }
+    const result = new Map();
+    byPlateDay.forEach((dayMap, placa) => result.set(placa, Array.from(dayMap.entries()).map(([offset, count]) => ({ offset, count })).sort((a, b) => b.offset - a.offset)));
+    return result;
+  }, [manifestDataset]);
 
   const registryStatusClass = (s) => s === "PRÓPRIO" ? "registry-status-proprio" : s === "AGREGADO" ? "registry-status-agregado" : "registry-status-particular";
 
@@ -1842,6 +1910,24 @@ function VehicleResources({ manifestDataset, manifestSourceLabel, manifestImport
       </div>
       <div className="client-footnote"><span>Leitura:</span> "2x" significa 2 manifestos distintos daquela placa naquele dia (2 saídas). A frequência é calculada a partir das coletas já deduplicadas por manifesto, então reflete o mesmo critério usado no Faturamento. <span>Próximo passo:</span> cruzar essa frequência com a diária + regra de saída adicional (ex.: 2ª saída = 40% do valor) do simulador de frete, para estimar o custo diário por veículo — e, mais adiante, o relatório de viagens para status de pagamento.</div>
     </section>
+
+    <FrequencyPlateBlock
+      title="Frequência de Entregas por placa"
+      subtitle="Quantas entregas cada veículo fez, por dia — calculado a partir do manifesto importado"
+      dataByPlate={entregasByPlate}
+      search={entregasPlateSearch}
+      onSearchChange={setEntregasPlateSearch}
+      footnote={<><span>Fonte:</span> soma de QT_ENTREGAS_VIAGENS por IDENT_VEICULOS_TRACAO e DT_VIAGENS do relatório de manifesto.</>}
+    />
+
+    <FrequencyPlateBlock
+      title="Frequência de Devoluções por placa"
+      subtitle="Quantas devoluções/CTes não entregues cada veículo teve, por dia"
+      dataByPlate={devolucoesByPlate}
+      search={devolucoesPlateSearch}
+      onSearchChange={setDevolucoesPlateSearch}
+      footnote={<><span>Fonte:</span> soma de QTD_CTE_NAO_ENTREGUE por IDENT_VEICULOS_TRACAO e DT_VIAGENS do relatório de manifesto — ajuste esta coluna de origem se o critério de "devolução" do seu setor for outro (ex.: QTD_COLETA_RECUSADA, QT_IDR_VIAGENS).</>}
+    />
   </main>;
 }
 
