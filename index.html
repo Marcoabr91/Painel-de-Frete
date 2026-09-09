@@ -435,6 +435,27 @@ html:not(.dark) .scenario-toolbar { background: #ffffff; }.dark .scenario-toolba
 .frequency-plate-header span { font-size: 9px; color: #9aa5a6; font-family: 'IBM Plex Mono', monospace; text-transform: uppercase; }
 .frequency-days-row { display: flex; flex-wrap: wrap; gap: 6px; }
 .frequency-day-chip { border: 1px solid var(--border); padding: 4px 8px; font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #647579; }
+.revenue-plate-clients { display: flex; flex-direction: column; gap: 4px; }
+.revenue-plate-client-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 4px 0; border-top: 1px dashed var(--border); font-size: 11px; }
+.revenue-plate-client-row:first-child { border-top: none; }
+.revenue-plate-client-row small { display: block; color: #9aa5a6; font-family: 'IBM Plex Mono', monospace; font-size: 9px; }
+.revenue-vehicles-by-plate { display: flex; flex-direction: column; gap: 10px; }
+.pending-programacao-block { border-color: var(--amber, #c98a1f); border-style: dashed; }
+.pending-programacao-block .frequency-plate-header strong { color: #b5790f; }
+.global-status-bar { display: flex; gap: 8px; flex-wrap: wrap; padding: 6px 24px; border-bottom: 1px solid var(--border); background: var(--panel); }
+.global-status-chip { display: flex; align-items: center; gap: 5px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; padding: 4px 8px; border: 1px solid var(--border); border-radius: 2px; }
+.global-status-chip small { color: #9aa5a6; margin-left: 3px; }
+.global-status-chip.status-ok { color: #2f8f4e; border-color: #2f8f4e55; }
+.global-status-chip.status-missing { color: #c94b4b; border-color: #c94b4b55; }
+.dedup-audit-block { margin-top: 10px; }
+.dedup-audit-table { margin-top: 8px; border: 1px solid var(--border); max-height: 320px; overflow-y: auto; }
+.dedup-audit-row { display: grid; grid-template-columns: 70px 90px 110px 1fr 1fr; gap: 8px; padding: 7px 10px; border-bottom: 1px solid var(--border); font-size: 10px; align-items: start; }
+.dedup-audit-row.dedup-audit-head { font-family: 'IBM Plex Mono', monospace; font-size: 8px; text-transform: uppercase; letter-spacing: .05em; color: #9aa5a6; position: sticky; top: 0; background: var(--panel); }
+.dedup-audit-row strong { display: block; }
+.dedup-audit-row small { color: #9aa5a6; font-family: 'IBM Plex Mono', monospace; font-size: 9px; }
+.dedup-rule-tag { font-family: 'IBM Plex Mono', monospace; font-size: 8px; font-weight: 700; padding: 2px 6px; width: fit-content; border: 1px solid var(--border); }
+.dedup-rule-tag.dedup-rule-grupo { color: #2f6fa8; border-color: #2f6fa855; }
+.dedup-rule-tag.dedup-rule-local { color: #8f5a2f; border-color: #8f5a2f55; }
 .frequency-day-more { color: #9aa5a6; font-style: italic; }
 .dark .vehicle-registry-form input, html.dark .vehicle-registry-form input, .dark .vehicle-registry-form select, html.dark .vehicle-registry-form select { background: #0b120d; border-color: #203124; color: #e6f3e4; }
 .dark .vehicle-registry-grid-head, html.dark .vehicle-registry-grid-head { color: #5f7365; border-color: #1b2a1e; }
@@ -775,6 +796,29 @@ function statusLabel(key) { return STATUS_LABELS[key] ?? key; }
 
 /* Datas em collectionsRecords são guardadas como deslocamento de dias a partir de BASE_DATE_ISO (fixo),
    para manter o dataset compacto e consistente mesmo após reimportar uma nova planilha. */
+/* Persistência local — cada relatório importado (manifesto/coleta/receita) fica salvo no navegador
+   deste computador, então um F5 não volta pros dados de exemplo. IMPORTANTE: isso é por navegador/
+   computador, não compartilhado entre pessoas — ver nota na tela sobre isso. */
+const LS_PREFIX = "painelFreteGru:v1:";
+function lsSave(key, value) {
+  try { window.localStorage.setItem(LS_PREFIX + key, JSON.stringify(value)); return true; }
+  catch (e) { console.warn("Não foi possível salvar localmente:", e); return false; }
+}
+function lsLoad(key) {
+  try { const raw = window.localStorage.getItem(LS_PREFIX + key); return raw ? JSON.parse(raw) : null; }
+  catch (e) { console.warn("Não foi possível ler dado salvo localmente:", e); return null; }
+}
+function relativeTime(iso) {
+  if (!iso) return "";
+  const diffMs = Date.now() - new Date(iso).getTime();
+  const mins = Math.round(diffMs / 60000);
+  if (mins < 1) return "agora mesmo";
+  if (mins < 60) return `há ${mins} min`;
+  const hrs = Math.round(mins / 60);
+  if (hrs < 24) return `há ${hrs}h`;
+  const days = Math.round(hrs / 24);
+  return `há ${days}d`;
+}
 const BASE_DATE_ISO = "2026-05-01";
 function baseDateObj() { const [y, m, d] = BASE_DATE_ISO.split("-").map(Number); return new Date(y, m - 1, d); }
 function dayOffsetToISO(offset) { const d = new Date(baseDateObj()); d.setDate(d.getDate() + offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; }
@@ -832,6 +876,7 @@ function parseCollectionsReport(rows, manifestMap) {
     nr: find("nr coletas"),
     diario: find("nr diario bordo"),
     cidade: find("nm cidade"),
+    filial: find("sigla filiais atendimento", "sigla filial atendimento"),
   };
   if (!keys.cnpj || !keys.name || !keys.vehicle || !keys.date) throw new Error("Não encontrei as colunas CNPJ_CLIENTES_SOL, RAZAO_SOCIAL_SOL, Classe do Veículo ou DT_EFETUAR_COLETAS na planilha.");
   const parsedRows = [];
@@ -862,7 +907,8 @@ function parseCollectionsReport(rows, manifestMap) {
     }
     if (!minDate || date < minDate) minDate = date;
     if (!maxDate || date > maxDate) maxDate = date;
-    parsedRows.push({ cnpj, name, vehicle, date, status, nr, diario, cidade: keys.cidade ? value(keys.cidade) : "" });
+    const filial = keys.filial ? value(keys.filial).toUpperCase() : "";
+    parsedRows.push({ cnpj, name, vehicle, date, status, nr, diario, cidade: keys.cidade ? value(keys.cidade) : "", filial });
   }
   if (!parsedRows.length) throw new Error("Nenhuma coleta com CNPJ, cliente e DT_EFETUAR_COLETAS válidos foi encontrada.");
 
@@ -874,6 +920,9 @@ function parseCollectionsReport(rows, manifestMap) {
      Em ambas, mantém o CNPJ de maior Valor Médio calibrado (fallback: menor NR_COLETAS). */
   let dedupedRows = parsedRows;
   let dedupCount = 0;
+  /* Auditoria da deduplicação — cada fusão (GRUPO ou LOCAL) fica registrada aqui: quem "ganhou"
+     (CNPJ mantido) e quem "perdeu" (CNPJ absorvido), pra dar pra conferir a regra depois. */
+  const dedupAudit = [];
   if (manifestMap && manifestMap.size && keys.diario) {
     const byManifest = new Map();
     const semManifesto = [];
@@ -899,7 +948,10 @@ function parseCollectionsReport(rows, manifestMap) {
         const distinctCnpjs = Array.from(new Set(grows.map((r) => r.cnpj)));
         if (distinctCnpjs.length > 1) {
           const winner = pickWinner(grows, distinctCnpjs);
-          dedupCount += grows.filter((r) => r.cnpj !== winner).length;
+          const losers = grows.filter((r) => r.cnpj !== winner);
+          dedupCount += losers.length;
+          const winnerRow = grows.find((r) => r.cnpj === winner);
+          dedupAudit.push({ rule: "GRUPO", diario: grows[0].diario, date: grows[0].date, cidade: grows[0].cidade, winnerCnpj: winner, winnerName: winnerRow?.name ?? "", losers: Array.from(new Set(losers.map((r) => r.cnpj))).map((c) => ({ cnpj: c, name: losers.find((r) => r.cnpj === c)?.name ?? "" })) });
           afterGrupoDedup.push(...grows.filter((r) => r.cnpj === winner));
         } else {
           afterGrupoDedup.push(...grows);
@@ -913,7 +965,10 @@ function parseCollectionsReport(rows, manifestMap) {
       const distinctCnpjs = Array.from(new Set(rowsGroup.map((r) => r.cnpj)));
       if (distinctCnpjs.length === 2) {
         const winner = pickWinner(rowsGroup, distinctCnpjs);
-        dedupCount += rowsGroup.filter((r) => r.cnpj !== winner).length;
+        const losers = rowsGroup.filter((r) => r.cnpj !== winner);
+        dedupCount += losers.length;
+        const winnerRow = rowsGroup.find((r) => r.cnpj === winner);
+        dedupAudit.push({ rule: "LOCAL", diario: rowsGroup[0].diario, date: rowsGroup[0].date, cidade: rowsGroup[0].cidade, winnerCnpj: winner, winnerName: winnerRow?.name ?? "", losers: Array.from(new Set(losers.map((r) => r.cnpj))).map((c) => ({ cnpj: c, name: losers.find((r) => r.cnpj === c)?.name ?? "" })) });
         dedupedRows.push(...rowsGroup.filter((r) => r.cnpj === winner));
       } else {
         dedupedRows.push(...rowsGroup);
@@ -945,17 +1000,49 @@ function parseCollectionsReport(rows, manifestMap) {
       const classification = distinctClients <= 2 ? "DEDICADO" : "ROTA";
       const [y, m, d] = rowsGroup[0].date.split("-").map(Number);
       const offset = Math.round((new Date(y, m - 1, d) - base) / 86400000);
-      manifestEvents.push([offset, MANIFEST_VEHICLE_GROUPS.indexOf(group), MANIFEST_CLASSES.indexOf(classification)]);
+      const placa = (manifestInfo && manifestInfo.placa) ? manifestInfo.placa : "SEM PLACA";
+      const clientTotals = new Map();
+      rowsGroup.forEach((r) => { const curr = clientTotals.get(r.cnpj) ?? { cnpj: r.cnpj, name: r.name, qtd: 0 }; curr.qtd += 1; clientTotals.set(r.cnpj, curr); });
+      const clients = Array.from(clientTotals.values()).sort((a, b) => b.qtd - a.qtd);
+      manifestEvents.push([offset, MANIFEST_VEHICLE_GROUPS.indexOf(group), MANIFEST_CLASSES.indexOf(classification), placa, clients]);
+    });
+  }
+
+  /* Pendente Programação: coletas do dia que caem numa janela com manifesto carregado, mas cujo
+     NR_DIARIO_BORDO não bate com nenhum manifesto importado — ou seja, ainda não foram programadas
+     em nenhum veículo. Fica visível em vez de simplesmente desaparecer da visão por placa. */
+  const pendingEvents = [];
+  if (manifestMap && manifestMap.size && keys.diario) {
+    const unlinkedRows = dedupedRows.filter((r) => !(r.diario && manifestMap.has(r.diario)));
+    const byDayGroup = new Map();
+    const baseP = baseDateObj();
+    unlinkedRows.forEach((r) => {
+      const [y, m, d] = r.date.split("-").map(Number);
+      const offset = Math.round((new Date(y, m - 1, d) - baseP) / 86400000);
+      const group = vehicleRevenueGroup(r.vehicle);
+      const key = `${offset}|${group}`;
+      if (!byDayGroup.has(key)) byDayGroup.set(key, new Map());
+      const clientMap = byDayGroup.get(key);
+      const curr = clientMap.get(r.cnpj) ?? { cnpj: r.cnpj, name: r.name, qtd: 0 };
+      curr.qtd += 1;
+      clientMap.set(r.cnpj, curr);
+    });
+    byDayGroup.forEach((clientMap, key) => {
+      const [offsetStr, group] = key.split("|");
+      const clients = Array.from(clientMap.values()).sort((a, b) => b.qtd - a.qtd);
+      pendingEvents.push([Number(offsetStr), MANIFEST_VEHICLE_GROUPS.indexOf(group), clients]);
     });
   }
 
   const grouped = new Map();
   const names = new Map();
   const statusSet = new Set();
+  const filialSet = new Set();
   for (const r of dedupedRows) {
     names.set(r.cnpj, r.name);
     statusSet.add(r.status);
-    const key = `${r.cnpj}|${r.vehicle}|${r.date}|${r.status}`;
+    if (r.filial) filialSet.add(r.filial);
+    const key = `${r.cnpj}|${r.vehicle}|${r.date}|${r.status}|${r.filial ?? ""}`;
     const current = grouped.get(key);
     if (current) { current.count += 1; if (r.nr) current.nr.push(r.nr); }
     else grouped.set(key, { count: 1, nr: r.nr ? [r.nr] : [] });
@@ -965,15 +1052,19 @@ function parseCollectionsReport(rows, manifestMap) {
   const cnpjIndex = new Map(cnpjs.map((c, i) => [c, i]));
   const vehicleList = ["CAV.MECANICO", "TRUCK", "TOCO", "TOCO 3/4", "VAN", "FIORINO", "OUTROS"];
   const statusList = Array.from(statusSet.values());
+  /* Filial de origem — vem de SIGLA_FILIAIS_ATENDIMENTO do próprio relatório de coleta importado,
+     não de nenhuma lista fixa. Some/aparece de acordo com o que estiver no relatório anexado. */
+  const filiais = Array.from(filialSet.values()).sort();
+  const filialIndex = new Map(filiais.map((f, i) => [f, i]));
   const base = baseDateObj();
   const records = Array.from(grouped.entries()).map(([key, value]) => {
-    const [cnpj, vehicle, date, status] = key.split("|");
+    const [cnpj, vehicle, date, status, filial] = key.split("|");
     const [y, m, d] = date.split("-").map(Number);
     const offset = Math.round((new Date(y, m - 1, d) - base) / 86400000);
-    return [cnpjIndex.get(cnpj), vehicleList.indexOf(vehicle), offset, statusList.indexOf(status), value.count, value.nr.sort((a, b) => a - b)];
+    return [cnpjIndex.get(cnpj), vehicleList.indexOf(vehicle), offset, statusList.indexOf(status), value.count, value.nr.sort((a, b) => a - b), filial ? filialIndex.get(filial) : null];
   });
   const validCollections = Array.from(grouped.values()).reduce((sum, v) => sum + v.count, 0);
-  return { cnpjs, names: cnpjs.map((c) => names.get(c)), vehicleList, statusList, records, validCollections, rowCount: rows.length, periodStart: minDate, periodEnd: maxDate, dedupCount, manifestEvents, manifestCoverage: manifestEvents.length ? { start: minDate, end: maxDate } : null, manifestVehicleOverrides };
+  return { cnpjs, names: cnpjs.map((c) => names.get(c)), vehicleList, statusList, filiais, records, validCollections, rowCount: rows.length, periodStart: minDate, periodEnd: maxDate, dedupCount, dedupAudit, manifestEvents, pendingEvents, manifestCoverage: manifestEvents.length ? { start: minDate, end: maxDate } : null, manifestVehicleOverrides };
 }
 
 
@@ -1295,25 +1386,41 @@ function Home() {
 /* =============================================================================================
    PÁGINA 2 — ANÁLISE POR CLIENTE
    ============================================================================================= */
-function ClientAnalysis({ manifestDataset, manifestSourceLabel }) {
+function ClientAnalysis({ manifestDataset, manifestSourceLabel, manifestImportError, manifestFileInputRef, handleManifestImport, onColetaStatusChange, onReceitaStatusChange }) {
   const [viewMode, setViewMode] = useState("daily");
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState("all");
   const [statusFilter, setStatusFilter] = useState("ALL");
-  const [dataset, setDataset] = useState({ cnpjs: collectionsCnpjs, names: collectionsNames, vehicleList: collectionsVehicleList, statusList: collectionsStatusList, records: collectionsRecords, validCollections: collectionsMeta.validCollections, rowCount: collectionsMeta.rowsAnalyzed, periodStart: collectionsMeta.periodStart, periodEnd: collectionsMeta.periodEnd });
-  const [sourceLabel, setSourceLabel] = useState(collectionsMeta.sourceLabel);
+  const [dataset, setDataset] = useState(() => lsLoad("coletas")?.dataset ?? { cnpjs: collectionsCnpjs, names: collectionsNames, vehicleList: collectionsVehicleList, statusList: collectionsStatusList, filiais: [], records: collectionsRecords, validCollections: collectionsMeta.validCollections, rowCount: collectionsMeta.rowsAnalyzed, periodStart: collectionsMeta.periodStart, periodEnd: collectionsMeta.periodEnd });
+  const [dedupAudit, setDedupAudit] = useState(() => lsLoad("coletas")?.dedupAudit ?? []);
+  const [showDedupAudit, setShowDedupAudit] = useState(false);
+  const [sourceLabel, setSourceLabel] = useState(() => lsLoad("coletas")?.label ?? collectionsMeta.sourceLabel);
+  /* Filial de origem — lista e filtro vêm só do relatório de coleta importado (SIGLA_FILIAIS_ATENDIMENTO),
+     sem nenhuma ligação com o filtro "FILIAL DE ORIGEM" do Faturamento (que usa o relatório de Receita). */
+  const [collectionFilialFilter, setCollectionFilialFilter] = useState("TODAS");
   const [selectedDate, setSelectedDate] = useState(collectionsMeta.periodEnd);
   const [selectedDayVehicle, setSelectedDayVehicle] = useState(null);
-  const [revenueDataset, setRevenueDataset] = useState({ cnpjs: revenueCnpjs, names: revenueNames, filiais: revenueFiliais, records: revenueRecords, year: revenueMeta.year });
-  const [revenueSourceLabel, setRevenueSourceLabel] = useState(revenueMeta.sourceLabel);
+  const [revenueDataset, setRevenueDataset] = useState(() => lsLoad("receita")?.dataset ?? { cnpjs: revenueCnpjs, names: revenueNames, filiais: revenueFiliais, records: revenueRecords, year: revenueMeta.year });
+  const [revenueSourceLabel, setRevenueSourceLabel] = useState(() => lsLoad("receita")?.label ?? revenueMeta.sourceLabel);
   const [revenueImportError, setRevenueImportError] = useState(null);
   const [revenueYearInput, setRevenueYearInput] = useState(revenueMeta.year);
   const [revenueDate, setRevenueDate] = useState(collectionsMeta.periodEnd);
   const [revenueVehicleFilter, setRevenueVehicleFilter] = useState("ALL");
   const [revenueSplitView, setRevenueSplitView] = useState(false);
   const [revenueFilialFilter, setRevenueFilialFilter] = useState("GERAL");
-  const [manifestVehicleEvents, setManifestVehicleEvents] = useState({ events: manifestVehicleEventsDefault, coverage: manifestCoverageDefault });
+  /* Período de referência do Valor Médio Fixo — editável (antes era travado em Mar+Abr+Mai/2025
+     dentro do código). Meses do ANO atualmente carregado no relatório de Receita (revenueDataset.year). */
+  const [refMonths, setRefMonths] = useState(() => lsLoad("refMonths") ?? [3, 4, 5]);
+  function toggleRefMonth(m) {
+    setRefMonths((curr) => {
+      const next = curr.includes(m) ? curr.filter((x) => x !== m) : [...curr, m].sort((a, b) => a - b);
+      const safe = next.length ? next : curr;
+      lsSave("refMonths", safe);
+      return safe;
+    });
+  }
+  const [manifestVehicleEvents, setManifestVehicleEvents] = useState(() => lsLoad("coletas")?.manifestVehicleEvents ?? { events: manifestVehicleEventsDefault, coverage: manifestCoverageDefault, pending: [] });
   const [revenueClientSearch, setRevenueClientSearch] = useState("");
   const [revenueClientSelected, setRevenueClientSelected] = useState(() => new Set());
   const revenueFileInputRef = useRef(null);
@@ -1321,7 +1428,11 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel }) {
   const fileInputRef = useRef(null);
 
   const statusOptions = useMemo(() => dataset.statusList.filter((s) => dataset.records.some((r) => dataset.statusList[r[3]] === s)), [dataset]);
-  const statusFilteredRecords = useMemo(() => statusFilter === "ALL" ? dataset.records : dataset.records.filter((r) => dataset.statusList[r[3]] === statusFilter), [dataset, statusFilter]);
+  const statusFilteredRecords = useMemo(() => {
+    let recs = statusFilter === "ALL" ? dataset.records : dataset.records.filter((r) => dataset.statusList[r[3]] === statusFilter);
+    if (collectionFilialFilter !== "TODAS") { const idx = dataset.filiais.indexOf(collectionFilialFilter); recs = recs.filter((r) => r[6] === idx); }
+    return recs;
+  }, [dataset, statusFilter, collectionFilialFilter]);
   const statusScopeOffset = useMemo(() => {
     if (viewMode === "revenue") return isoToDayOffset(revenueDate);
     if (viewMode === "daily") return isoToDayOffset(selectedDate);
@@ -1391,7 +1502,30 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel }) {
     });
     return map;
   }, [manifestVehicleEvents]);
-  const revenueFixedCnpjIndex = useMemo(() => new Map(revenueFixedCnpjs.map((c, i) => [c, i])), []);
+  /* Placa x clientes por dia/categoria — pra abrir "Carreta"/"Caminhão" e ver, dentro de cada
+     placa manifestada, quem foram os clientes atendidos naquele veículo naquele dia. */
+  const manifestVehiclesByDay = useMemo(() => {
+    const map = new Map();
+    manifestVehicleEvents.events.forEach(([offset, groupIdx, classIdx, placa, clients]) => {
+      if (!placa) return;
+      const group = MANIFEST_VEHICLE_GROUPS[groupIdx];
+      const cls = MANIFEST_CLASSES[classIdx];
+      const key = `${offset}|${group}`;
+      if (!map.has(key)) map.set(key, []);
+      map.get(key).push({ placa, classification: cls, clients: clients ?? [] });
+    });
+    map.forEach((list) => list.sort((a, b) => a.placa.localeCompare(b.placa)));
+    return map;
+  }, [manifestVehicleEvents]);
+  /* Coletas do dia sem manifesto vinculado (Pendente Programação), por dia/categoria. */
+  const pendingByDay = useMemo(() => {
+    const map = new Map();
+    (manifestVehicleEvents.pending ?? []).forEach(([offset, groupIdx, clients]) => {
+      const group = MANIFEST_VEHICLE_GROUPS[groupIdx];
+      map.set(`${offset}|${group}`, clients ?? []);
+    });
+    return map;
+  }, [manifestVehicleEvents]);
   const revenueByKeyGeral = useMemo(() => {
     const map = new Map();
     revenueDataset.records.forEach((r) => {
@@ -1403,6 +1537,23 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel }) {
     return map;
   }, [revenueDataset]);
   const revenueByKeyFilial = useMemo(() => new Map(revenueDataset.records.map((r) => [`${r[0]}|${r[1]}|${r[2]}`, { receita: r[3], qtdCte: r[4], volume: r[5], pesoReal: r[6], pesoCalculo: r[7] }])), [revenueDataset]);
+  /* Valor Médio Fixo, calculado ao vivo pro período de referência escolhido (refMonths, no ano
+     carregado em revenueDataset.year) — em vez do array fixo antigo travado em Mar+Abr+Mai/2025.
+     Fórmula: soma da receita do cliente nos meses escolhidos ÷ total de dias úteis desses meses.
+     "Fixo" agora é qualquer CNPJ com receita em pelo menos 1 dos meses de referência; sem isso, cai
+     no fallback "Mensal" de sempre. */
+  const fixedValorMedioLive = useMemo(() => {
+    const map = new Map();
+    if (!refMonths.length) return map;
+    let totalBusinessDays = 0;
+    refMonths.forEach((m) => { totalBusinessDays += businessDaysInMonth(revenueDataset.year, m); });
+    revenueDataset.cnpjs.forEach((cnpj, revIdx) => {
+      let totalReceita = 0, hasData = false;
+      refMonths.forEach((m) => { const rev = revenueByKeyGeral.get(`${revIdx}|${m}`); if (rev) { totalReceita += rev.receita; hasData = true; } });
+      if (hasData && totalBusinessDays > 0) map.set(cnpj, totalReceita / totalBusinessDays);
+    });
+    return map;
+  }, [revenueDataset, revenueByKeyGeral, refMonths]);
   const revenueClientMatches = useMemo(() => { const q = revenueClientSearch.trim().toLowerCase(); if (!q) return []; return dataset.cnpjs.map((cnpj, idx) => ({ cnpj, name: dataset.names[idx] })).filter((c) => `${c.cnpj} ${c.name}`.toLowerCase().includes(q)).slice(0, 8); }, [dataset, revenueClientSearch]);
   function toggleRevenueClient(cnpj) { setRevenueClientSelected((current) => { const next = new Set(current); if (next.has(cnpj)) next.delete(cnpj); else next.add(cnpj); return next; }); }
   function computeRevenueDay(dayOffset, forceGroup) {
@@ -1423,9 +1574,9 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel }) {
       const count = r[4];
       if (group === "CARRETA") countCarreta += count; else countCaminhao += count;
       let valorMedio = null, fonte = "sem_dados";
-      const fixedIdx = revenueFixedCnpjIndex.get(cnpj);
-      if (fixedIdx !== undefined) {
-        valorMedio = revenueFixedValores[fixedIdx];
+      const fixedValor = fixedValorMedioLive.get(cnpj);
+      if (fixedValor !== undefined) {
+        valorMedio = fixedValor;
         fonte = "fixo";
       } else {
         const revIdx = revenueCnpjIndexByCnpj.get(cnpj);
@@ -1454,17 +1605,18 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel }) {
     const manifestDay = !revenueClientSelected.size ? manifestCountsByDay.get(dayOffset) : undefined;
     let vehicleCountSource = "ordem", dedicadoCarreta = null, rotaCarreta = null, dedicadoCaminhao = null, rotaCaminhao = null;
     let finalCountCarreta = countCarreta, finalCountCaminhao = countCaminhao;
+    let vehiclesCarreta = [], vehiclesCaminhao = [], pendingCarreta = [], pendingCaminhao = [];
     if (manifestDay) {
       vehicleCountSource = "manifesto";
-      if (activeFilter === "ALL" || activeFilter === "CARRETA") { dedicadoCarreta = manifestDay.CARRETA.DEDICADO; rotaCarreta = manifestDay.CARRETA.ROTA; }
-      if (activeFilter === "ALL" || activeFilter === "CAMINHAO") { dedicadoCaminhao = manifestDay.CAMINHAO.DEDICADO; rotaCaminhao = manifestDay.CAMINHAO.ROTA; }
+      if (activeFilter === "ALL" || activeFilter === "CARRETA") { dedicadoCarreta = manifestDay.CARRETA.DEDICADO; rotaCarreta = manifestDay.CARRETA.ROTA; vehiclesCarreta = manifestVehiclesByDay.get(`${dayOffset}|CARRETA`) ?? []; pendingCarreta = pendingByDay.get(`${dayOffset}|CARRETA`) ?? []; }
+      if (activeFilter === "ALL" || activeFilter === "CAMINHAO") { dedicadoCaminhao = manifestDay.CAMINHAO.DEDICADO; rotaCaminhao = manifestDay.CAMINHAO.ROTA; vehiclesCaminhao = manifestVehiclesByDay.get(`${dayOffset}|CAMINHAO`) ?? []; pendingCaminhao = pendingByDay.get(`${dayOffset}|CAMINHAO`) ?? []; }
       finalCountCarreta = (dedicadoCarreta ?? 0) + (rotaCarreta ?? 0);
       finalCountCaminhao = (dedicadoCaminhao ?? 0) + (rotaCaminhao ?? 0);
     }
-    return { iso, totalFaturamento, totalVolume, totalPeso, countCarreta: finalCountCarreta, countCaminhao: finalCountCaminhao, totalVeiculos: finalCountCarreta + finalCountCaminhao, clientRows, vehicleCountSource, dedicadoCarreta, rotaCarreta, dedicadoCaminhao, rotaCaminhao };
+    return { iso, totalFaturamento, totalVolume, totalPeso, countCarreta: finalCountCarreta, countCaminhao: finalCountCaminhao, totalVeiculos: finalCountCarreta + finalCountCaminhao, clientRows, vehicleCountSource, dedicadoCarreta, rotaCarreta, dedicadoCaminhao, rotaCaminhao, vehiclesCarreta, vehiclesCaminhao, pendingCarreta, pendingCaminhao };
   }
   const selectedRevenueOffset = isoToDayOffset(revenueDate);
-  const revenueDeps = [statusFilteredRecords, dataset, revenueVehicleFilter, revenueFilialFilter, revenueClientSelected, revenueByKeyGeral, revenueByKeyFilial, revenueCnpjIndexByCnpj, manifestCountsByDay];
+  const revenueDeps = [statusFilteredRecords, dataset, revenueVehicleFilter, revenueFilialFilter, revenueClientSelected, revenueByKeyGeral, revenueByKeyFilial, revenueCnpjIndexByCnpj, manifestCountsByDay, manifestVehiclesByDay, pendingByDay, fixedValorMedioLive];
   const currentDayRevenue = useMemo(() => computeRevenueDay(selectedRevenueOffset), [selectedRevenueOffset, ...revenueDeps]);
   const previousDayRevenue = useMemo(() => computeRevenueDay(selectedRevenueOffset - 1), [selectedRevenueOffset, ...revenueDeps]);
   const currentDayCarreta = useMemo(() => computeRevenueDay(selectedRevenueOffset, "CARRETA"), [selectedRevenueOffset, ...revenueDeps]);
@@ -1564,9 +1716,14 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel }) {
       const workbook = XLSX.read(await file.arrayBuffer(), { type: "array" });
       const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1, defval: "" });
       const imported = parseRevenueReport(rows, revenueYearInput || revenueDataset.year, dataset.cnpjs);
-      setRevenueDataset({ cnpjs: imported.cnpjs, names: imported.names, filiais: imported.filiais, records: imported.records, year: imported.year });
+      const nextRevenueDataset = { cnpjs: imported.cnpjs, names: imported.names, filiais: imported.filiais, records: imported.records, year: imported.year };
+      const label = `${file.name} · ${numberInt.format(imported.rowCount)} linhas · ano ${imported.year} · ${imported.cnpjs.length} CNPJ(s) do relatório de coletas`;
+      const updatedAt = new Date().toISOString();
+      setRevenueDataset(nextRevenueDataset);
       setRevenueFilialFilter("GERAL");
-      setRevenueSourceLabel(`${file.name} · ${numberInt.format(imported.rowCount)} linhas · ano ${imported.year} · ${imported.cnpjs.length} CNPJ(s) do relatório de coletas`);
+      setRevenueSourceLabel(label);
+      lsSave("receita", { dataset: nextRevenueDataset, label, updatedAt });
+      onReceitaStatusChange?.({ label, updatedAt });
     } catch (error) { setRevenueImportError(error instanceof Error ? error.message : "Não foi possível ler a planilha de receita."); }
     finally { event.target.value = ""; }
   }
@@ -1580,15 +1737,23 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel }) {
       const workbook = XLSX.read(await file.arrayBuffer(), { type: "array" });
       const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { defval: "" });
       const imported = parseCollectionsReport(rows, manifestDataset?.byManifest);
-      setDataset({ cnpjs: imported.cnpjs, names: imported.names, vehicleList: imported.vehicleList, statusList: imported.statusList, records: imported.records, validCollections: imported.validCollections, rowCount: imported.rowCount, periodStart: imported.periodStart, periodEnd: imported.periodEnd });
-      setSourceLabel(`${file.name} · base em DT_EFETUAR_COLETAS${manifestDataset ? ` · ${numberInt.format(imported.dedupCount)} coleta(s) deduplicada(s) via manifesto` : ""}`);
+      const nextDataset = { cnpjs: imported.cnpjs, names: imported.names, vehicleList: imported.vehicleList, statusList: imported.statusList, filiais: imported.filiais, records: imported.records, validCollections: imported.validCollections, rowCount: imported.rowCount, periodStart: imported.periodStart, periodEnd: imported.periodEnd };
+      const label = `${file.name} · base em DT_EFETUAR_COLETAS${manifestDataset ? ` · ${numberInt.format(imported.dedupCount)} coleta(s) deduplicada(s) via manifesto` : ""}`;
+      const updatedAt = new Date().toISOString();
+      const nextManifestVehicleEvents = imported.manifestCoverage ? { events: imported.manifestEvents, coverage: imported.manifestCoverage, pending: imported.pendingEvents ?? [] } : { events: [], coverage: null, pending: [] };
+      const nextDedupAudit = imported.dedupAudit ?? [];
+      setDataset(nextDataset);
+      setSourceLabel(label);
       setSelectedCategory(null);
       setSelectedMonth("all");
       setStatusFilter("ALL");
       setSelectedDate(imported.periodEnd);
       setSelectedDayVehicle(null);
       setRevenueDate(imported.periodEnd);
-      setManifestVehicleEvents(imported.manifestCoverage ? { events: imported.manifestEvents, coverage: imported.manifestCoverage } : { events: [], coverage: null });
+      setManifestVehicleEvents(nextManifestVehicleEvents);
+      setDedupAudit(nextDedupAudit);
+      lsSave("coletas", { dataset: nextDataset, label, updatedAt, manifestVehicleEvents: nextManifestVehicleEvents, dedupAudit: nextDedupAudit });
+      onColetaStatusChange?.({ label, updatedAt, rowCount: imported.rowCount });
     } catch (error) { setImportError(error instanceof Error ? error.message : "Não foi possível ler a base de coletas."); }
     finally { event.target.value = ""; }
   }
@@ -1601,6 +1766,7 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel }) {
     <div className="status-tiles-wrap">
       {statusScopeOffset !== null && <div className="status-scope-hint"><CalendarRange size={12} /> Quantitativo do dia {formatDatePtBR(dayOffsetToISO(statusScopeOffset))} — muda conforme a data selecionada {viewMode === "revenue" ? "no Faturamento" : "na Visão diária"}</div>}
       <div className="status-tiles"><button type="button" className={`status-chip tone-neutral ${statusFilter === "ALL" ? "active" : ""}`} onClick={() => setStatusFilter("ALL")}>Todos<small>{numberInt.format(statusScopeTotal)}</small></button>{statusOptions.map((status) => <button key={status} type="button" className={`status-chip tone-${STATUS_TONE[status] ?? "neutral"} ${statusFilter === status ? "active" : ""}`} onClick={() => setStatusFilter(status)}>{statusLabel(status)}<small>{numberInt.format(statusCounts.get(status) ?? 0)}</small></button>)}</div>
+      {dataset.filiais.length > 0 && <div className="revenue-filter-group"><span className="field-label">FILIAL DE ATENDIMENTO (relatório de coleta)</span><select className="month-select" value={collectionFilialFilter} onChange={(e) => setCollectionFilialFilter(e.target.value)}><option value="TODAS">Todas as filiais</option>{dataset.filiais.map((f) => <option key={f} value={f}>{f}</option>)}</select></div>}
     </div>
 
     {viewMode === "daily" ? <>
@@ -1627,6 +1793,7 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel }) {
           <div className={`revenue-filter-group ${revenueSplitView ? "revenue-filter-disabled" : ""}`}><span className="field-label">CATEGORIA DE VEÍCULO {revenueSplitView && "(ignorado na visão dividida)"}</span><div className="revenue-chip-row"><button type="button" disabled={revenueSplitView} className={revenueVehicleFilter === "ALL" ? "active" : ""} onClick={() => setRevenueVehicleFilter("ALL")}>Todos</button><button type="button" disabled={revenueSplitView} className={revenueVehicleFilter === "CARRETA" ? "active" : ""} onClick={() => setRevenueVehicleFilter("CARRETA")}>Carreta</button><button type="button" disabled={revenueSplitView} className={revenueVehicleFilter === "CAMINHAO" ? "active" : ""} onClick={() => setRevenueVehicleFilter("CAMINHAO")}>Caminhão</button></div></div>
           <div className="revenue-filter-group"><span className="field-label">GRUPO DE CLIENTES</span><div className="client-search"><Search size={14} /><input aria-label="Buscar cliente para filtrar" placeholder="Buscar cliente ou CNPJ para incluir no filtro" value={revenueClientSearch} onChange={(e) => setRevenueClientSearch(e.target.value)} /></div>{(revenueClientMatches.length > 0 || revenueClientSelected.size > 0) && <div className="revenue-chip-row">{revenueClientMatches.map((c) => <button type="button" key={c.cnpj} className={revenueClientSelected.has(c.cnpj) ? "active" : ""} onClick={() => toggleRevenueClient(c.cnpj)}>{c.name.split(" ").slice(0, 2).join(" ")}</button>)}{revenueClientSelected.size > 0 && <button type="button" className="clear-chip" onClick={() => setRevenueClientSelected(new Set())}>Limpar seleção ({revenueClientSelected.size})</button>}</div>}</div>
           <div className="revenue-filter-group"><span className="field-label">FILIAL DE ORIGEM</span><select className="month-select" value={revenueFilialFilter} onChange={(e) => setRevenueFilialFilter(e.target.value)}><option value="GERAL">Geral (todas as filiais)</option>{revenueDataset.filiais.map((f) => <option key={f} value={f}>{filialSigla(f)} — {f}</option>)}</select></div>
+          <div className="revenue-filter-group"><span className="field-label">PERÍODO DE REFERÊNCIA (Valor Médio Fixo) · ano {revenueDataset.year}</span><div className="revenue-chip-row">{REVENUE_MONTH_LABELS.slice(1).map((m, i) => <button type="button" key={m} className={refMonths.includes(i + 1) ? "active" : ""} onClick={() => toggleRefMonth(i + 1)}>{m.slice(0, 3)}</button>)}</div></div>
         </div>
       </div>
 
@@ -1641,22 +1808,46 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel }) {
           const splitPct = pctChange(curr.totalFaturamento, prev.totalFaturamento);
           const splitPctVeic = pctChange(curr.totalVeiculos, prev.totalVeiculos);
           return <div className="revenue-split-panel" key={key}>
-            <div className="revenue-split-header"><Truck size={16} /><h3>{label}</h3><span className="revenue-split-count">{numberInt.format(curr.totalVeiculos)} veículo(s) no dia {curr.vehicleCountSource === "manifesto" ? "· via manifesto" : "· por ordem (sem manifesto)"}</span></div>
+            <div className="revenue-split-header"><Truck size={16} /><h3>{label}</h3><span className="revenue-split-count">{numberInt.format(curr.totalVeiculos)} veículo(s) no dia {curr.vehicleCountSource === "manifesto" ? "· via manifesto" : "· Pendente Programação"}</span></div>
             <div className="revenue-split-metrics">
               <div><span>Faturamento previsto</span><strong>{money.format(curr.totalFaturamento)}</strong><small className={splitPct === null ? "" : splitPct < 0 ? "tone-warning" : "tone-positive"}>{formatPct(splitPct)}</small></div>
               <div><span>Veículos no dia</span><strong>{numberInt.format(curr.totalVeiculos)}</strong><small className={splitPctVeic === null ? "" : splitPctVeic < 0 ? "tone-warning" : "tone-positive"}>{formatPct(splitPctVeic)}</small></div>
               <div><span>Volumetria prevista</span><strong>{number.format(curr.totalVolume)}</strong></div>
               <div><span>Peso previsto (kg)</span><strong>{numberInt.format(curr.totalPeso)}</strong></div>
+              {curr.vehicleCountSource === "manifesto" && (() => {
+                const list = key === "CARRETA" ? curr.vehiclesCarreta : curr.vehiclesCaminhao;
+                const pending = (key === "CARRETA" ? curr.pendingCarreta : curr.pendingCaminhao).length;
+                const linked = list.reduce((s, v) => s + v.clients.length, 0);
+                const total = linked + pending;
+                const pct = total > 0 ? Math.round((linked / total) * 100) : null;
+                return <div><span>% Programado</span><strong>{pct === null ? "—" : `${pct}%`}</strong>{pending > 0 && <small className="tone-warning">{pending} pendente(s)</small>}</div>;
+              })()}
             </div>
             {curr.vehicleCountSource === "manifesto" && <div className="revenue-split-dedicado-rota">
               <div className="dedicado-rota-item"><span>Dedicado</span><strong>{numberInt.format((key === "CARRETA" ? curr.dedicadoCarreta : curr.dedicadoCaminhao) ?? 0)}</strong><small>1–2 clientes no manifesto</small></div>
               <div className="dedicado-rota-item"><span>Rota</span><strong>{numberInt.format((key === "CARRETA" ? curr.rotaCarreta : curr.rotaCaminhao) ?? 0)}</strong><small>3+ clientes no manifesto</small></div>
             </div>}
-            <div className="revenue-split-clients">
-              <div className="revenue-client-grid-head revenue-split-grid-cols"><span>Cliente / CNPJ</span><span>Qtd</span><span>Valor Médio</span><span>Valor Previsto</span><span>Fonte</span></div>
-              {curr.clientRows.map((c) => <div className="revenue-client-grid-row revenue-split-grid-cols" key={c.cnpj}><div><strong>{c.name}</strong><small>{c.cnpj}</small></div><strong>{numberInt.format(c.qtd)}</strong><span>{money.format(c.valorMedio)}</span><strong>{money.format(c.valorPrevisto)}</strong><span className={`revenue-source-tag revenue-source-${c.fonte}`}>{c.fonte === "fixo" ? "Fixo" : c.fonte === "mensal" ? "Mensal" : "Sem dados"}</span></div>)}
-              {curr.clientRows.length === 0 && <div className="empty-client-state"><RouteIcon size={16} /> Nenhuma coleta de {label.toLowerCase()} neste dia.</div>}
-            </div>
+            {curr.vehicleCountSource === "manifesto" ? (
+              <div className="revenue-split-clients">
+                <div className="revenue-vehicles-by-plate">
+                  {(key === "CARRETA" ? curr.vehiclesCarreta : curr.vehiclesCaminhao).map((v) => <div className="frequency-plate-block" key={v.placa}>
+                    <div className="frequency-plate-header"><Truck size={14} /><strong>{v.placa}</strong><span>{v.classification === "DEDICADO" ? "Dedicado" : "Rota"} · {v.clients.length} cliente(s)</span></div>
+                    <div className="revenue-plate-clients">{v.clients.map((c) => <div className="revenue-plate-client-row" key={c.cnpj}><div><strong>{c.name}</strong><small>{c.cnpj}</small></div><strong>{numberInt.format(c.qtd)}</strong></div>)}</div>
+                  </div>)}
+                  {(key === "CARRETA" ? curr.vehiclesCarreta : curr.vehiclesCaminhao).length === 0 && (key === "CARRETA" ? curr.pendingCarreta : curr.pendingCaminhao).length === 0 && <div className="empty-client-state"><RouteIcon size={16} /> Nenhum veículo manifestado de {label.toLowerCase()} neste dia.</div>}
+                  {(key === "CARRETA" ? curr.pendingCarreta : curr.pendingCaminhao).length > 0 && <div className="frequency-plate-block pending-programacao-block">
+                    <div className="frequency-plate-header"><RouteIcon size={14} /><strong>Pendente Programação</strong><span>{(key === "CARRETA" ? curr.pendingCarreta : curr.pendingCaminhao).length} cliente(s) sem manifesto vinculado</span></div>
+                    <div className="revenue-plate-clients">{(key === "CARRETA" ? curr.pendingCarreta : curr.pendingCaminhao).map((c) => <div className="revenue-plate-client-row" key={c.cnpj}><div><strong>{c.name}</strong><small>{c.cnpj}</small></div><strong>{numberInt.format(c.qtd)}</strong></div>)}</div>
+                  </div>}
+                </div>
+              </div>
+            ) : (
+              <div className="revenue-split-clients">
+                <div className="revenue-client-grid-head revenue-split-grid-cols"><span>Cliente / CNPJ</span><span>Qtd</span><span>Valor Médio</span><span>Valor Previsto</span><span>Fonte</span></div>
+                {curr.clientRows.map((c) => <div className="revenue-client-grid-row revenue-split-grid-cols" key={c.cnpj}><div><strong>{c.name}</strong><small>{c.cnpj}</small></div><strong>{numberInt.format(c.qtd)}</strong><span>{money.format(c.valorMedio)}</span><strong>{money.format(c.valorPrevisto)}</strong><span className={`revenue-source-tag revenue-source-${c.fonte}`}>{c.fonte === "fixo" ? "Fixo" : c.fonte === "mensal" ? "Mensal" : "Sem dados"}</span></div>)}
+                {curr.clientRows.length === 0 && <div className="empty-client-state"><RouteIcon size={16} /> Nenhuma coleta de {label.toLowerCase()} neste dia.</div>}
+              </div>
+            )}
           </div>;
         })}
       </div>
@@ -1719,13 +1910,30 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel }) {
 
       <div className="client-toolbar import-toolbar revenue-import-toolbar"><input ref={revenueFileInputRef} className="hidden-file-input" type="file" accept=".xlsx,.xls" onChange={handleRevenueImport} /><button className="secondary-action" type="button" onClick={() => revenueFileInputRef.current?.click()}><UploadCloud size={15} /> Atualizar planilha de Receita</button><label className="revenue-year-field">Ano<input type="number" className="revenue-year-input" value={revenueYearInput} onChange={(e) => setRevenueYearInput(Number(e.target.value) || revenueDataset.year)} /></label><span className="source-badge"><Database size={13} /> {revenueSourceLabel}</span>{revenueImportError && <div className="import-error">{revenueImportError}</div>}</div>
 
-      <div className="client-footnote"><span>Metodologia (atualizada):</span> cada cliente tem um Valor Médio calibrado com a mesma conta já usada na planilha real (abas Auxiliar/Faturamento Original): soma da Receita de Março+Abril+Maio/2025 ÷ 4 ÷ 22 dias úteis — esse valor é FIXO por cliente, não muda de mês pra mês. Carreta (Cav. Mecânico, incluindo variações como conjunto completo/especial/bitrem) recebe 100% desse valor por veículo despachado no dia; Toco/Truck/Van/Fiorino/Outros (Caminhão) recebem 50%. Isso cobre 81 dos 140 CNPJs do relatório de coletas — marcados como "Fixo" na tabela de clientes acima. Para os demais, o painel cai num fallback "Mensal" (Receita do mês ÷ dias úteis, planilha nacional por filial) só pra não zerar a projeção; e quando nem isso existe, aparece "Sem dados". Volumetria e peso previstos (só no fallback mensal) usam a média por CT-e do cliente no mês. <span>Deduplicação por manifesto:</span> quando o relatório de manifesto está carregado, aplicamos 2 regras — (1) GRUPO: no mesmo NR_DIARIO_BORDO (=NR_MANIFESTOS), CNPJs que são o mesmo grupo comercial (NM_CLIENTES_GRUPO do relatório de coletas, ex.: ACHE + LABOFARMA) viram 1 serviço só, mesmo em cidades diferentes; (2) LOCAL: no que sobrar, mesmo manifesto + mesma cidade + exatamente 2 CNPJs distintos também vira 1 serviço. Em ambas, mantém o CNPJ de maior Valor Médio. <span>Contagem de veículos (Dividir Carreta/Caminhão):</span> passou a contar por manifesto (1 manifesto = 1 veículo no dia), não por ordem de coleta — um manifesto com várias ordens do mesmo grupo não conta como vários carros. Cada veículo é classificado como "Dedicado" (1–2 clientes distintos no manifesto) ou "Rota" (3+ clientes) — visível na visão dividida. Isso vale para todo o período com manifesto vinculado (hoje, 01/05 a 02/09/2026); fora dessa janela, a contagem cai no fallback por ordem de coleta, indicado no rótulo "veículo(s) no dia". <span>Categoria do veículo por manifesto:</span> quando o NR_DIARIO_BORDO bate com um manifesto, a categoria (Carreta/Caminhão) passa a ser validada pelo CLASSE_VEICULO_VIAGEM do manifesto — ligado à placa — em vez do campo da própria coleta, que pode ter digitação inconsistente; a ordem de coleta segue essa fonte. Fique de olho na coluna "Fonte" da tabela de clientes: ela mostra exatamente qual regra gerou cada valor.</div>
+      <div className="client-footnote"><span>Metodologia (atualizada):</span> cada cliente tem um Valor Médio calibrado por um período de referência que você escolhe (chips acima, padrão Mar+Abr+Mai) no ano do relatório de Receita carregado: soma da receita do cliente nesses meses ÷ total de dias úteis desses meses — esse valor é FIXO por cliente, não muda de mês pra mês, e recalcula sozinho se você mudar os meses de referência. Carreta (Cav. Mecânico, incluindo variações como conjunto completo/especial/bitrem) recebe 100% desse valor por veículo despachado no dia; Toco/Truck/Van/Fiorino/Outros (Caminhão) recebem 50%. Fica marcado como "Fixo" na tabela de clientes acima qualquer CNPJ com receita em pelo menos 1 dos meses de referência. Para os demais, o painel cai num fallback "Mensal" (Receita do mês ÷ dias úteis, planilha nacional por filial) só pra não zerar a projeção; e quando nem isso existe, aparece "Sem dados". Volumetria e peso previstos (só no fallback mensal) usam a média por CT-e do cliente no mês. <span>Deduplicação por manifesto:</span> quando o relatório de manifesto está carregado, aplicamos 2 regras — (1) GRUPO: no mesmo NR_DIARIO_BORDO (=NR_MANIFESTOS), CNPJs que são o mesmo grupo comercial (NM_CLIENTES_GRUPO do relatório de coletas, ex.: ACHE + LABOFARMA) viram 1 serviço só, mesmo em cidades diferentes; (2) LOCAL: no que sobrar, mesmo manifesto + mesma cidade + exatamente 2 CNPJs distintos também vira 1 serviço. Em ambas, mantém o CNPJ de maior Valor Médio. <span>Contagem de veículos (Dividir Carreta/Caminhão):</span> passou a contar por manifesto (1 manifesto = 1 veículo no dia), não por ordem de coleta — um manifesto com várias ordens do mesmo grupo não conta como vários carros. Cada veículo é classificado como "Dedicado" (1–2 clientes distintos no manifesto) ou "Rota" (3+ clientes) — visível na visão dividida. Isso vale para todo o período com manifesto vinculado (hoje, 01/05 a 02/09/2026); fora dessa janela, a contagem cai no fallback por ordem de coleta, indicado no rótulo "veículo(s) no dia". <span>Categoria do veículo por manifesto:</span> quando o NR_DIARIO_BORDO bate com um manifesto, a categoria (Carreta/Caminhão) passa a ser validada pelo CLASSE_VEICULO_VIAGEM do manifesto — ligado à placa — em vez do campo da própria coleta, que pode ter digitação inconsistente; a ordem de coleta segue essa fonte. Fique de olho na coluna "Fonte" da tabela de clientes: ela mostra exatamente qual regra gerou cada valor. <span>% Programado:</span> mostra, por dia e por categoria, quantos clientes já têm veículo/placa definidos via manifesto contra quantos ainda estão em "Pendente Programação" (coletas sem manifesto vinculado naquele dia).</div>
+      {dedupAudit.length > 0 && <div className="dedup-audit-block">
+        <button type="button" className="secondary-action" onClick={() => setShowDedupAudit((v) => !v)}><Repeat size={14} /> Auditoria de deduplicação ({numberInt.format(dedupAudit.length)} fusão/fusões) {showDedupAudit ? "▲" : "▼"}</button>
+        {showDedupAudit && <div className="dedup-audit-table">
+          <div className="dedup-audit-row dedup-audit-head"><span>Regra</span><span>Data</span><span>Cidade</span><span>CNPJ mantido</span><span>CNPJ(s) absorvido(s)</span></div>
+          {dedupAudit.slice(0, 300).map((a, i) => <div className="dedup-audit-row" key={i}>
+            <span className={`dedup-rule-tag dedup-rule-${a.rule.toLowerCase()}`}>{a.rule}</span>
+            <span>{formatDatePtBR(a.date)}</span>
+            <span>{a.cidade || "—"}</span>
+            <span><strong>{a.winnerName}</strong><small>{a.winnerCnpj}</small></span>
+            <span>{a.losers.map((l) => <div key={l.cnpj}>{l.name} <small>{l.cnpj}</small></div>)}</span>
+          </div>)}
+          {dedupAudit.length > 300 && <div className="client-footnote">Mostrando as primeiras 300 fusões de {numberInt.format(dedupAudit.length)}.</div>}
+        </div>}
+      </div>}
     </>}
 
     <div className="client-toolbar import-toolbar">
       <input ref={fileInputRef} className="hidden-file-input" type="file" accept=".xlsx,.xls" onChange={handleClientImport} />
       <button className="secondary-action" type="button" onClick={() => fileInputRef.current?.click()}><UploadCloud size={15} /> Atualizar base de coletas</button>
-      <span className={`manifest-status-badge ${manifestDataset ? "manifest-status-on" : "manifest-status-off"}`}><RouteIcon size={13} /> {manifestSourceLabel}<small className="manifest-status-hint">· atualize em Recursos - Veículos</small></span>
+      <span className={`manifest-status-badge ${manifestDataset ? "manifest-status-on" : "manifest-status-off"}`}><RouteIcon size={13} /> {manifestSourceLabel}</span>
+      <button className="secondary-action" type="button" onClick={() => manifestFileInputRef.current?.click()}><UploadCloud size={15} /> Atualizar relatório de manifesto</button>
+      {manifestImportError && <div className="import-error client-import-error">{manifestImportError}</div>}
+      {manifestDataset && <small className="manifest-status-hint">Depois de atualizar o manifesto, clique em "Atualizar base de coletas" acima para reaplicar a vinculação placa × cliente.</small>}
       {importError && <div className="import-error client-import-error">{importError}</div>}
     </div>
   </main>;
@@ -1852,7 +2060,6 @@ function VehicleResources({ manifestDataset, manifestSourceLabel, manifestImport
     </div>
 
     <div className="client-toolbar import-toolbar">
-      <input ref={manifestFileInputRef} className="hidden-file-input" type="file" accept=".xlsx,.xls" onChange={handleManifestImport} />
       <button className="secondary-action" type="button" onClick={() => manifestFileInputRef.current?.click()}><UploadCloud size={15} /> Atualizar relatório de manifesto</button>
       {manifestImportError && <div className="import-error client-import-error">{manifestImportError}</div>}
     </div>
@@ -1931,13 +2138,33 @@ function VehicleResources({ manifestDataset, manifestSourceLabel, manifestImport
   </main>;
 }
 
+/* Barra de status global — visível em todas as telas, mostra os 3 relatórios (Coleta/Manifesto/
+   Receita) e quando cada um foi atualizado pela última vez, pra nunca mais um relatório "sumir"
+   silenciosamente sem ninguém perceber (foi o que gerou o bug de contagem por placa). */
+function GlobalStatusBar({ coletaStatus, manifestSourceLabel, manifestUpdatedAt, manifestLoaded, receitaStatus }) {
+  return (
+    <div className="global-status-bar">
+      <span className={`global-status-chip ${coletaStatus ? "status-ok" : "status-missing"}`}><Database size={12} /> Coleta: {coletaStatus ? <>{numberInt.format(coletaStatus.rowCount ?? 0)} linhas <small>{relativeTime(coletaStatus.updatedAt)}</small></> : "não carregada"}</span>
+      <span className={`global-status-chip ${manifestLoaded ? "status-ok" : "status-missing"}`}><RouteIcon size={12} /> Manifesto: {manifestLoaded ? <>carregado <small>{relativeTime(manifestUpdatedAt)}</small></> : "não carregado"}</span>
+      <span className={`global-status-chip ${receitaStatus ? "status-ok" : "status-missing"}`}><CircleDollarSign size={12} /> Receita: {receitaStatus ? <>carregada <small>{relativeTime(receitaStatus.updatedAt)}</small></> : "não carregada"}</span>
+    </div>
+  );
+}
+
 function App() {
   const [page, setPage] = useState("home");
   const [theme, setTheme] = useState("dark");
-  const [manifestDataset, setManifestDataset] = useState(null);
-  const [manifestSourceLabel, setManifestSourceLabel] = useState("Nenhum relatório de manifesto carregado");
+  const [manifestDataset, setManifestDataset] = useState(() => {
+    const saved = lsLoad("manifest");
+    if (!saved) return null;
+    return { ...saved.data, byManifest: new Map(saved.data.byManifest) };
+  });
+  const [manifestSourceLabel, setManifestSourceLabel] = useState(() => lsLoad("manifest")?.label ?? "Nenhum relatório de manifesto carregado");
+  const [manifestUpdatedAt, setManifestUpdatedAt] = useState(() => lsLoad("manifest")?.updatedAt ?? null);
   const [manifestImportError, setManifestImportError] = useState(null);
   const manifestFileInputRef = useRef(null);
+  const [coletaStatus, setColetaStatus] = useState(() => { const s = lsLoad("coletas"); return s ? { label: s.label, updatedAt: s.updatedAt, rowCount: s.dataset?.rowCount } : null; });
+  const [receitaStatus, setReceitaStatus] = useState(() => { const s = lsLoad("receita"); return s ? { label: s.label, updatedAt: s.updatedAt } : null; });
 
   useEffect(() => {
     const root = document.documentElement;
@@ -1954,8 +2181,12 @@ function App() {
       const workbook = XLSX.read(await file.arrayBuffer(), { type: "array" });
       const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1, defval: "" });
       const parsed = parseManifestReport(rows);
+      const label = `${file.name} · ${numberInt.format(parsed.totalManifests)} manifesto(s) · ${numberInt.format(parsed.uniquePlates)} placa(s)`;
+      const updatedAt = new Date().toISOString();
       setManifestDataset(parsed);
-      setManifestSourceLabel(`${file.name} · ${numberInt.format(parsed.totalManifests)} manifesto(s) · ${numberInt.format(parsed.uniquePlates)} placa(s)`);
+      setManifestSourceLabel(label);
+      setManifestUpdatedAt(updatedAt);
+      lsSave("manifest", { data: { ...parsed, byManifest: Array.from(parsed.byManifest.entries()) }, label, updatedAt });
     } catch (error) { setManifestImportError(error instanceof Error ? error.message : "Não foi possível ler a planilha de manifesto."); }
     finally { event.target.value = ""; }
   }
@@ -1963,9 +2194,11 @@ function App() {
   return (
     <div className={`app-shell ${page === "clients" || page === "vehicles" ? "client-analysis-shell" : ""}`}>
       <style>{CSS_TEXT}</style>
+      <input ref={manifestFileInputRef} className="hidden-file-input" type="file" accept=".xlsx,.xls" onChange={handleManifestImport} />
       <DashboardLayout page={page} setPage={setPage} theme={theme} toggleTheme={toggleTheme} />
       <TopBar page={page} setPage={setPage} />
-      {page === "home" ? <Home /> : page === "clients" ? <ClientAnalysis manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} /> : <VehicleResources manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} />}
+      <GlobalStatusBar coletaStatus={coletaStatus} manifestSourceLabel={manifestSourceLabel} manifestUpdatedAt={manifestUpdatedAt} manifestLoaded={!!manifestDataset} receitaStatus={receitaStatus} />
+      {page === "home" ? <Home /> : page === "clients" ? <ClientAnalysis manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} onColetaStatusChange={setColetaStatus} onReceitaStatusChange={setReceitaStatus} /> : <VehicleResources manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} />}
     </div>
   );
 }
