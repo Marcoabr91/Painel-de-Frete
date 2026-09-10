@@ -615,6 +615,7 @@ function normalizeRevenueHeader(value) { return String(value ?? "").normalize("N
 function parseRevenueReport(rows, year, allowedCnpjs) {
   if (!rows.length) throw new Error("Planilha de receita vazia.");
   let headerRowIndex = -1, headerMap = null;
+  let sawPeriodo = false, sawReceita = false, sawCnpj = false;
   for (let i = 0; i < Math.min(rows.length, 200); i++) {
     const normalized = (rows[i] ?? []).map(normalizeRevenueHeader);
     const find = (...names) => { for (const n of names) { const idx = normalized.indexOf(n); if (idx !== -1) return idx; } return -1; };
@@ -623,9 +624,18 @@ function parseRevenueReport(rows, year, allowedCnpjs) {
       receita: find("receita"), qtdCte: find("qtd cte"), volume: find("volume"),
       pesoReal: find("peso real"), pesoCalculo: find("peso calculo"), cnpj: find("cnpj cliente", "cnpj"),
     };
+    if (map.periodo !== -1) sawPeriodo = true;
+    if (map.receita !== -1) sawReceita = true;
+    if (map.cnpj !== -1) sawCnpj = true;
     if (map.periodo !== -1 && map.receita !== -1 && map.cnpj !== -1) { headerRowIndex = i; headerMap = map; break; }
   }
-  if (headerRowIndex === -1) throw new Error("Não encontrei as colunas Periodo, Receita e CNPJ Cliente na planilha de receita.");
+  if (headerRowIndex === -1) {
+    const missing = [];
+    if (!sawPeriodo) missing.push("Periodo");
+    if (!sawReceita) missing.push("Receita");
+    if (!sawCnpj) missing.push("CNPJ Cliente");
+    throw new Error(`Não encontrei a(s) coluna(s): ${missing.join(", ")} na planilha de receita (procurei nas primeiras 200 linhas).`);
+  }
   const dataRows = rows.slice(headerRowIndex + 1);
   const allowedSet = allowedCnpjs instanceof Set ? allowedCnpjs : new Set(allowedCnpjs ?? []);
   const agg = new Map();
@@ -732,6 +742,7 @@ function fixedValorMedio(cnpj) {
 function parseManifestReport(rows) {
   if (!rows.length) throw new Error("A planilha de manifesto não possui linhas de dados.");
   let headerRowIndex = -1, headerMap = null;
+  let sawManifesto = false, sawPlaca = false;
   for (let i = 0; i < Math.min(rows.length, 30); i++) {
     const normalized = (rows[i] ?? []).map(headerClient);
     const find = (name) => normalized.indexOf(headerClient(name));
@@ -741,9 +752,16 @@ function parseManifestReport(rows) {
       rota: find("ROTA_VIAGEM"), km: find("KM_TOTAL_VIAGEM"), data: find("DT_VIAGENS"),
       entregas: find("QT_ENTREGAS_VIAGENS"), devolucoes: find("QTD_CTE_NAO_ENTREGUE"),
     };
+    if (map.manifesto !== -1) sawManifesto = true;
+    if (map.placa !== -1) sawPlaca = true;
     if (map.manifesto !== -1 && map.placa !== -1) { headerRowIndex = i; headerMap = map; break; }
   }
-  if (headerRowIndex === -1) throw new Error("Não encontrei as colunas NR_MANIFESTOS e IDENT_VEICULOS_TRACAO na planilha de manifesto.");
+  if (headerRowIndex === -1) {
+    const missing = [];
+    if (!sawManifesto) missing.push("NR_MANIFESTOS");
+    if (!sawPlaca) missing.push("IDENT_VEICULOS_TRACAO");
+    throw new Error(`Não encontrei a coluna ${missing.join(" e a coluna ")} na planilha de manifesto (procurei nas primeiras 30 linhas). Confira se o cabeçalho está escrito exatamente assim.`);
+  }
   const byManifest = new Map();
   const plates = new Set();
   const classeCounter = new Map();
@@ -878,7 +896,14 @@ function parseCollectionsReport(rows, manifestMap) {
     cidade: find("nm cidade"),
     filial: find("sigla filiais atendimento", "sigla filial atendimento"),
   };
-  if (!keys.cnpj || !keys.name || !keys.vehicle || !keys.date) throw new Error("Não encontrei as colunas CNPJ_CLIENTES_SOL, RAZAO_SOCIAL_SOL, Classe do Veículo ou DT_EFETUAR_COLETAS na planilha.");
+  const REQUIRED_COLLECTIONS = [
+    { key: "cnpj", label: "CNPJ_CLIENTES_SOL (ou CNPJ_CLIENTES)" },
+    { key: "name", label: "RAZAO_SOCIAL_SOL (ou NM_FANTASIA_CLIENTES)" },
+    { key: "vehicle", label: "Classe do Veículo (ou CLASSE_VEICULO)" },
+    { key: "date", label: "DT_EFETUAR_COLETAS" },
+  ];
+  const missingCollections = REQUIRED_COLLECTIONS.filter((r) => !keys[r.key]).map((r) => r.label);
+  if (missingCollections.length) throw new Error(`Não encontrei a(s) coluna(s): ${missingCollections.join(", ")}. Colunas encontradas na planilha: ${headers.slice(0, 15).join(", ")}${headers.length > 15 ? "…" : ""}.`);
   const parsedRows = [];
   let minDate = null, maxDate = null;
   let manifestVehicleOverrides = 0;
@@ -1096,17 +1121,15 @@ function parseMonthlyCollectionsReport(rows) {
   return Array.from(grouped.values()).sort((a, b) => b.trips - a.trips);
 }
 
-/* Persistência simples via window.storage (com fallback em memória caso indisponível) */
+/* Persistência simples via localStorage (cenários salvos do simulador). Antes usava window.storage,
+   uma API que só existe dentro do ambiente de artifacts do claude.ai — no site publicado de verdade
+   (GitHub Pages) isso nunca funcionava e os "cenários salvos" nunca persistiam de fato. */
 async function storageGet(key, fallback) {
-  try {
-    const result = await window.storage?.get(key, false);
-    return result ? JSON.parse(result.value) : fallback;
-  } catch {
-    return fallback;
-  }
+  try { const value = lsLoad(key); return value !== null ? value : fallback; }
+  catch { return fallback; }
 }
 async function storageSet(key, value) {
-  try { await window.storage?.set(key, JSON.stringify(value), false); } catch { /* silencioso */ }
+  try { lsSave(key, value); } catch { /* silencioso */ }
 }
 
 /* =============================================================================================
