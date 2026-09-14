@@ -13,6 +13,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.4/babel.min.js" crossorigin></script>
 <!-- SheetJS: leitura de planilhas Excel (importação de tabelas e relatórios) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin></script>
+<!-- Supabase: banco de dados compartilhado (todos que acessarem veem o mesmo relatório importado) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" crossorigin></script>
 <!-- Os ícones da interface são desenhados localmente no próprio arquivo (sem dependência de CDN externo). -->
 
 <style>
@@ -26,6 +28,7 @@
 
 <script type="text/babel" data-presets="react">
 const { useState, useEffect, useMemo, useRef } = React;
+const { createClient } = window.supabase;
 
 /* Ícones desenhados localmente (sem dependência de CDN externo de ícones — mais robusto para hospedagem estática).
    Cada entrada é uma lista de [tag, atributos] no estilo do desenho do Lucide, em viewBox 24x24. */
@@ -837,6 +840,30 @@ function relativeTime(iso) {
   const days = Math.round(hrs / 24);
   return `há ${days}d`;
 }
+/* Banco compartilhado (Supabase) — cada relatório importado (manifesto/coletas/receita) é
+   espelhado numa tabela na nuvem, então qualquer pessoa que abrir o painel vê a última versão
+   importada, não só quem importou no próprio navegador. localStorage continua como cache local
+   rápido; o Supabase é a fonte "oficial" quando disponível. */
+const SUPABASE_URL = "https://niupiphqaoneaqctrmwo.supabase.co";
+const SUPABASE_KEY = "sb_publishable_uVDdV0AtxeqW6TPrXdG_Kw_aHDNNFm0";
+const supabaseClient = (SUPABASE_URL && SUPABASE_KEY) ? createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+async function cloudSave(reportId, data, label) {
+  if (!supabaseClient) return false;
+  try {
+    const { error } = await supabaseClient.from("painel_reports").upsert({ id: reportId, data, label, updated_at: new Date().toISOString() });
+    if (error) throw error;
+    return true;
+  } catch (e) { console.warn(`Não foi possível salvar "${reportId}" na nuvem:`, e); return false; }
+}
+async function cloudLoad(reportId) {
+  if (!supabaseClient) return null;
+  try {
+    const { data, error } = await supabaseClient.from("painel_reports").select("*").eq("id", reportId).maybeSingle();
+    if (error) throw error;
+    return data;
+  } catch (e) { console.warn(`Não foi possível carregar "${reportId}" da nuvem:`, e); return null; }
+}
 const BASE_DATE_ISO = "2026-05-01";
 function baseDateObj() { const [y, m, d] = BASE_DATE_ISO.split("-").map(Number); return new Date(y, m - 1, d); }
 function dayOffsetToISO(offset) { const d = new Date(baseDateObj()); d.setDate(d.getDate() + offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; }
@@ -1426,6 +1453,56 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel, manifestImportEr
   const [selectedDayVehicle, setSelectedDayVehicle] = useState(null);
   const [revenueDataset, setRevenueDataset] = useState(() => lsLoad("receita")?.dataset ?? { cnpjs: revenueCnpjs, names: revenueNames, filiais: revenueFiliais, records: revenueRecords, year: revenueMeta.year });
   const [revenueSourceLabel, setRevenueSourceLabel] = useState(() => lsLoad("receita")?.label ?? revenueMeta.sourceLabel);
+
+  /* Busca coletas/receita mais recentes na nuvem ao abrir esta tela (podem ter sido importadas
+     por outra pessoa) e assina atualização em tempo real enquanto a tela estiver aberta. */
+  useEffect(() => {
+    let cancelled = false;
+    cloudLoad("coletas").then((row) => {
+      if (cancelled || !row) return;
+      const localUpdatedAt = lsLoad("coletas")?.updatedAt;
+      if (!localUpdatedAt || new Date(row.updated_at) > new Date(localUpdatedAt)) {
+        setDataset(row.data.dataset);
+        setSourceLabel(row.label ?? sourceLabel);
+        setManifestVehicleEvents(row.data.manifestVehicleEvents ?? { events: [], coverage: null, pending: [] });
+        setDedupAudit(row.data.dedupAudit ?? []);
+        lsSave("coletas", { dataset: row.data.dataset, label: row.label, updatedAt: row.updated_at, manifestVehicleEvents: row.data.manifestVehicleEvents, dedupAudit: row.data.dedupAudit });
+      }
+    });
+    cloudLoad("receita").then((row) => {
+      if (cancelled || !row) return;
+      const localUpdatedAt = lsLoad("receita")?.updatedAt;
+      if (!localUpdatedAt || new Date(row.updated_at) > new Date(localUpdatedAt)) {
+        setRevenueDataset(row.data.dataset);
+        setRevenueSourceLabel(row.label ?? revenueSourceLabel);
+        lsSave("receita", { dataset: row.data.dataset, label: row.label, updatedAt: row.updated_at });
+      }
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    if (!supabaseClient) return;
+    const channel = supabaseClient.channel("painel_reports_sync_clients").on(
+      "postgres_changes", { event: "*", schema: "public", table: "painel_reports" },
+      (payload) => {
+        const row = payload.new;
+        if (!row) return;
+        if (row.id === "coletas") {
+          setDataset(row.data.dataset);
+          setSourceLabel(row.label ?? "Coletas atualizadas por outra pessoa");
+          setManifestVehicleEvents(row.data.manifestVehicleEvents ?? { events: [], coverage: null, pending: [] });
+          setDedupAudit(row.data.dedupAudit ?? []);
+          lsSave("coletas", { dataset: row.data.dataset, label: row.label, updatedAt: row.updated_at, manifestVehicleEvents: row.data.manifestVehicleEvents, dedupAudit: row.data.dedupAudit });
+        } else if (row.id === "receita") {
+          setRevenueDataset(row.data.dataset);
+          setRevenueSourceLabel(row.label ?? "Receita atualizada por outra pessoa");
+          lsSave("receita", { dataset: row.data.dataset, label: row.label, updatedAt: row.updated_at });
+        }
+      }
+    ).subscribe();
+    return () => { supabaseClient.removeChannel(channel); };
+  }, []);
   const [revenueImportError, setRevenueImportError] = useState(null);
   const [revenueYearInput, setRevenueYearInput] = useState(revenueMeta.year);
   const [revenueDate, setRevenueDate] = useState(collectionsMeta.periodEnd);
@@ -1745,7 +1822,9 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel, manifestImportEr
       setRevenueDataset(nextRevenueDataset);
       setRevenueFilialFilter("GERAL");
       setRevenueSourceLabel(label);
+      const cloudPayload = { dataset: nextRevenueDataset };
       lsSave("receita", { dataset: nextRevenueDataset, label, updatedAt });
+      cloudSave("receita", cloudPayload, label);
       onReceitaStatusChange?.({ label, updatedAt });
     } catch (error) { setRevenueImportError(error instanceof Error ? error.message : "Não foi possível ler a planilha de receita."); }
     finally { event.target.value = ""; }
@@ -1775,7 +1854,9 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel, manifestImportEr
       setRevenueDate(imported.periodEnd);
       setManifestVehicleEvents(nextManifestVehicleEvents);
       setDedupAudit(nextDedupAudit);
+      const cloudPayload = { dataset: nextDataset, manifestVehicleEvents: nextManifestVehicleEvents, dedupAudit: nextDedupAudit };
       lsSave("coletas", { dataset: nextDataset, label, updatedAt, manifestVehicleEvents: nextManifestVehicleEvents, dedupAudit: nextDedupAudit });
+      cloudSave("coletas", cloudPayload, label);
       onColetaStatusChange?.({ label, updatedAt, rowCount: imported.rowCount });
     } catch (error) { setImportError(error instanceof Error ? error.message : "Não foi possível ler a base de coletas."); }
     finally { event.target.value = ""; }
@@ -2196,6 +2277,47 @@ function App() {
 
   const toggleTheme = () => setTheme((prev) => (prev === "light" ? "dark" : "light"));
 
+  /* Busca a versão mais recente do manifesto na nuvem ao abrir o painel (pode ter sido
+     importada por outra pessoa, em outro computador) — só troca se for mais nova que a local. */
+  useEffect(() => {
+    let cancelled = false;
+    cloudLoad("manifest").then((row) => {
+      if (cancelled || !row) return;
+      const localUpdatedAt = lsLoad("manifest")?.updatedAt;
+      if (!localUpdatedAt || new Date(row.updated_at) > new Date(localUpdatedAt)) {
+        setManifestDataset({ ...row.data, byManifest: new Map(row.data.byManifest) });
+        setManifestSourceLabel(row.label ?? "Manifesto (da nuvem)");
+        setManifestUpdatedAt(row.updated_at);
+        lsSave("manifest", { data: row.data, label: row.label, updatedAt: row.updated_at });
+      }
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  /* Tempo real: se alguém em outro computador importar um relatório novo, este painel
+     atualiza sozinho, sem precisar de F5. */
+  useEffect(() => {
+    if (!supabaseClient) return;
+    const channel = supabaseClient.channel("painel_reports_sync").on(
+      "postgres_changes", { event: "*", schema: "public", table: "painel_reports" },
+      (payload) => {
+        const row = payload.new;
+        if (!row) return;
+        if (row.id === "manifest") {
+          setManifestDataset({ ...row.data, byManifest: new Map(row.data.byManifest) });
+          setManifestSourceLabel(row.label ?? "Manifesto atualizado por outra pessoa");
+          setManifestUpdatedAt(row.updated_at);
+          lsSave("manifest", { data: row.data, label: row.label, updatedAt: row.updated_at });
+        } else if (row.id === "coletas") {
+          setColetaStatus({ label: row.label, updatedAt: row.updated_at, rowCount: row.data?.dataset?.rowCount });
+        } else if (row.id === "receita") {
+          setReceitaStatus({ label: row.label, updatedAt: row.updated_at });
+        }
+      }
+    ).subscribe();
+    return () => { supabaseClient.removeChannel(channel); };
+  }, []);
+
   async function handleManifestImport(event) {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -2209,7 +2331,9 @@ function App() {
       setManifestDataset(parsed);
       setManifestSourceLabel(label);
       setManifestUpdatedAt(updatedAt);
-      lsSave("manifest", { data: { ...parsed, byManifest: Array.from(parsed.byManifest.entries()) }, label, updatedAt });
+      const cloudPayload = { ...parsed, byManifest: Array.from(parsed.byManifest.entries()) };
+      lsSave("manifest", { data: cloudPayload, label, updatedAt });
+      cloudSave("manifest", cloudPayload, label);
     } catch (error) { setManifestImportError(error instanceof Error ? error.message : "Não foi possível ler a planilha de manifesto."); }
     finally { event.target.value = ""; }
   }
