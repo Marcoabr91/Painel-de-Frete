@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as XLSX from "xlsx";
+import { createClient } from "@supabase/supabase-js";
 import {
   ArrowDownRight, ArrowUpRight, Gauge, Fuel, MapPin, Plus, Route as RouteIcon, Trash2, Truck,
   Clock3, CircleDollarSign, SlidersHorizontal, Database, Info, Upload, Save, FolderOpen, FileDown,
@@ -369,6 +370,30 @@ html:not(.dark) .scenario-toolbar { background: #ffffff; }.dark .scenario-toolba
 .revenue-vehicles-by-plate { display: flex; flex-direction: column; gap: 10px; }
 .pending-programacao-block { border-color: var(--amber, #c98a1f); border-style: dashed; }
 .pending-programacao-block .frequency-plate-header strong { color: #b5790f; }
+.sim-grid-head, .sim-grid-row { display: grid; grid-template-columns: 2fr 1.6fr .8fr .8fr 1fr 1fr 28px; gap: 10px; align-items: center; }
+.sim-grid-head { padding: 14px 10px 9px; color: #8b9a9c; font-family: 'IBM Plex Mono', monospace; font-size: 9px; text-transform: uppercase; }
+.sim-grid-row { border-top: 1px solid #edf1ef; padding: 10px; color: #647579; font-size: 10px; }
+.sim-grid-row > div strong { display: block; color: var(--navy); font-size: 11px; }
+.sim-grid-row small { display: block; color: #9aa6a7; font-family: 'IBM Plex Mono', monospace; font-size: 9px; margin-top: 3px; }
+.sim-progress-tag { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #718184; }
+.sim-input { width: 100%; border: 1px solid var(--border); padding: 6px 7px; font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: var(--navy); background: #fff; }
+.sim-input-rate { color: #8f5a2f; }
+.sim-remove-btn { border: 1px solid var(--border); background: #fff; color: #c94b4b; padding: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.sim-remove-btn:hover { background: #fff0f0; }
+.sim-add-suggestions { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.sim-add-chip { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--amber); background: var(--amber-pale); color: var(--navy); padding: 5px 9px; font-size: 10px; cursor: pointer; font-weight: 700; }
+.sim-add-chip:hover { background: var(--amber); }
+@media (max-width: 900px) { .sim-grid-head, .sim-grid-row { min-width: 760px; } .client-table-card:has(.sim-grid-row) { overflow-x: auto; } }
+html:not(.dark) .sim-grid-row > div strong { color: #17301f; }
+.dark .sim-grid-row > div strong { color: #e8f5e5; }
+.dark .sim-grid-row { color: #a2b1a4; border-color: #17251a; }
+.dark .sim-grid-head { color: #78927e; border-color: #1b2a1e; }
+.dark .sim-input, .dark .sim-input-rate { background: #0b120d; border-color: #203124; color: #e6f3e4; }
+.dark .sim-progress-tag { color: #8ca19a; }
+.sim-remote-banner { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; border: 1px dashed var(--amber); background: var(--amber-pale); color: var(--navy); padding: 11px 14px; margin-bottom: 14px; font-size: 11px; }
+.sim-remote-banner span { display: flex; align-items: center; gap: 8px; }
+.sim-remote-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.dark .sim-remote-banner { background: #0d2b16; border-color: #00e676; color: #e8f5e5; }
 .global-status-bar { display: flex; gap: 8px; flex-wrap: wrap; padding: 6px 24px; border-bottom: 1px solid var(--border); background: var(--panel); }
 .global-status-chip { display: flex; align-items: center; gap: 5px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; padding: 4px 8px; border: 1px solid var(--border); border-radius: 2px; }
 .global-status-chip small { color: #9aa5a6; margin-left: 3px; }
@@ -764,6 +789,30 @@ function relativeTime(iso) {
   if (hrs < 24) return `há ${hrs}h`;
   const days = Math.round(hrs / 24);
   return `há ${days}d`;
+}
+/* Banco compartilhado (Supabase) — cada relatório importado (manifesto/coletas/receita) é
+   espelhado numa tabela na nuvem, então qualquer pessoa que abrir o painel vê a última versão
+   importada, não só quem importou no próprio navegador. localStorage continua como cache local
+   rápido; o Supabase é a fonte "oficial" quando disponível. */
+const SUPABASE_URL = "https://niupiphqaoneaqctrmwo.supabase.co";
+const SUPABASE_KEY = "sb_publishable_uVDdV0AtxeqW6TPrXdG_Kw_aHDNNFm0";
+const supabaseClient = (SUPABASE_URL && SUPABASE_KEY) ? createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+async function cloudSave(reportId, data, label) {
+  if (!supabaseClient) return false;
+  try {
+    const { error } = await supabaseClient.from("painel_reports").upsert({ id: reportId, data, label, updated_at: new Date().toISOString() });
+    if (error) throw error;
+    return true;
+  } catch (e) { console.warn(`Não foi possível salvar "${reportId}" na nuvem:`, e); return false; }
+}
+async function cloudLoad(reportId) {
+  if (!supabaseClient) return null;
+  try {
+    const { data, error } = await supabaseClient.from("painel_reports").select("*").eq("id", reportId).maybeSingle();
+    if (error) throw error;
+    return data;
+  } catch (e) { console.warn(`Não foi possível carregar "${reportId}" da nuvem:`, e); return null; }
 }
 const BASE_DATE_ISO = "2026-05-01";
 function baseDateObj() { const [y, m, d] = BASE_DATE_ISO.split("-").map(Number); return new Date(y, m - 1, d); }
@@ -1353,9 +1402,107 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel, manifestImportEr
   const [selectedDayVehicle, setSelectedDayVehicle] = useState(null);
   const [revenueDataset, setRevenueDataset] = useState(() => lsLoad("receita")?.dataset ?? { cnpjs: revenueCnpjs, names: revenueNames, filiais: revenueFiliais, records: revenueRecords, year: revenueMeta.year });
   const [revenueSourceLabel, setRevenueSourceLabel] = useState(() => lsLoad("receita")?.label ?? revenueMeta.sourceLabel);
+
+  /* Busca coletas/receita mais recentes na nuvem ao abrir esta tela (podem ter sido importadas
+     por outra pessoa) e assina atualização em tempo real enquanto a tela estiver aberta. */
+  useEffect(() => {
+    let cancelled = false;
+    cloudLoad("coletas").then((row) => {
+      if (cancelled || !row) return;
+      const localUpdatedAt = lsLoad("coletas")?.updatedAt;
+      if (!localUpdatedAt || new Date(row.updated_at) > new Date(localUpdatedAt)) {
+        setDataset(row.data.dataset);
+        setSourceLabel(row.label ?? sourceLabel);
+        setManifestVehicleEvents(row.data.manifestVehicleEvents ?? { events: [], coverage: null, pending: [] });
+        setDedupAudit(row.data.dedupAudit ?? []);
+        lsSave("coletas", { dataset: row.data.dataset, label: row.label, updatedAt: row.updated_at, manifestVehicleEvents: row.data.manifestVehicleEvents, dedupAudit: row.data.dedupAudit });
+      }
+    });
+    cloudLoad("receita").then((row) => {
+      if (cancelled || !row) return;
+      const localUpdatedAt = lsLoad("receita")?.updatedAt;
+      if (!localUpdatedAt || new Date(row.updated_at) > new Date(localUpdatedAt)) {
+        setRevenueDataset(row.data.dataset);
+        setRevenueSourceLabel(row.label ?? revenueSourceLabel);
+        lsSave("receita", { dataset: row.data.dataset, label: row.label, updatedAt: row.updated_at });
+      }
+    });
+    cloudLoad("tarifas").then((row) => {
+      if (cancelled || !row) return;
+      const localUpdatedAt = lsLoad("tarifas")?.updatedAt;
+      if (!localUpdatedAt || new Date(row.updated_at) > new Date(localUpdatedAt)) {
+        setClientRates(row.data.rates ?? {});
+        lsSave("tarifas", { rates: row.data.rates ?? {}, updatedAt: row.updated_at });
+      }
+    });
+    cloudLoad("simulacao").then((row) => {
+      if (cancelled || !row) return;
+      const localUpdatedAt = lsLoad("simulacaoManual")?.updatedAt;
+      if (!localUpdatedAt || new Date(row.updated_at) > new Date(localUpdatedAt)) {
+        setManualSim(row.data.byDate ?? {});
+        setSimSavedAt(row.updated_at);
+        lsSave("simulacaoManual", { byDate: row.data.byDate ?? {}, updatedAt: row.updated_at });
+      }
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    if (!supabaseClient) return;
+    const channel = supabaseClient.channel("painel_reports_sync_clients").on(
+      "postgres_changes", { event: "*", schema: "public", table: "painel_reports" },
+      (payload) => {
+        const row = payload.new;
+        if (!row) return;
+        if (row.id === "coletas") {
+          setDataset(row.data.dataset);
+          setSourceLabel(row.label ?? "Coletas atualizadas por outra pessoa");
+          setManifestVehicleEvents(row.data.manifestVehicleEvents ?? { events: [], coverage: null, pending: [] });
+          setDedupAudit(row.data.dedupAudit ?? []);
+          lsSave("coletas", { dataset: row.data.dataset, label: row.label, updatedAt: row.updated_at, manifestVehicleEvents: row.data.manifestVehicleEvents, dedupAudit: row.data.dedupAudit });
+        } else if (row.id === "receita") {
+          setRevenueDataset(row.data.dataset);
+          setRevenueSourceLabel(row.label ?? "Receita atualizada por outra pessoa");
+          lsSave("receita", { dataset: row.data.dataset, label: row.label, updatedAt: row.updated_at });
+        } else if (row.id === "tarifas") {
+          setClientRates(row.data.rates ?? {});
+          lsSave("tarifas", { rates: row.data.rates ?? {}, updatedAt: row.updated_at });
+        } else if (row.id === "simulacao") {
+          const incoming = row.data.byDate ?? {};
+          const editingDate = revenueDateRef.current;
+          setManualSim((curr) => {
+            const merged = { ...curr };
+            Object.keys(incoming).forEach((date) => { if (date !== editingDate) merged[date] = incoming[date]; });
+            return merged;
+          });
+          if (Object.prototype.hasOwnProperty.call(incoming, editingDate)) {
+            setSimRemoteUpdate({ byDate: incoming, updatedAt: row.updated_at });
+          }
+          setSimSavedAt(row.updated_at);
+          lsSave("simulacaoManual", { byDate: incoming, updatedAt: row.updated_at });
+        }
+      }
+    ).subscribe();
+    return () => { supabaseClient.removeChannel(channel); };
+  }, []);
   const [revenueImportError, setRevenueImportError] = useState(null);
   const [revenueYearInput, setRevenueYearInput] = useState(revenueMeta.year);
   const [revenueDate, setRevenueDate] = useState(collectionsMeta.periodEnd);
+  const revenueDateRef = useRef(revenueDate);
+  useEffect(() => { revenueDateRef.current = revenueDate; setSimRemoteUpdate(null); }, [revenueDate]);
+  /* Simulação Manual: em vez de tentar adivinhar quantos veículos cada cliente teve, o usuário
+     digita o número real (ex.: "ACHE 9 carretas") e o painel calcula o valor. Tarifa por cliente
+     (Valor Carreta) é editável e persiste separado das quantidades do dia — Caminhão é sempre
+     metade da Carreta (mesma regra confirmada na planilha real, aba Auxiliar). */
+  const [clientRates, setClientRates] = useState(() => lsLoad("tarifas")?.rates ?? {});
+  const [manualSim, setManualSim] = useState(() => lsLoad("simulacaoManual")?.byDate ?? {});
+  const [simClientSearch, setSimClientSearch] = useState("");
+  const [simSavedAt, setSimSavedAt] = useState(() => lsLoad("simulacaoManual")?.updatedAt ?? null);
+  /* Se outra pessoa salvar uma simulação para o MESMO dia que você está editando agora, não
+     aplicamos por cima silenciosamente (isso apagaria o que você digitou e ainda não salvou) —
+     só avisamos, e você decide se quer recarregar. Dias diferentes do que você está vendo
+     continuam atualizando sozinhos, sem aviso, porque não há risco de perder edição em andamento. */
+  const [simRemoteUpdate, setSimRemoteUpdate] = useState(null);
   const [revenueVehicleFilter, setRevenueVehicleFilter] = useState("ALL");
   const [revenueSplitView, setRevenueSplitView] = useState(false);
   const [revenueFilialFilter, setRevenueFilialFilter] = useState("GERAL");
@@ -1504,6 +1651,82 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel, manifestImportEr
     });
     return map;
   }, [revenueDataset, revenueByKeyGeral, refMonths]);
+
+  /* Simulação Manual — matriz Cliente × Carreta/Caminhão pro dia selecionado. "Coletas" e
+     "Programados" vêm do relatório (auto); Carretas/Caminhões começam sugeridos pela contagem de
+     placas do manifesto naquele dia, mas são 100% editáveis — o usuário corrige pro número real. */
+  const simDayOffset = isoToDayOffset(revenueDate);
+  const simRows = useMemo(() => {
+    const byCnpj = new Map();
+    const ensure = (cnpj, name) => {
+      if (!byCnpj.has(cnpj)) byCnpj.set(cnpj, { cnpj, name: name || cnpj, coletas: 0, programados: 0, autoCarretas: 0, autoCaminhoes: 0 });
+      return byCnpj.get(cnpj);
+    };
+    dataset.records.forEach((r) => {
+      if (r[2] !== simDayOffset) return;
+      const cnpj = dataset.cnpjs[r[0]];
+      const row = ensure(cnpj, dataset.names[r[0]]);
+      row.coletas += r[4];
+    });
+    ["CARRETA", "CAMINHAO"].forEach((grp) => {
+      const list = manifestVehiclesByDay.get(`${simDayOffset}|${grp}`) ?? [];
+      list.forEach((v) => v.clients.forEach((c) => {
+        const row = ensure(c.cnpj, c.name);
+        row.programados += c.qtd;
+        if (grp === "CARRETA") row.autoCarretas += 1; else row.autoCaminhoes += 1;
+      }));
+    });
+    const dayManual = manualSim[revenueDate] ?? {};
+    Object.keys(dayManual).forEach((cnpj) => {
+      if (!byCnpj.has(cnpj)) { const idx = dataset.cnpjs.indexOf(cnpj); ensure(cnpj, idx !== -1 ? dataset.names[idx] : cnpj); }
+    });
+    return Array.from(byCnpj.values()).sort((a, b) => b.coletas - a.coletas);
+  }, [dataset, manifestVehiclesByDay, revenueDate, simDayOffset, manualSim]);
+
+  const simFiltered = useMemo(() => {
+    const q = simClientSearch.trim().toLowerCase();
+    if (!q) return simRows;
+    return simRows.filter((r) => `${r.cnpj} ${r.name}`.toLowerCase().includes(q));
+  }, [simRows, simClientSearch]);
+
+  function simEntry(cnpj) { return (manualSim[revenueDate] ?? {})[cnpj] ?? {}; }
+  function simRate(cnpj) { return clientRates[cnpj] ?? fixedValorMedioLive.get(cnpj) ?? 0; }
+  function updateSimQty(cnpj, field, value) {
+    const n = value === "" ? null : Math.max(0, Number(value) || 0);
+    setManualSim((curr) => ({ ...curr, [revenueDate]: { ...(curr[revenueDate] ?? {}), [cnpj]: { ...(curr[revenueDate]?.[cnpj] ?? {}), [field]: n } } }));
+  }
+  function updateSimRate(cnpj, value) {
+    const n = value === "" ? undefined : Math.max(0, Number(value) || 0);
+    setClientRates((curr) => { const next = { ...curr }; if (n === undefined) delete next[cnpj]; else next[cnpj] = n; return next; });
+  }
+  function addSimClient(cnpj) {
+    setManualSim((curr) => ({ ...curr, [revenueDate]: { ...(curr[revenueDate] ?? {}), [cnpj]: curr[revenueDate]?.[cnpj] ?? { carretas: 0, caminhoes: 0 } } }));
+    setSimClientSearch("");
+  }
+  function removeSimClient(cnpj) {
+    setManualSim((curr) => { const dayMap = { ...(curr[revenueDate] ?? {}) }; delete dayMap[cnpj]; return { ...curr, [revenueDate]: dayMap }; });
+  }
+  const simTotals = useMemo(() => {
+    let faturamento = 0, totalCarretas = 0, totalCaminhoes = 0;
+    simRows.forEach((row) => {
+      const entry = simEntry(row.cnpj);
+      const carretas = entry.carretas ?? row.autoCarretas;
+      const caminhoes = entry.caminhoes ?? row.autoCaminhoes;
+      const rate = simRate(row.cnpj);
+      faturamento += carretas * rate + caminhoes * (rate / 2);
+      totalCarretas += carretas;
+      totalCaminhoes += caminhoes;
+    });
+    return { faturamento, totalCarretas, totalCaminhoes };
+  }, [simRows, manualSim, clientRates, fixedValorMedioLive, revenueDate]);
+  function saveSimulacao() {
+    const updatedAt = new Date().toISOString();
+    lsSave("simulacaoManual", { byDate: manualSim, updatedAt });
+    lsSave("tarifas", { rates: clientRates, updatedAt });
+    cloudSave("simulacao", { byDate: manualSim }, `Simulação manual · ${Object.keys(manualSim).length} dia(s) editado(s)`);
+    cloudSave("tarifas", { rates: clientRates }, `Tarifas por cliente · ${Object.keys(clientRates).length} personalizada(s)`);
+    setSimSavedAt(updatedAt);
+  }
   const revenueClientMatches = useMemo(() => { const q = revenueClientSearch.trim().toLowerCase(); if (!q) return []; return dataset.cnpjs.map((cnpj, idx) => ({ cnpj, name: dataset.names[idx] })).filter((c) => `${c.cnpj} ${c.name}`.toLowerCase().includes(q)).slice(0, 8); }, [dataset, revenueClientSearch]);
   function toggleRevenueClient(cnpj) { setRevenueClientSelected((current) => { const next = new Set(current); if (next.has(cnpj)) next.delete(cnpj); else next.add(cnpj); return next; }); }
   function computeRevenueDay(dayOffset, forceGroup) {
@@ -1672,7 +1895,9 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel, manifestImportEr
       setRevenueDataset(nextRevenueDataset);
       setRevenueFilialFilter("GERAL");
       setRevenueSourceLabel(label);
+      const cloudPayload = { dataset: nextRevenueDataset };
       lsSave("receita", { dataset: nextRevenueDataset, label, updatedAt });
+      cloudSave("receita", cloudPayload, label);
       onReceitaStatusChange?.({ label, updatedAt });
     } catch (error) { setRevenueImportError(error instanceof Error ? error.message : "Não foi possível ler a planilha de receita."); }
     finally { event.target.value = ""; }
@@ -1702,7 +1927,9 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel, manifestImportEr
       setRevenueDate(imported.periodEnd);
       setManifestVehicleEvents(nextManifestVehicleEvents);
       setDedupAudit(nextDedupAudit);
+      const cloudPayload = { dataset: nextDataset, manifestVehicleEvents: nextManifestVehicleEvents, dedupAudit: nextDedupAudit };
       lsSave("coletas", { dataset: nextDataset, label, updatedAt, manifestVehicleEvents: nextManifestVehicleEvents, dedupAudit: nextDedupAudit });
+      cloudSave("coletas", cloudPayload, label);
       onColetaStatusChange?.({ label, updatedAt, rowCount: imported.rowCount });
     } catch (error) { setImportError(error instanceof Error ? error.message : "Não foi possível ler a base de coletas."); }
     finally { event.target.value = ""; }
@@ -1712,7 +1939,7 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel, manifestImportEr
   return <main className="client-page">
     <div className="client-page-heading"><div><span className="section-kicker">04 / DEMANDA POR CLIENTE</span><h2>Coletas consolidadas por CNPJ</h2><p>Coletas no período de {formatDatePtBR(dataset.periodStart)} a {formatDatePtBR(dataset.periodEnd)}, com base em DT_EFETUAR_COLETAS e DS_STATUS_COLETAS.</p></div><div className="client-source"><Database size={15} /> {sourceLabel}<small>{numberInt.format(dataset.rowCount)} linhas · {numberInt.format(dataset.validCollections)} coletas no total</small></div></div>
 
-    <div className="view-tabs"><button type="button" className={viewMode === "daily" ? "active" : ""} onClick={() => setViewMode("daily")}><Clock3 size={14} /> Visão diária</button><button type="button" className={viewMode === "monthly" ? "active" : ""} onClick={() => setViewMode("monthly")}><BarChart3 size={14} /> Consolidado mensal</button><button type="button" className={viewMode === "revenue" ? "active" : ""} onClick={() => setViewMode("revenue")}><CircleDollarSign size={14} /> Faturamento</button></div>
+    <div className="view-tabs"><button type="button" className={viewMode === "daily" ? "active" : ""} onClick={() => setViewMode("daily")}><Clock3 size={14} /> Visão diária</button><button type="button" className={viewMode === "monthly" ? "active" : ""} onClick={() => setViewMode("monthly")}><BarChart3 size={14} /> Consolidado mensal</button><button type="button" className={viewMode === "revenue" ? "active" : ""} onClick={() => setViewMode("revenue")}><CircleDollarSign size={14} /> Faturamento</button><button type="button" className={viewMode === "simulation" ? "active" : ""} onClick={() => setViewMode("simulation")}><Boxes size={14} /> Simulação Manual</button></div>
 
     <div className="status-tiles-wrap">
       {statusScopeOffset !== null && <div className="status-scope-hint"><CalendarRange size={12} /> Quantitativo do dia {formatDatePtBR(dayOffsetToISO(statusScopeOffset))} — muda conforme a data selecionada {viewMode === "revenue" ? "no Faturamento" : "na Visão diária"}</div>}
@@ -1737,7 +1964,7 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel, manifestImportEr
 
       <section className="client-table-card"><div className="client-toolbar"><div className="client-search"><Search size={16} /><input aria-label="Pesquisar cliente ou CNPJ" placeholder="Pesquisar CNPJ ou nome do cliente" value={search} onChange={(event) => setSearch(event.target.value)} /></div><div className="client-filters"><select className="month-select" value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}><option value="all">Período completo</option>{monthOptions.map((m) => <option key={m} value={m}>{monthLabel(m)}</option>)}</select>{activeCategory && <button type="button" onClick={() => setSelectedCategory(null)}>Limpar filtro · {activeCategory.label}</button>}</div></div><div className="client-grid-head monthly-grid-head"><span>Cliente / CNPJ</span><span>Tipo de veículo</span><span>Coletas</span><span>Nº coleta (NR_COLETAS)</span><span>Diária de referência</span><span>Projeção do grupo</span></div>{monthlyFiltered.map((item) => <div className="client-grid-row monthly-grid-row" key={`${item.cnpj}-${item.vehicle}`}><div><strong>{item.name}</strong><small>{item.cnpj}</small></div><span className="vehicle-tag"><Truck size={13} /> {vehicleLabels[item.vehicle] ?? item.vehicle}</span><strong className="collection-count">{numberInt.format(item.collections)}x</strong><small className="nr-coletas">{formatNrList(item.nr)}</small><span>{money.format(dailyByVehicle[item.vehicle] ?? 0)}</span><strong>{money.format(item.collections * (dailyByVehicle[item.vehicle] ?? 0))}</strong></div>)}{monthlyFiltered.length === 0 && <div className="empty-client-state"><RouteIcon size={18} /> Nenhum cliente encontrado para os filtros atuais.</div>}</section>
       <div className="client-footnote"><span>Regra de consolidação:</span> agrupa por CNPJ_CLIENTES_SOL + Classe do Veículo dentro do filtro de status e mês escolhidos. Projeção do grupo = diária de referência do veículo × quantidade de coletas. Ex.: {monthlyFiltered[0] ? `${monthlyFiltered[0].name.split(" ")[0]} · ${vehicleLabels[monthlyFiltered[0].vehicle] ?? monthlyFiltered[0].vehicle} · ${monthlyFiltered[0].collections}x` : "cliente · veículo · Nx"}.</div>
-    </> : <>
+    </> : viewMode === "revenue" ? <>
       <div className="day-strip-card revenue-toolbar-card"><div className="card-heading"><div><span className="section-kicker">PROJEÇÃO DE FATURAMENTO</span><h3>Comparativo diário · {formatDatePtBR(revenueDate)}</h3></div><div className="day-nav"><button type="button" onClick={() => shiftRevenueDay(-1)} disabled={selectedRevenueOffset <= startOffset}>◀ Dia anterior</button><input type="date" value={revenueDate} onChange={(e) => setRevenueDate(e.target.value)} /><button type="button" onClick={() => shiftRevenueDay(1)} disabled={selectedRevenueOffset >= endOffset}>Próximo dia ▶</button></div></div>
         <div className="revenue-view-toggle"><button type="button" className={!revenueSplitView ? "active" : ""} onClick={() => setRevenueSplitView(false)}><BarChart3 size={13} /> Visão unificada</button><button type="button" className={revenueSplitView ? "active" : ""} onClick={() => setRevenueSplitView(true)}><Truck size={13} /> Dividir Carreta / Caminhão</button></div>
         <div className="revenue-filters">
@@ -1876,6 +2103,53 @@ function ClientAnalysis({ manifestDataset, manifestSourceLabel, manifestImportEr
           {dedupAudit.length > 300 && <div className="client-footnote">Mostrando as primeiras 300 fusões de {numberInt.format(dedupAudit.length)}.</div>}
         </div>}
       </div>}
+    </> : <>
+      <div className="day-strip-card revenue-toolbar-card"><div className="card-heading"><div><span className="section-kicker">SIMULAÇÃO MANUAL</span><h3>Faturamento do dia · {formatDatePtBR(revenueDate)}</h3></div><div className="day-nav"><button type="button" onClick={() => shiftRevenueDay(-1)} disabled={selectedRevenueOffset <= startOffset}>◀ Dia anterior</button><input type="date" value={revenueDate} onChange={(e) => setRevenueDate(e.target.value)} /><button type="button" onClick={() => shiftRevenueDay(1)} disabled={selectedRevenueOffset >= endOffset}>Próximo dia ▶</button></div></div>
+        <div className="client-footnote"><span>Como funciona:</span> "Coletas" e "Programados" vêm do relatório (ex.: "Coletas 9 · Programados 8"). Carretas/Caminhões já vêm sugeridos pela contagem de placas do manifesto naquele dia, mas são totalmente editáveis — corrija pro número real (ex.: digite 9 se a ACHE teve 9 carretas de verdade). O valor por Carreta é editável por cliente; Caminhão é sempre metade da Carreta. Nada é salvo até você clicar em "Salvar simulação".</div>
+      </div>
+
+      {simRemoteUpdate && <div className="sim-remote-banner">
+        <span><Repeat size={14} /> Alguém salvou uma atualização da simulação para {formatDatePtBR(revenueDate)} enquanto você editava ({relativeTime(simRemoteUpdate.updatedAt)}). Seus campos aqui continuam como estavam.</span>
+        <div className="sim-remote-actions">
+          <button type="button" className="secondary-action" onClick={() => setSimRemoteUpdate(null)}>Manter meus dados</button>
+          <button type="button" className="import-button" onClick={() => { setManualSim((curr) => ({ ...curr, ...simRemoteUpdate.byDate })); setSimRemoteUpdate(null); }}>Recarregar da nuvem</button>
+        </div>
+      </div>}
+
+      <div className="client-summary-grid metrics-grid-3">
+        <div className="client-summary-card highlight"><span>Faturamento simulado</span><strong>{money.format(simTotals.faturamento)}</strong></div>
+        <div className="client-summary-card"><span>Carretas no dia</span><strong>{numberInt.format(simTotals.totalCarretas)}</strong></div>
+        <div className="client-summary-card"><span>Caminhões no dia</span><strong>{numberInt.format(simTotals.totalCaminhoes)}</strong></div>
+      </div>
+
+      <section className="client-table-card">
+        <div className="client-toolbar">
+          <div className="client-search"><Search size={16} /><input aria-label="Buscar ou adicionar cliente" placeholder="Buscar cliente na lista, ou digitar CNPJ/nome pra adicionar um novo" value={simClientSearch} onChange={(e) => setSimClientSearch(e.target.value)} /></div>
+          <button type="button" className="import-button" onClick={saveSimulacao}><Save size={14} /> Salvar simulação</button>
+        </div>
+        {simClientSearch.trim() && !simFiltered.some((r) => r.cnpj === simClientSearch.trim()) && <div className="sim-add-suggestions">
+          {dataset.cnpjs.map((cnpj, idx) => ({ cnpj, name: dataset.names[idx] })).filter((c) => `${c.cnpj} ${c.name}`.toLowerCase().includes(simClientSearch.trim().toLowerCase()) && !simRows.some((r) => r.cnpj === c.cnpj)).slice(0, 6).map((c) => <button type="button" key={c.cnpj} className="sim-add-chip" onClick={() => addSimClient(c.cnpj)}><Plus size={12} /> {c.name}</button>)}
+        </div>}
+        <div className="sim-grid-head"><span>Cliente / CNPJ</span><span>Coletas · Programados</span><span>Carretas</span><span>Caminhões</span><span>Valor Carreta</span><span>Valor do dia</span><span /></div>
+        {simFiltered.map((row) => {
+          const entry = simEntry(row.cnpj);
+          const carretas = entry.carretas ?? row.autoCarretas;
+          const caminhoes = entry.caminhoes ?? row.autoCaminhoes;
+          const rate = simRate(row.cnpj);
+          const valorDia = carretas * rate + caminhoes * (rate / 2);
+          return <div className="sim-grid-row" key={row.cnpj}>
+            <div><strong>{row.cnpj} — {row.name}</strong></div>
+            <span className="sim-progress-tag">Coletas {numberInt.format(row.coletas)} · Programados {numberInt.format(row.programados)}</span>
+            <input type="number" min="0" className="sim-input" value={carretas} onChange={(e) => updateSimQty(row.cnpj, "carretas", e.target.value)} />
+            <input type="number" min="0" className="sim-input" value={caminhoes} onChange={(e) => updateSimQty(row.cnpj, "caminhoes", e.target.value)} />
+            <input type="number" min="0" step="0.01" className="sim-input sim-input-rate" value={rate ? rate.toFixed(2) : ""} placeholder="0,00" onChange={(e) => updateSimRate(row.cnpj, e.target.value)} />
+            <strong>{money.format(valorDia)}</strong>
+            <button type="button" className="sim-remove-btn" onClick={() => removeSimClient(row.cnpj)} title="Remover da simulação deste dia"><Trash2 size={13} /></button>
+          </div>;
+        })}
+        {simFiltered.length === 0 && <div className="empty-client-state"><RouteIcon size={18} /> Nenhum cliente encontrado — busque um CNPJ/nome acima pra adicionar manualmente.</div>}
+      </section>
+      <div className="client-footnote">{simSavedAt ? <><span>Última simulação salva:</span> {relativeTime(simSavedAt)}.</> : <><span>Ainda não salva:</span> os valores acima são calculados ao vivo, mas só ficam guardados (e visíveis pra outras pessoas) depois de clicar em "Salvar simulação".</>}</div>
     </>}
 
     <div className="client-toolbar import-toolbar">
@@ -2124,6 +2398,47 @@ export default function App() {
 
   const toggleTheme = () => setTheme((prev) => (prev === "light" ? "dark" : "light"));
 
+  /* Busca a versão mais recente do manifesto na nuvem ao abrir o painel (pode ter sido
+     importada por outra pessoa, em outro computador) — só troca se for mais nova que a local. */
+  useEffect(() => {
+    let cancelled = false;
+    cloudLoad("manifest").then((row) => {
+      if (cancelled || !row) return;
+      const localUpdatedAt = lsLoad("manifest")?.updatedAt;
+      if (!localUpdatedAt || new Date(row.updated_at) > new Date(localUpdatedAt)) {
+        setManifestDataset({ ...row.data, byManifest: new Map(row.data.byManifest) });
+        setManifestSourceLabel(row.label ?? "Manifesto (da nuvem)");
+        setManifestUpdatedAt(row.updated_at);
+        lsSave("manifest", { data: row.data, label: row.label, updatedAt: row.updated_at });
+      }
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  /* Tempo real: se alguém em outro computador importar um relatório novo, este painel
+     atualiza sozinho, sem precisar de F5. */
+  useEffect(() => {
+    if (!supabaseClient) return;
+    const channel = supabaseClient.channel("painel_reports_sync").on(
+      "postgres_changes", { event: "*", schema: "public", table: "painel_reports" },
+      (payload) => {
+        const row = payload.new;
+        if (!row) return;
+        if (row.id === "manifest") {
+          setManifestDataset({ ...row.data, byManifest: new Map(row.data.byManifest) });
+          setManifestSourceLabel(row.label ?? "Manifesto atualizado por outra pessoa");
+          setManifestUpdatedAt(row.updated_at);
+          lsSave("manifest", { data: row.data, label: row.label, updatedAt: row.updated_at });
+        } else if (row.id === "coletas") {
+          setColetaStatus({ label: row.label, updatedAt: row.updated_at, rowCount: row.data?.dataset?.rowCount });
+        } else if (row.id === "receita") {
+          setReceitaStatus({ label: row.label, updatedAt: row.updated_at });
+        }
+      }
+    ).subscribe();
+    return () => { supabaseClient.removeChannel(channel); };
+  }, []);
+
   async function handleManifestImport(event) {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -2137,7 +2452,9 @@ export default function App() {
       setManifestDataset(parsed);
       setManifestSourceLabel(label);
       setManifestUpdatedAt(updatedAt);
-      lsSave("manifest", { data: { ...parsed, byManifest: Array.from(parsed.byManifest.entries()) }, label, updatedAt });
+      const cloudPayload = { ...parsed, byManifest: Array.from(parsed.byManifest.entries()) };
+      lsSave("manifest", { data: cloudPayload, label, updatedAt });
+      cloudSave("manifest", cloudPayload, label);
     } catch (error) { setManifestImportError(error instanceof Error ? error.message : "Não foi possível ler a planilha de manifesto."); }
     finally { event.target.value = ""; }
   }
