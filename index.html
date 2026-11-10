@@ -65,6 +65,7 @@ const ICON_PATHS = {
   MapPin: [["path",{d:"M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"}],["circle",{cx:12,cy:9,r:2.5}]],
   Fuel: [["rect",{x:3,y:8,width:8,height:13}],["line",{x1:3,y1:21,x2:14,y2:21}],["path",{d:"M11 21V6a2 2 0 0 1 2-2h0"}],["path",{d:"M16 8h1a2 2 0 0 1 2 2v5a1.5 1.5 0 0 0 3 0V9l-2-2"}]],
   Gauge: [["circle",{cx:12,cy:12,r:9}],["path",{d:"M7.5 15a5 5 0 0 1 9-4.2"}],["line",{x1:12,y1:12,x2:15,y2:9}]],
+  Wrench: [["path",{d:"M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"}]],
   Route: [["circle",{cx:6,cy:19,r:2}],["circle",{cx:18,cy:5,r:2}],["path",{d:"M8 19h9a4 4 0 0 0 0-8H7a4 4 0 0 1 0-8h9"}]],
 };
 
@@ -80,7 +81,7 @@ function Icon({ name, size = 16, className, style, ...rest }) {
 const ICON_NAMES = Object.keys(ICON_PATHS);
 const ICONS = {};
 ICON_NAMES.forEach((n) => { ICONS[n] = function (props) { return Icon({ name: n, ...props }); }; });
-const { ArrowDownRight, ArrowUpRight, Gauge, Fuel, MapPin, Plus, Trash2, Truck, Clock3, CircleDollarSign, SlidersHorizontal, Database, Info, Upload, Save, FolderOpen, FileDown, BarChart3, Building2, Search, UploadCloud, ArrowLeft, Boxes, ClipboardList, FileSpreadsheet, Moon, Settings2, Sun, UsersRound, Warehouse, CalendarRange, Repeat } = ICONS;
+const { ArrowDownRight, ArrowUpRight, Gauge, Fuel, MapPin, Plus, Trash2, Truck, Clock3, CircleDollarSign, SlidersHorizontal, Database, Info, Upload, Save, FolderOpen, FileDown, BarChart3, Building2, Search, UploadCloud, ArrowLeft, Boxes, ClipboardList, FileSpreadsheet, Moon, Settings2, Sun, UsersRound, Warehouse, CalendarRange, Repeat, Wrench } = ICONS;
 const RouteIcon = ICONS.Route;
 
 const CSS_TEXT = `
@@ -558,6 +559,70 @@ html:not(.dark) .sim-grid-row > div strong { color: #17301f; }
 @media (max-width: 980px) { .revenue-analytics-grid { grid-template-columns: 1fr; } .weekly-pattern-bars { flex-wrap: wrap; } .weekly-pattern-col { min-width: 90px; } }
 @media (max-width: 980px) { .revenue-split-grid { grid-template-columns: 1fr; } .revenue-split-grid-cols { grid-template-columns: minmax(120px,1.6fr) .4fr .7fr .8fr .7fr !important; font-size: 10px; } }
 
+/* Extensão: página "Diagnóstico Veículos" — usa as variáveis de tema (--card, --border, --foreground...), então vale para claro e escuro. */
+.diag-page { --diag-op: var(--green); --diag-bk: #d9a521; --diag-mt: var(--red); --diag-jdi: #4f8fd6; }
+.diag-page .view-tabs { margin-top: 12px; }
+.diag-kpi-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin-bottom: 10px; }
+.diag-kpi { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; font-family: inherit; cursor: pointer; background: var(--card); color: var(--foreground); border: 1px solid var(--border); padding: 9px 11px; }
+.diag-kpi span { color: var(--muted-foreground); font-size: 10px; }
+.diag-kpi strong { font-size: 22px; letter-spacing: -.02em; color: var(--foreground); }
+.diag-kpi small { color: var(--muted-foreground); font-size: 10px; font-family: 'IBM Plex Mono', monospace; }
+.diag-kpi:hover { border-color: var(--green); }
+.diag-kpi:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.diag-kpi.active { border-color: var(--green); box-shadow: 0 0 0 1px var(--green) inset; }
+.diag-kpi.static { cursor: default; border-left: 3px solid var(--green); }
+.diag-kpi.static:hover { border-color: var(--border); border-left-color: var(--green); }
+.diag-attention { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
+.diag-attn { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--diag-bk); padding: 9px 12px; display: grid; gap: 3px; align-content: start; }
+.diag-attn.tone-warning { border-left-color: var(--red); }
+.diag-attn strong { font-size: 12px; color: var(--foreground); }
+.diag-attn small { color: var(--muted-foreground); font-size: 10px; line-height: 1.5; }
+.diag-page .client-table-card { margin-bottom: 10px; }
+.diag-page .client-toolbar > div:first-child:not(.client-search) strong { display: block; color: var(--foreground); font-size: 13px; }
+.diag-page .client-toolbar > div:first-child:not(.client-search) small { display: block; color: var(--muted-foreground); margin-top: 2px; }
+.diag-scroll { overflow-x: auto; }
+.diag-sum-head, .diag-sum-row { display: grid; grid-template-columns: 1.5fr repeat(7, .7fr) 1.7fr; gap: 10px; align-items: center; min-width: 760px; }
+.diag-sum-head { padding: 12px 10px 8px; color: var(--muted-foreground); font-family: 'IBM Plex Mono', monospace; font-size: 9px; text-transform: uppercase; }
+.diag-sum-head span:not(:first-child), .diag-sum-row > span:not(:first-child):not(.diag-avail) { text-align: right; }
+.diag-sum-row { border-top: 1px solid var(--border); padding: 9px 10px; font-size: 11px; color: var(--foreground); font-variant-numeric: tabular-nums; }
+.diag-sum-row strong { font-size: 11px; color: var(--foreground); }
+.diag-sum-total { border-top: 2px solid var(--border); font-weight: 800; }
+.diag-avail { display: flex; align-items: center; gap: 8px; }
+.diag-avail-track { flex: 1; height: 6px; background: var(--muted); border-radius: 2px; overflow: hidden; }
+.diag-avail-track i { display: block; height: 100%; background: var(--green); }
+.diag-avail b { min-width: 46px; text-align: right; font-size: 11px; }
+.diag-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-left: auto; font-size: 10px; color: var(--muted-foreground); }
+.diag-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.diag-dot { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
+.seg-op { background: var(--diag-op); } .seg-bk { background: var(--diag-bk); } .seg-mt { background: var(--diag-mt); } .seg-jdi { background: var(--diag-jdi); }
+.diag-bars { display: grid; gap: 10px; padding-top: 12px; }
+.diag-bar-row { display: grid; grid-template-columns: 140px 1fr minmax(180px, 280px); gap: 12px; align-items: center; font-size: 11px; color: var(--foreground); }
+.diag-bar-row strong { font-size: 11px; color: var(--foreground); }
+.diag-bar-row small { color: var(--muted-foreground); font-size: 10px; }
+.diag-bar-track { display: flex; gap: 2px; height: 16px; background: var(--muted); border-radius: 2px; overflow: hidden; }
+.diag-bar-track i { display: block; min-width: 3px; }
+.diag-list-count { padding: 9px 4px 6px; color: var(--muted-foreground); font-size: 10px; font-family: 'IBM Plex Mono', monospace; }
+.diag-grid-head, .diag-grid-row { display: grid; grid-template-columns: 1.2fr 1fr .9fr 1fr 1.2fr 1.9fr; gap: 10px; align-items: center; min-width: 820px; }
+.diag-grid-head { padding: 10px 8px 7px; color: var(--muted-foreground); font-family: 'IBM Plex Mono', monospace; font-size: 9px; text-transform: uppercase; border-top: 1px solid var(--border); }
+.diag-grid-row { border-top: 1px solid var(--border); padding: 7px 8px; font-size: 10px; color: var(--muted-foreground); }
+.diag-grid-row > strong { font-size: 11px; color: var(--foreground); }
+.diag-driver { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; color: var(--foreground); }
+.diag-driver small { color: var(--muted-foreground); font-size: 9px; }
+.diag-page { --diag-in: #9b7be0; }
+.seg-in { background: var(--diag-in); }
+.diag-adj-form { display: grid; grid-template-columns: 1.2fr 1fr 2fr auto; gap: 8px; padding-top: 14px; }
+.diag-adj-form input, .diag-adj-form select { min-height: 36px; padding: 0 10px; border: 1px solid var(--border); border-radius: 0; background: var(--input); color: var(--foreground); font: 11px 'IBM Plex Mono', monospace; }
+.diag-adj-form .add-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 14px; min-height: 36px; cursor: pointer; border: 0; font-weight: 800; font-size: 11px; }
+.diag-adj-list { display: grid; gap: 6px; padding-top: 12px; }
+.diag-adj-item { display: grid; grid-template-columns: 150px 110px 1fr auto; gap: 10px; align-items: center; border-top: 1px solid var(--border); padding-top: 8px; font-size: 11px; color: var(--foreground); }
+.diag-adj-item small { color: var(--muted-foreground); font-size: 10px; }
+.diag-cmp-head, .diag-cmp-row { display: grid; grid-template-columns: 1.5fr repeat(5, 1fr); gap: 10px; align-items: center; min-width: 640px; }
+.diag-cmp-head { padding: 14px 10px 8px; color: var(--muted-foreground); font-family: 'IBM Plex Mono', monospace; font-size: 9px; text-transform: uppercase; }
+.diag-cmp-row { border-top: 1px solid var(--border); padding: 9px 10px; font-size: 11px; color: var(--foreground); font-variant-numeric: tabular-nums; }
+.diag-cmp-head span:not(:first-child), .diag-cmp-row > span { text-align: right; }
+@media (max-width: 760px) { .diag-adj-form { grid-template-columns: 1fr; } .diag-adj-item { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 1080px) { .diag-kpi-grid { grid-template-columns: repeat(4, 1fr); } .diag-attention { grid-template-columns: 1fr; } .diag-bar-row { grid-template-columns: 110px 1fr; } .diag-bar-row small { grid-column: 1 / -1; } }
+@media (max-width: 760px) { .diag-kpi-grid { grid-template-columns: repeat(2, 1fr); } .diag-legend { margin-left: 0; } }
 `;
 
 
@@ -1201,6 +1266,7 @@ const modules = [
   { label: "Tabelas vigentes", icon: FileSpreadsheet },
   { label: "Distribuição", icon: Boxes },
   { label: "Recursos - Veículos", icon: Truck, page: "vehicles" },
+  { label: "Diagnóstico Veículos", icon: Wrench, page: "diagnostico" },
   { label: "Monitor de filiais", icon: Warehouse },
 ];
 
@@ -1221,6 +1287,7 @@ function TopBar({ page, setPage }) {
       <button type="button" className={`topnav-link ${page === "home" ? "active" : ""}`} onClick={() => setPage("home")}><Truck size={14} /> Simulador</button>
       <button type="button" className={`topnav-link ${page === "clients" ? "active" : ""}`} onClick={() => setPage("clients")}><Building2 size={14} /> Análise por cliente</button>
       <button type="button" className={`topnav-link ${page === "vehicles" ? "active" : ""}`} onClick={() => setPage("vehicles")}><Truck size={14} /> Recursos - Veículos</button>
+      <button type="button" className={`topnav-link ${page === "diagnostico" ? "active" : ""}`} onClick={() => setPage("diagnostico")}><Wrench size={14} /> Diagnóstico Veículos</button>
     </nav>
     <div className="topbar-meta"><span className="status-dot" /> Simulação operacional <span className="date-chip">{dateLabel}</span></div>
   </header>;
@@ -2438,6 +2505,388 @@ function VehicleResources({ manifestDataset, manifestSourceLabel, manifestImport
   </main>;
 }
 
+/* =============================================================================================
+   PÁGINA 5 — DIAGNÓSTICO VEÍCULOS
+   Resumo gerencial da frota de coleta (Frota própria + Agregados): operando, backup, manutenção,
+   JDI e sem motorista por categoria/tipo. A fonte é a aba "Base" do Resumo_Gerencial_Frota.xlsx.
+   Já abre com a última base embutida; "Atualizar" importa uma planilha nova (salva neste navegador
+   e na nuvem, como os demais relatórios do painel).
+   ============================================================================================= */
+const FROTA_TIPOS = ["Cav. Mecanico", "TRUCK", "TOCO", "VUC 3/4"];
+const FROTA_TIPO_OUTROS = "Outros (tipo novo)";
+const FROTA_CLASSES = ["Operando", "Backup", "Manutenção", "JDI", "Inoperante"];
+/* Chave estável de placa: só o 1º token ("EZU9I31 - 429" → "EZU9I31"), para casar com o que o usuário digita. */
+const frotaPlateKey = (v) => String(v ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").trim().toUpperCase().split(/[\s-]+/)[0] || "";
+const FROTA_DEFAULT_LABEL = "Resumo_Gerencial_Frota_1.xlsx · base de 09/11/2026";
+/* [placa, status, situação, tipo, categoria, motorista] — aba Base do Resumo Gerencial. */
+const frotaBaseDefault = [["DVT9608 - 712","Funcional","BACKUP","TRUCK","FROTA",""],["EGK9174 - 454","Funcional","BACKUP","TOCO","FROTA","JOÃO SANTANA DE CASTRO"],["DJE4F17","Funcional","BACKUP","TOCO","FROTA","LUCAS SILVA GUIMARAES"],["EZU9817 - 431","Funcional","BACKUP","TOCO","FROTA","FRANCISCO PEREIRA DA SILVA"],["EZU9I31 - 429","Funcional","BACKUP","TOCO","FROTA","JOSE ROBERTO SANTOS FELINTO"],["FFN1A21","MANUTENÇÃO","GRU","TOCO","FROTA","MANUTENÇÃO"],["CLU8842 - 668","MANUTENÇÃO","GRU","TRUCK","FROTA","JOSE NATANIEL FERREIRA SILVA"],["EZL0D81","MANUTENÇÃO","GRU","TOCO","FROTA","MANUTENÇÃO"],["LRC1I95","MANUTENÇÃO","GRU","TOCO","FROTA","MANUTENÇÃO"],["FFN6D99","MANUTENÇÃO","GRU","TOCO","FROTA","EDVALDO LEMOS"],["FCB6D75","MANUTENÇÃO","GRU","VUC 3/4","FROTA","MANUTENÇÃO"],["LRE6E03","MANUTENÇÃO","GRU","TRUCK","FROTA","EDSON DIAS"],["FFN4I90","Funcional","GRU","TOCO","FROTA","MARCONI MUNIZ DE ALBUQUERQUE"],["LRE6424","Funcional","GRU","TRUCK","FROTA","IVANILDO DO NASCIMENTO"],["EFW6G52","Funcional","GRU","TOCO","FROTA","FRANCISCO CARVALHO DE MELHO"],["FFN4J12","Funcional","GRU","TOCO","FROTA","ADRIANO LIMA OLIVEIRA DE ALMEI"],["EMU1A83","Funcional","GRU","TOCO","FROTA","CREDEMILTON SANTOS DA SILVA"],["LRE6E13","Funcional","GRU","TOCO","FROTA","LUIZ SANTOS DA SILVA"],["LRE6E16","Funcional","GRU","TOCO","FROTA","MAGNO SILVA DIAS DE CASTRO"],["FFN6E17","Funcional","GRU","TOCO","FROTA","JAILSON BATISTA FERREIRA"],["LRE6E22","Funcional","GRU","TRUCK","FROTA","ALMIR DO SANTOS XAVIER"],["GGD8J74 - 730","Funcional","GRU","TRUCK","FROTA","PEDRO ALVES DELMONDES"],["LRE6E04","Funcional","GRU","TRUCK","FROTA","MARCOS CEZAR PEREIRA SANTOS"],["KPW9A15","Funcional","GRU","TRUCK","FROTA","AGNALDO BARBOSA DE LIMA"],["SWE6E36 - 172","Funcional","GRU","VUC 3/4","FROTA","ROBERTO PEREIRA DA SILVA"],["SWZ1J87 - 110","Funcional","GRU","VUC 3/4","FROTA","CLECIO PEREIRA DE QUEIROZ"],["FTL1571","Funcional","GRU","TOCO","FROTA","JOSE DENIS DA SILVA"],["DJE8540","Funcional","GRU","TOCO","AGREGADO","ANDERSON ANTONELLI"],["BWU4G61","Funcional","GRU","TRUCK","AGREGADO","MANOEL CORREIA"],["HZK4J01","Funcional","GRU","TRUCK","AGREGADO","FELIPE DE OLIVEIRA LIMA"],["CBL2E06","Funcional","GRU","TRUCK","AGREGADO","JULIAO ELIAS EWANKIW"],["BWH0849","Funcional","GRU","TRUCK","AGREGADO","NELSON HABACHE"],["CRY4643","Funcional","GRU","TRUCK","AGREGADO","SAVANIO VIEIRA ALVES"],["EFO1715","Funcional","GRU","TRUCK","AGREGADO","SAVANIO VIEIRA ALVES"],["DJB5B30","Funcional","GRU","TOCO","AGREGADO","VALDERICO FERNANDES JUNIOR"],["GPD6021","Funcional","GRU","TRUCK","AGREGADO","JOSE FERREIRA"],["MNS0F95","Funcional","GRU","TRUCK","AGREGADO","HELDER GADELHA DALCIL"],["ETJ0J27","Funcional","GRU","TRUCK","AGREGADO","CARLOS ALBERTO SANTOS"],["BWO1C86","Funcional","GRU","TRUCK","AGREGADO","JAIME LICERIO MATOS"],["GVK3549","Funcional","GRU","TRUCK","AGREGADO","MATHEUS CRECENCIO DE JESUS"],["ADK8434","Funcional","GRU","TRUCK","AGREGADO","BRUNO MEDEIROS DE JESUS"],["AUQ3371","Funcional","GRU","Cav. Mecanico","AGREGADO","EDUARDO MAGALHAES"],["CSK1D21","Funcional","GRU","Cav. Mecanico","AGREGADO","IVANILDO ALVARO"],["JUY9222","Funcional","GRU","Cav. Mecanico","AGREGADO","JOAO BATISTA MENEZES"],["MFK3902","Funcional","GRU","Cav. Mecanico","AGREGADO","CARLOS ALBERTO GONCALVES"],["DTC2533","Funcional","GRU","Cav. Mecanico","AGREGADO","JOEL CARDOSO DE AGUIAR"],["EOE8993","Funcional","GRU","Cav. Mecanico","AGREGADO","LUCILVINO FERREIRA SOUSA"],["GVQ4D66","Funcional","GRU","Cav. Mecanico","AGREGADO","IDAMAR BEZERRA DA SILVA"],["FSH1B85","Funcional","GRU","Cav. Mecanico","AGREGADO","RONALDO LIRA MARTINS"],["EGJ7055","Funcional","GRU","Cav. Mecanico","AGREGADO","WEMERSON CHARLES DE SOUZA NUNE"],["DPC5370","Funcional","GRU","Cav. Mecanico","AGREGADO","EVERALDO SATURINO SOARES"],["EKH1A18","Funcional","GRU","Cav. Mecanico","AGREGADO","CAIO MOZAR"],["AFP6608","Funcional","GRU","Cav. Mecanico","AGREGADO","SANDRO ROGERIO"],["ODT6010","Funcional","GRU","Cav. Mecanico","AGREGADO","FRANCISCO SERGIO ARAUJO DOS SA"],["JLQ6949","Funcional","GRU","Cav. Mecanico","AGREGADO","ELZITON MAXIMIANO"],["DBL7870","Funcional","GRU","Cav. Mecanico","AGREGADO","ADAO DE OLIVEIRA"],["OZJ1D48","Funcional","GRU","Cav. Mecanico","AGREGADO","MOISES OLIVEIRA SILVA"],["LWT4H49","Funcional","GRU","Cav. Mecanico","AGREGADO","GABRIEL ARAUJO DE SOUZ"],["BTS4G92","Funcional","GRU","Cav. Mecanico","AGREGADO","VALMIR ROVAROTO"],["DQS8E93","Funcional","GRU","Cav. Mecanico","AGREGADO","THIAGO ANDRADE FELTRIN"],["EYV7A94","Funcional","GRU","Cav. Mecanico","AGREGADO","DIOGO DIAS ROVAROTO"],["DPC6C42","Funcional","GRU","Cav. Mecanico","AGREGADO","ELISIO DE OLIVEIRA SOUZA"],["EVO9A31","Funcional","GRU","Cav. Mecanico","AGREGADO","RODRIGO BERNARDO DA SILVA"],["DJF3A84","Funcional","GRU","Cav. Mecanico","AGREGADO","IVO CESAR JORGE DE OLIVEIRA"],["DTE4I96","Funcional","GRU","Cav. Mecanico","AGREGADO","MEIRIVAN CUNHA SANTOS"],["EOF1E61","Funcional","GRU","Cav. Mecanico","AGREGADO","ESMERALDO SANTOS DE OLIVEIRA"],["HGJ8D25","MANUTENÇÃO","GRU","Cav. Mecanico","AGREGADO","PAULO CEZAR MOREIRA SANTOS"],["EZU9J41","Funcional","GRU","Cav. Mecanico","FROTA","ISAIAS PEREIRA DE CARVALHO"],["OPA9E53","Funcional","GRU","Cav. Mecanico","FROTA","FLAVIO ROCHA DE SOUSA"],["FUI3858","Funcional","GRU","Cav. Mecanico","FROTA","GILMAR APARECIDO ALVES"],["FJX0J63","Funcional","GRU","Cav. Mecanico","FROTA","JOSE FELICIANO DA SILVA JUNIOR"],["FEI1C63","Funcional","GRU","Cav. Mecanico","FROTA","DOUGLAS ALVES NUNES"],["OPT1G36","Funcional","GRU","Cav. Mecanico","FROTA","FRANCISCO JUNIOR COELHO GOMES"],["EZU9J34","Funcional","GRU","Cav. Mecanico","FROTA","MARCIO JOSE MARINHO"],["EZU9I45","Funcional","GRU","Cav. Mecanico","FROTA","MICHEL FRANCISCO LIMA"],["FTQ0759 - 552","Funcional","GRU","Cav. Mecanico","FROTA","EZEQUIEL LINCOLN TORRES DOS SANTOS"],["528","MANUTENÇÃO","GRU","Cav. Mecanico","FROTA","PENDENTE"],["574","JDI","GRU","Cav. Mecanico","FROTA","PENDENTE"],["550","MANUTENÇÃO","GRU","Cav. Mecanico","FROTA","JOSE CICERO"]];
+
+const frotaNorm = (v) => String(v ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, " ").trim().toUpperCase();
+const frotaPct = (v) => `${(v * 100).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`;
+
+/* Monta um registro da frota. Se a planilha trouxer as colunas CLASSIFICAÇÃO e MOTORISTA? (fórmulas
+   da aba Base), elas mandam; senão aplica a mesma regra do Resumo Gerencial:
+   STATUS "MANUTENÇÃO" → Manutenção · STATUS "JDI" → JDI · SITUAÇÃO "BACKUP" → Backup · resto → Operando.
+   Sem motorista = campo motorista vazio, "MANUTENÇÃO" ou "PENDENTE". */
+function buildFrotaRecord({ placa, status, situacao, tipo, categoria, motorista, classificacao, temMotorista }) {
+  const st = frotaNorm(status);
+  const sit = frotaNorm(situacao);
+  let classe = FROTA_CLASSES.find((c) => frotaNorm(c) === frotaNorm(classificacao));
+  if (!classe) classe = st === "MANUTENCAO" ? "Manutenção" : st === "JDI" ? "JDI" : sit === "BACKUP" ? "Backup" : "Operando";
+  const mot = String(motorista ?? "").replace(/\s+/g, " ").trim();
+  const motNorm = frotaNorm(mot);
+  const flag = frotaNorm(temMotorista);
+  const semMotorista = flag === "SEM MOTORISTA" ? true : flag === "COM MOTORISTA" ? false : (!mot || motNorm === "MANUTENCAO" || motNorm === "PENDENTE");
+  const tipoCanon = FROTA_TIPOS.find((t) => frotaNorm(t) === frotaNorm(tipo));
+  return {
+    placa: String(placa ?? "").replace(/\s+/g, " ").trim(),
+    status: String(status ?? "").trim(),
+    situacao: String(situacao ?? "").trim(),
+    tipo: tipoCanon ?? FROTA_TIPO_OUTROS,
+    tipoOriginal: String(tipo ?? "").trim(),
+    categoria: frotaNorm(categoria),
+    motorista: mot,
+    classe,
+    semMotorista,
+  };
+}
+
+function parseFrotaBase(rows) {
+  const headerIdx = rows.findIndex((r) => r.some((c) => frotaNorm(c).startsWith("PLACA")));
+  if (headerIdx < 0) throw new Error('Não encontrei a coluna "PLACA FROTA". Use a aba "Base" do Resumo Gerencial da Frota.');
+  const header = rows[headerIdx].map(frotaNorm);
+  const find = (pred) => header.findIndex(pred);
+  const idx = {
+    placa: find((h) => h.startsWith("PLACA")),
+    status: find((h) => h === "STATUS"),
+    situacao: find((h) => h.startsWith("SITUACAO")),
+    tipo: find((h) => h.startsWith("TIPO")),
+    categoria: find((h) => h === "CATEGORIA"),
+    motorista: find((h) => h === "MOTORISTA FROTA") >= 0 ? find((h) => h === "MOTORISTA FROTA") : find((h) => h.startsWith("MOTORISTA") && !h.endsWith("?")),
+    classificacao: find((h) => h.startsWith("CLASSIFICACAO")),
+    temMotorista: find((h) => h === "MOTORISTA?"),
+  };
+  const missing = ["placa", "status", "situacao", "tipo", "categoria"].filter((k) => idx[k] < 0);
+  if (missing.length) throw new Error(`Colunas obrigatórias não encontradas na aba Base: ${missing.join(", ")}.`);
+  const get = (row, k) => (idx[k] >= 0 ? row[idx[k]] : "");
+  const records = rows.slice(headerIdx + 1)
+    .filter((row) => String(get(row, "placa") ?? "").trim() !== "")
+    .map((row) => buildFrotaRecord({
+      placa: get(row, "placa"), status: get(row, "status"), situacao: get(row, "situacao"), tipo: get(row, "tipo"),
+      categoria: get(row, "categoria"), motorista: get(row, "motorista"), classificacao: get(row, "classificacao"), temMotorista: get(row, "temMotorista"),
+    }));
+  if (!records.length) throw new Error("A aba Base não tem nenhum veículo com placa preenchida.");
+  return records;
+}
+
+function summarizeFrota(list) {
+  const blank = () => ({ total: 0, operando: 0, backup: 0, manutencao: 0, jdi: 0, inoperante: 0, semMotorista: 0 });
+  const tipos = [...FROTA_TIPOS, FROTA_TIPO_OUTROS];
+  const byTipo = new Map(tipos.map((t) => [t, blank()]));
+  const total = blank();
+  const keyOf = { "Operando": "operando", "Backup": "backup", "Manutenção": "manutencao", "JDI": "jdi", "Inoperante": "inoperante" };
+  list.forEach((r) => {
+    [byTipo.get(r.tipo), total].forEach((acc) => {
+      acc.total += 1;
+      acc[keyOf[r.classe]] += 1;
+      if (r.semMotorista) acc.semMotorista += 1;
+    });
+  });
+  const withAvail = (o) => ({ ...o, disponivel: o.total ? (o.operando + o.backup) / o.total : 0 });
+  return { total: withAvail(total), tipos: tipos.map((t) => ({ tipo: t, ...withAvail(byTipo.get(t)) })) };
+}
+
+const FROTA_CLASSE_TONE = { "Operando": "tone-positive", "Backup": "tone-info", "Manutenção": "tone-warning", "JDI": "tone-neutral", "Inoperante": "tone-warning" };
+const FROTA_CLASSE_ORDER = { "Inoperante": 0, "Manutenção": 1, "JDI": 2, "Backup": 3, "Operando": 4 };
+const FROTA_SCOPES = [{ key: "all", label: "Visão geral" }, { key: "FROTA", label: "Frota (própria)" }, { key: "AGREGADO", label: "Agregado" }];
+
+function DiagnosticoVeiculos() {
+  const [data, setData] = useState(() => {
+    const saved = lsLoad("frota");
+    if (saved && Array.isArray(saved.rows) && saved.rows.length) return saved;
+    return {
+      rows: frotaBaseDefault.map(([placa, status, situacao, tipo, categoria, motorista]) => buildFrotaRecord({ placa, status, situacao, tipo, categoria, motorista })),
+      label: FROTA_DEFAULT_LABEL,
+      updatedAt: null,
+    };
+  });
+  const [scope, setScope] = useState("all");
+  const [classFilter, setClassFilter] = useState(null); // null | "Operando" | "Backup" | "Manutenção" | "JDI" | "SEM_MOTORISTA"
+  const [search, setSearch] = useState("");
+  const [importError, setImportError] = useState(null);
+  const fileInputRef = useRef(null);
+  /* Ajustes manuais: placas marcadas como Manutenção/Inoperante direto no painel (valem por cima da planilha). */
+  const [adj, setAdj] = useState(() => lsLoad("frota_ajustes")?.items ?? {});
+  const [adjPlaca, setAdjPlaca] = useState("");
+  const [adjClasse, setAdjClasse] = useState("Manutenção");
+  const [adjMotivo, setAdjMotivo] = useState("");
+  const [adjError, setAdjError] = useState(null);
+
+  function persistAdj(next) {
+    setAdj(next);
+    lsSave("frota_ajustes", { items: next, updatedAt: new Date().toISOString() });
+    cloudSave("frota_ajustes", { items: next }, `${Object.keys(next).length} ajuste(s) manual(is) de frota`);
+  }
+  function addAdj(event) {
+    event.preventDefault();
+    const key = frotaPlateKey(adjPlaca);
+    if (!key) { setAdjError("Informe a placa."); return; }
+    const found = data.rows.find((r) => frotaPlateKey(r.placa) === key);
+    if (!found) { setAdjError(`Placa ${key} não encontrada na base da frota.`); return; }
+    if (scope !== "all" && found.categoria !== scope) { setAdjError(`${found.placa} pertence a ${found.categoria === "FROTA" ? "Frota (própria)" : "Agregado"} — troque a aba para registrar.`); return; }
+    persistAdj({ ...adj, [key]: { placa: found.placa, classe: adjClasse, motivo: adjMotivo.trim(), at: new Date().toISOString() } });
+    setAdjPlaca(""); setAdjMotivo(""); setAdjError(null);
+  }
+  function removeAdj(key) { const next = { ...adj }; delete next[key]; persistAdj(next); }
+
+  /* Tempo real: ajustes (e nova base) feitos por outra pessoa aparecem aqui sem recarregar. */
+  useEffect(() => {
+    let cancelled = false;
+    cloudLoad("frota_ajustes").then((row) => {
+      if (cancelled || !row || !row.data || !row.data.items) return;
+      const localAt = lsLoad("frota_ajustes")?.updatedAt;
+      if (!localAt || new Date(row.updated_at) > new Date(localAt)) {
+        setAdj(row.data.items);
+        lsSave("frota_ajustes", { items: row.data.items, updatedAt: row.updated_at });
+      }
+    });
+    if (!supabaseClient) return () => { cancelled = true; };
+    const channel = supabaseClient.channel("painel_reports_sync_frota").on(
+      "postgres_changes", { event: "*", schema: "public", table: "painel_reports" },
+      (payload) => {
+        const row = payload.new;
+        if (!row || !row.data) return;
+        if (row.id === "frota_ajustes" && row.data.items) {
+          setAdj(row.data.items);
+          lsSave("frota_ajustes", { items: row.data.items, updatedAt: row.updated_at });
+        } else if (row.id === "frota" && Array.isArray(row.data.rows) && row.data.rows.length) {
+          const next = { rows: row.data.rows, label: row.label ?? "Frota (da nuvem)", updatedAt: row.updated_at };
+          setData(next);
+          lsSave("frota", next);
+        }
+      }
+    ).subscribe();
+    return () => { cancelled = true; supabaseClient.removeChannel(channel); };
+  }, []);
+
+  /* Se outra pessoa já importou uma base mais nova, ela aparece aqui ao abrir a página. */
+  useEffect(() => {
+    let cancelled = false;
+    cloudLoad("frota").then((row) => {
+      if (cancelled || !row || !row.data || !Array.isArray(row.data.rows) || !row.data.rows.length) return;
+      const localAt = lsLoad("frota")?.updatedAt;
+      if (!localAt || new Date(row.updated_at) > new Date(localAt)) {
+        const next = { rows: row.data.rows, label: row.label ?? "Frota (da nuvem)", updatedAt: row.updated_at };
+        setData(next);
+        lsSave("frota", next);
+      }
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  async function handleImport(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setImportError(null);
+    try {
+      const workbook = XLSX.read(await file.arrayBuffer(), { type: "array" });
+      const toRows = (name) => XLSX.utils.sheet_to_json(workbook.Sheets[name], { header: 1, defval: "" });
+      const sheetName = workbook.SheetNames.find((n) => frotaNorm(n) === "BASE")
+        ?? workbook.SheetNames.find((n) => toRows(n).some((r) => r.some((c) => frotaNorm(c).startsWith("PLACA"))));
+      if (!sheetName) throw new Error('Não encontrei a aba "Base" (coluna PLACA FROTA) nesta planilha.');
+      const rows = parseFrotaBase(toRows(sheetName));
+      const label = `${file.name} · ${numberInt.format(rows.length)} veículo(s)`;
+      const updatedAt = new Date().toISOString();
+      const next = { rows, label, updatedAt };
+      setData(next);
+      lsSave("frota", next);
+      cloudSave("frota", { rows }, label);
+    } catch (error) {
+      setImportError(error instanceof Error ? error.message : "Não foi possível ler a planilha da frota.");
+    } finally { event.target.value = ""; }
+  }
+
+  const effRows = useMemo(() => data.rows.map((r) => { const a = adj[frotaPlateKey(r.placa)]; return a ? { ...r, classe: a.classe, ajuste: a } : r; }), [data, adj]);
+  const scoped = useMemo(() => (scope === "all" ? effRows : effRows.filter((r) => r.categoria === scope)), [effRows, scope]);
+  const adjList = useMemo(() => Object.entries(adj).map(([key, a]) => ({ key, ...a, categoria: effRows.find((r) => frotaPlateKey(r.placa) === key)?.categoria ?? "" }))
+    .filter((a) => scope === "all" || a.categoria === scope).sort((a, b) => String(b.at).localeCompare(String(a.at))), [adj, effRows, scope]);
+  const plateOptions = useMemo(() => scoped.map((r) => r.placa), [scoped]);
+  const cmp = useMemo(() => FROTA_SCOPES.slice(1).map((s) => ({ key: s.key, label: s.label, ...summarizeFrota(effRows.filter((r) => r.categoria === s.key)) })), [effRows]);
+  const summary = useMemo(() => summarizeFrota(scoped), [scoped]);
+  const tiposVisiveis = summary.tipos.filter((t) => t.total > 0);
+  const t = summary.total;
+  const scopeLabel = FROTA_SCOPES.find((s) => s.key === scope).label;
+
+  const attention = useMemo(() => {
+    const items = [];
+    const plates = (list) => list.slice(0, 6).map((r) => r.placa).join(", ") + (list.length > 6 ? ` e +${list.length - 6}` : "");
+    const worst = summary.tipos.filter((x) => x.total > 0).sort((a, b) => a.disponivel - b.disponivel)[0];
+    if (worst && worst.disponivel < 1) {
+      items.push({ tone: "warning", title: `Menor disponibilidade: ${worst.tipo}`, detail: `${frotaPct(worst.disponivel)} disponível — ${worst.operando + worst.backup} de ${worst.total} veículos (${worst.manutencao} em manutenção${worst.inoperante ? `, ${worst.inoperante} inoperante(s)` : ""}${worst.jdi ? `, ${worst.jdi} JDI` : ""}).` });
+    }
+    const manutComMotorista = scoped.filter((r) => (r.classe === "Manutenção" || r.classe === "Inoperante") && !r.semMotorista);
+    if (manutComMotorista.length) {
+      items.push({ tone: "info", title: `${manutComMotorista.length} em manutenção/inoperante com motorista vinculado`, detail: `Verificar realocação em veículo backup: ${plates(manutComMotorista)}.` });
+    }
+    const semMotoristaAtivo = scoped.filter((r) => r.semMotorista && r.classe !== "Manutenção" && r.classe !== "Inoperante");
+    if (semMotoristaAtivo.length) {
+      items.push({ tone: "warning", title: `${semMotoristaAtivo.length} sem motorista fora de manutenção`, detail: `${plates(semMotoristaAtivo)}.` });
+    }
+    return items;
+  }, [scoped, summary]);
+
+  const listRows = useMemo(() => {
+    const q = frotaNorm(search);
+    return scoped
+      .filter((r) => classFilter === null || (classFilter === "SEM_MOTORISTA" ? r.semMotorista : r.classe === classFilter))
+      .filter((r) => !q || frotaNorm(`${r.placa} ${r.motorista} ${r.tipoOriginal} ${r.categoria}`).includes(q))
+      .slice()
+      .sort((a, b) => (FROTA_CLASSE_ORDER[a.classe] - FROTA_CLASSE_ORDER[b.classe]) || (Number(b.semMotorista) - Number(a.semMotorista)) || a.placa.localeCompare(b.placa));
+  }, [scoped, classFilter, search]);
+
+  const kpis = [
+    { key: null, label: "Total de veículos", value: t.total, sub: scopeLabel },
+    { key: "Operando", label: "Operando", value: t.operando, sub: t.total ? frotaPct(t.operando / t.total) : "—" },
+    { key: "Backup", label: "Backup", value: t.backup, sub: t.total ? frotaPct(t.backup / t.total) : "—" },
+    { key: "Manutenção", label: "Em manutenção", value: t.manutencao, sub: t.total ? frotaPct(t.manutencao / t.total) : "—" },
+    { key: "JDI", label: "JDI", value: t.jdi, sub: t.total ? frotaPct(t.jdi / t.total) : "—" },
+    { key: "Inoperante", label: "Inoperante", value: t.inoperante, sub: t.total ? frotaPct(t.inoperante / t.total) : "—" },
+    { key: "SEM_MOTORISTA", label: "Sem motorista", value: t.semMotorista, sub: t.total ? frotaPct(t.semMotorista / t.total) : "—" },
+  ];
+  const filterLabel = classFilter === "SEM_MOTORISTA" ? "Sem motorista" : classFilter;
+  const segs = [
+    { cls: "seg-op", label: "Operando", key: "operando" },
+    { cls: "seg-bk", label: "Backup", key: "backup" },
+    { cls: "seg-mt", label: "Manutenção", key: "manutencao" },
+    { cls: "seg-jdi", label: "JDI", key: "jdi" },
+    { cls: "seg-in", label: "Inoperante", key: "inoperante" },
+  ];
+
+  return <main className="client-page diag-page">
+    <input ref={fileInputRef} className="hidden-file-input" type="file" accept=".xlsx,.xls" onChange={handleImport} />
+    <div className="client-page-heading">
+      <div>
+        <span className="section-kicker">07 / DIAGNÓSTICO VEÍCULOS</span>
+        <h2>Diagnóstico da frota de coleta</h2>
+        <p>Veículos operando, em backup, em manutenção e sem motorista por categoria — Frota própria e Agregados. Clique num indicador para filtrar a lista de veículos.</p>
+      </div>
+      <div className="client-source"><Truck size={15} /> {data.label}{data.updatedAt && <small>{relativeTime(data.updatedAt)}</small>}</div>
+    </div>
+
+    <div className="client-toolbar import-toolbar">
+      <button className="secondary-action" type="button" onClick={() => fileInputRef.current?.click()}><UploadCloud size={15} /> Atualizar Resumo Gerencial da Frota</button>
+      {importError && <div className="import-error client-import-error">{importError}</div>}
+    </div>
+
+    <div className="view-tabs" role="tablist" aria-label="Escopo da frota">
+      {FROTA_SCOPES.map((s) => <button key={s.key} type="button" role="tab" aria-selected={scope === s.key} className={scope === s.key ? "active" : ""} onClick={() => setScope(s.key)}>{s.label}</button>)}
+    </div>
+
+    <div className="diag-kpi-grid">
+      {kpis.map((k) => <button key={k.label} type="button" className={`diag-kpi ${k.key !== null && classFilter === k.key ? "active" : ""}`} aria-pressed={k.key !== null && classFilter === k.key} onClick={() => setClassFilter(k.key === null || classFilter === k.key ? null : k.key)}>
+        <span>{k.label}</span><strong>{numberInt.format(k.value)}</strong><small>{k.sub}</small>
+      </button>)}
+      <div className="diag-kpi static highlight"><span>% Disponível</span><strong>{frotaPct(t.disponivel)}</strong><small>(operando + backup) ÷ total</small></div>
+    </div>
+
+    {attention.length > 0 && <div className="diag-attention">
+      {attention.map((a) => <div key={a.title} className={`diag-attn ${a.tone === "warning" ? "tone-warning" : "tone-info"}`}><strong>{a.title}</strong><small>{a.detail}</small></div>)}
+    </div>}
+
+    <section className="client-table-card diag-adj-card">
+      <div className="client-toolbar"><div><strong>Registrar veículo em manutenção / inoperante</strong><small>{scope === "all" ? "Frota e Agregados" : scopeLabel} · o painel atualiza na hora para todos que estiverem com ele aberto</small></div></div>
+      <form className="diag-adj-form" onSubmit={addAdj}>
+        <input aria-label="Placa do veículo" list="diag-plates" placeholder="Placa (ex.: EZU9I31)" value={adjPlaca} onChange={(e) => { setAdjPlaca(e.target.value); setAdjError(null); }} />
+        <datalist id="diag-plates">{plateOptions.map((p) => <option key={p} value={frotaPlateKey(p)}>{p}</option>)}</datalist>
+        <select aria-label="Situação" value={adjClasse} onChange={(e) => setAdjClasse(e.target.value)}><option value="Manutenção">Em manutenção</option><option value="Inoperante">Inoperante</option></select>
+        <input aria-label="Motivo (opcional)" placeholder="Motivo (opcional)" value={adjMotivo} onChange={(e) => setAdjMotivo(e.target.value)} />
+        <button className="add-button" type="submit"><Plus size={14} /> Registrar</button>
+      </form>
+      {adjError && <div className="import-error client-import-error">{adjError}</div>}
+      {adjList.length > 0 && <div className="diag-adj-list">
+        {adjList.map((a) => <div className="diag-adj-item" key={a.key}>
+          <strong>{a.placa}</strong><span className={`status-pill ${FROTA_CLASSE_TONE[a.classe]}`}>{a.classe}</span>
+          <small>{a.categoria === "FROTA" ? "Frota" : a.categoria === "AGREGADO" ? "Agregado" : a.categoria}{a.motivo ? ` · ${a.motivo}` : ""} · {relativeTime(a.at)}</small>
+          <button type="button" className="secondary-action" onClick={() => removeAdj(a.key)}>Voltou a operar</button>
+        </div>)}
+      </div>}
+    </section>
+
+    <section className="client-table-card">
+      <div className="client-toolbar"><div><strong>Resumo por categoria / tipo</strong><small>{scopeLabel} · {numberInt.format(t.total)} veículo(s)</small></div></div>
+      <div className="diag-scroll">
+        <div className="diag-sum-head"><span>Categoria / Tipo</span><span>Total</span><span>Operando</span><span>Backup</span><span>Manutenção</span><span>JDI</span><span>Inoperante</span><span>Sem motorista</span><span>% Disponível</span></div>
+        {tiposVisiveis.map((r) => <div className="diag-sum-row" key={r.tipo}>
+          <strong>{r.tipo}</strong><span>{numberInt.format(r.total)}</span><span>{numberInt.format(r.operando)}</span><span>{numberInt.format(r.backup)}</span><span>{numberInt.format(r.manutencao)}</span><span>{numberInt.format(r.jdi)}</span><span>{numberInt.format(r.inoperante)}</span><span>{numberInt.format(r.semMotorista)}</span>
+          <span className="diag-avail"><span className="diag-avail-track"><i style={{ width: `${Math.round(r.disponivel * 100)}%` }} /></span><b>{frotaPct(r.disponivel)}</b></span>
+        </div>)}
+        <div className="diag-sum-row diag-sum-total">
+          <strong>TOTAL</strong><span>{numberInt.format(t.total)}</span><span>{numberInt.format(t.operando)}</span><span>{numberInt.format(t.backup)}</span><span>{numberInt.format(t.manutencao)}</span><span>{numberInt.format(t.jdi)}</span><span>{numberInt.format(t.inoperante)}</span><span>{numberInt.format(t.semMotorista)}</span>
+          <span className="diag-avail"><span className="diag-avail-track"><i style={{ width: `${Math.round(t.disponivel * 100)}%` }} /></span><b>{frotaPct(t.disponivel)}</b></span>
+        </div>
+      </div>
+    </section>
+
+    <section className="client-table-card diag-bars-card">
+      <div className="client-toolbar"><div><strong>Composição por situação</strong><small>cada barra = 100% dos veículos da categoria</small></div>
+        <div className="diag-legend">{segs.map((s) => <span key={s.key}><i className={`diag-dot ${s.cls}`} />{s.label}</span>)}</div></div>
+      <div className="diag-bars">
+        {[...tiposVisiveis, { ...t, tipo: "TOTAL" }].map((r) => <div className="diag-bar-row" key={r.tipo}>
+          <strong>{r.tipo}</strong>
+          <div className="diag-bar-track" role="img" aria-label={`${r.tipo}: ${segs.map((s) => `${r[s.key]} ${s.label}`).join(", ")}`}>
+            {segs.map((s) => r[s.key] > 0 && <i key={s.key} className={s.cls} style={{ flexGrow: r[s.key] }} title={`${s.label}: ${r[s.key]} (${frotaPct(r[s.key] / r.total)})`} />)}
+          </div>
+          <small>{segs.filter((s) => r[s.key] > 0).map((s) => `${r[s.key]} ${s.label.toLowerCase()}`).join(" · ")}</small>
+        </div>)}
+      </div>
+    </section>
+
+    <section className="client-table-card">
+      <div className="client-toolbar"><div><strong>Comparativo Frota × Agregado</strong><small>disponibilidade = (operando + backup) ÷ total · considera os ajustes manuais</small></div>
+        <div className="diag-legend">{segs.map((s) => <span key={s.key}><i className={`diag-dot ${s.cls}`} />{s.label}</span>)}</div></div>
+      <div className="diag-bars">
+        {cmp.map((r) => <div className="diag-bar-row" key={r.key}>
+          <strong>{r.label}</strong>
+          <div className="diag-bar-track" role="img" aria-label={`${r.label}: ${segs.map((s) => `${r.total[s.key]} ${s.label}`).join(", ")}`}>
+            {segs.map((s) => r.total[s.key] > 0 && <i key={s.key} className={s.cls} style={{ flexGrow: r.total[s.key] }} title={`${s.label}: ${r.total[s.key]} (${frotaPct(r.total[s.key] / r.total.total)})`} />)}
+          </div>
+          <small><b>{frotaPct(r.total.disponivel)}</b> disponível · {r.total.operando + r.total.backup} de {r.total.total} · {r.total.semMotorista} sem motorista</small>
+        </div>)}
+      </div>
+      <div className="diag-scroll">
+        <div className="diag-cmp-head"><span>Tipo</span><span>Frota · total</span><span>Frota · disp.</span><span>Agregado · total</span><span>Agregado · disp.</span><span>Diferença (p.p.)</span></div>
+        {cmp[0].tipos.map((f, i) => { const a = cmp[1].tipos[i]; if (!f.total && !a.total) return null; const diff = f.total && a.total ? (f.disponivel - a.disponivel) * 100 : null; return <div className="diag-cmp-row" key={f.tipo}>
+          <strong>{f.tipo}</strong><span>{numberInt.format(f.total)}</span><span>{f.total ? frotaPct(f.disponivel) : "—"}</span><span>{numberInt.format(a.total)}</span><span>{a.total ? frotaPct(a.disponivel) : "—"}</span>
+          <span className={diff === null ? "" : diff < 0 ? "tone-warning" : "tone-positive"}>{diff === null ? "—" : `${diff > 0 ? "+" : ""}${diff.toLocaleString("pt-BR", { maximumFractionDigits: 1 })}`}</span>
+        </div>; })}
+        <div className="diag-cmp-row diag-sum-total"><strong>TOTAL</strong><span>{numberInt.format(cmp[0].total.total)}</span><span>{frotaPct(cmp[0].total.disponivel)}</span><span>{numberInt.format(cmp[1].total.total)}</span><span>{frotaPct(cmp[1].total.disponivel)}</span><span>{`${((cmp[0].total.disponivel - cmp[1].total.disponivel) * 100) > 0 ? "+" : ""}${((cmp[0].total.disponivel - cmp[1].total.disponivel) * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 })}`}</span></div>
+      </div>
+    </section>
+
+    <section className="client-table-card">
+      <div className="client-toolbar">
+        <div className="client-search"><Search size={16} /><input aria-label="Pesquisar placa, motorista ou tipo" placeholder="Pesquisar placa, motorista ou tipo" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
+        <div className="client-filters">{classFilter && <button type="button" onClick={() => setClassFilter(null)}>Limpar filtro · {filterLabel}</button>}</div>
+      </div>
+      <div className="diag-list-count">{numberInt.format(listRows.length)} de {numberInt.format(scoped.length)} veículo(s) · problemas primeiro (manutenção, JDI, backup)</div>
+      <div className="diag-scroll">
+        <div className="diag-grid-head"><span>Placa</span><span>Tipo</span><span>Categoria</span><span>Classificação</span><span>Status / Situação</span><span>Motorista</span></div>
+        {listRows.map((r, i) => <div className="diag-grid-row" key={`${r.placa}-${i}`}>
+          <strong>{r.placa}</strong>
+          <span className="vehicle-tag"><Truck size={13} /> {r.tipoOriginal || r.tipo}</span>
+          <span>{r.categoria === "FROTA" ? "Frota" : r.categoria === "AGREGADO" ? "Agregado" : r.categoria}</span>
+          <span><span className={`status-pill ${FROTA_CLASSE_TONE[r.classe]}`}>{r.classe}</span></span>
+          <span>{r.ajuste ? `Ajuste manual${r.ajuste.motivo ? ` · ${r.ajuste.motivo}` : ""}` : `${r.status} · ${r.situacao}`}</span>
+          <span className="diag-driver">{r.semMotorista ? <><span className="status-pill tone-warning">Sem motorista</span>{r.motorista && <small>{r.motorista}</small>}</> : r.motorista}</span>
+        </div>)}
+        {listRows.length === 0 && <div className="empty-client-state"><Truck size={16} /> Nenhum veículo encontrado para os filtros atuais.</div>}
+      </div>
+      <div className="client-footnote"><span>Regras:</span> Disponível = (Operando + Backup) ÷ Total. "Sem motorista" = campo motorista vazio, "MANUTENÇÃO" ou "PENDENTE". Classificação: status MANUTENÇÃO → Manutenção; status JDI → JDI; situação BACKUP → Backup; demais → Operando. Inoperante = placa marcada manualmente no painel (não conta como disponível); "Voltou a operar" remove o ajuste e a classificação volta a seguir a planilha. Fonte: aba Base do Resumo Gerencial da Frota.</div>
+    </section>
+  </main>;
+}
+
+
 /* Barra de status global — visível em todas as telas, mostra os 3 relatórios (Coleta/Manifesto/
    Receita) e quando cada um foi atualizado pela última vez, pra nunca mais um relatório "sumir"
    silenciosamente sem ninguém perceber (foi o que gerou o bug de contagem por placa). */
@@ -2535,13 +2984,13 @@ function App() {
   }
 
   return (
-    <div className={`app-shell ${page === "clients" || page === "vehicles" ? "client-analysis-shell" : ""}`}>
+    <div className={`app-shell ${page === "clients" || page === "vehicles" || page === "diagnostico" ? "client-analysis-shell" : ""}`}>
       <style>{CSS_TEXT}</style>
       <input ref={manifestFileInputRef} className="hidden-file-input" type="file" accept=".xlsx,.xls" onChange={handleManifestImport} />
       <DashboardLayout page={page} setPage={setPage} theme={theme} toggleTheme={toggleTheme} />
       <TopBar page={page} setPage={setPage} />
       <GlobalStatusBar coletaStatus={coletaStatus} manifestSourceLabel={manifestSourceLabel} manifestUpdatedAt={manifestUpdatedAt} manifestLoaded={!!manifestDataset} receitaStatus={receitaStatus} />
-      {page === "home" ? <Home /> : page === "clients" ? <ClientAnalysis manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} onColetaStatusChange={setColetaStatus} onReceitaStatusChange={setReceitaStatus} /> : <VehicleResources manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} />}
+      {page === "home" ? <Home /> : page === "clients" ? <ClientAnalysis manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} onColetaStatusChange={setColetaStatus} onReceitaStatusChange={setReceitaStatus} /> : page === "diagnostico" ? <DiagnosticoVeiculos /> : <VehicleResources manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} />}
     </div>
   );
 }
