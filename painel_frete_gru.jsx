@@ -2826,7 +2826,7 @@ function GlobalStatusBar({ coletaStatus, manifestSourceLabel, manifestUpdatedAt,
 
 export default function App() {
   const [page, setPage] = useState("home");
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState("light");
   const [manifestDataset, setManifestDataset] = useState(() => {
     const saved = lsLoad("manifest");
     if (!saved) return null;
