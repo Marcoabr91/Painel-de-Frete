@@ -581,7 +581,7 @@ html:not(.dark) .sim-grid-row > div strong { color: #17301f; }
 .diag-page .client-toolbar > div:first-child:not(.client-search) strong { display: block; color: var(--foreground); font-size: 13px; }
 .diag-page .client-toolbar > div:first-child:not(.client-search) small { display: block; color: var(--muted-foreground); margin-top: 2px; }
 .diag-scroll { overflow-x: auto; }
-.diag-sum-head, .diag-sum-row { display: grid; grid-template-columns: 1.5fr repeat(7, .7fr) 1.7fr; gap: 10px; align-items: center; min-width: 760px; }
+.diag-sum-head, .diag-sum-row { display: grid; grid-template-columns: 1.5fr repeat(7, .7fr) 2.4fr; gap: 10px; align-items: center; min-width: 840px; }
 .diag-sum-head { padding: 12px 10px 8px; color: var(--muted-foreground); font-family: 'IBM Plex Mono', monospace; font-size: 9px; text-transform: uppercase; }
 .diag-sum-head span:not(:first-child), .diag-sum-row > span:not(:first-child):not(.diag-avail) { text-align: right; }
 .diag-sum-row { border-top: 1px solid var(--border); padding: 9px 10px; font-size: 11px; color: var(--foreground); font-variant-numeric: tabular-nums; }
@@ -589,7 +589,13 @@ html:not(.dark) .sim-grid-row > div strong { color: #17301f; }
 .diag-sum-total { border-top: 2px solid var(--border); font-weight: 800; }
 .diag-avail { display: flex; align-items: center; gap: 8px; }
 .diag-avail-track { flex: 1; height: 6px; background: var(--muted); border-radius: 2px; overflow: hidden; }
-.diag-avail-track i { display: block; height: 100%; background: var(--green); }
+.diag-avail-track { display: flex; }
+.diag-avail-track i { display: block; height: 100%; }
+.diag-avail-track i.up { background: var(--green); }
+.diag-avail-track i.down { background: var(--red); }
+.diag-avail b.up { color: var(--green); }
+.diag-avail b.down { color: var(--red); }
+.diag-avail b.down.zero { opacity: .4; }
 .diag-avail b { min-width: 46px; text-align: right; font-size: 11px; }
 .diag-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-left: auto; font-size: 10px; color: var(--muted-foreground); }
 .diag-legend span { display: inline-flex; align-items: center; gap: 6px; }
@@ -602,7 +608,10 @@ html:not(.dark) .sim-grid-row > div strong { color: #17301f; }
 .diag-bar-track { display: flex; gap: 2px; height: 16px; background: var(--muted); border-radius: 2px; overflow: hidden; }
 .diag-bar-track i { display: block; min-width: 3px; }
 .diag-list-count { padding: 9px 4px 6px; color: var(--muted-foreground); font-size: 10px; font-family: 'IBM Plex Mono', monospace; }
-.diag-grid-head, .diag-grid-row { display: grid; grid-template-columns: 1.2fr 1fr .9fr 1fr 1.2fr 1.9fr; gap: 10px; align-items: center; min-width: 820px; }
+.diag-grid-head, .diag-grid-row { display: grid; grid-template-columns: 1.2fr 1fr .9fr 1fr 1.2fr 1.9fr 100px; gap: 10px; align-items: center; min-width: 940px; }
+.diag-release-btn { padding: 4px 10px; min-height: 0; font-size: 10px; }
+.diag-adj-count { padding-top: 12px; color: var(--muted-foreground); font-size: 10px; font-family: 'IBM Plex Mono', monospace; }
+.diag-released { margin-top: 6px; }
 .diag-grid-head { padding: 10px 8px 7px; color: var(--muted-foreground); font-family: 'IBM Plex Mono', monospace; font-size: 9px; text-transform: uppercase; border-top: 1px solid var(--border); }
 .diag-grid-row { border-top: 1px solid var(--border); padding: 7px 8px; font-size: 10px; color: var(--muted-foreground); }
 .diag-grid-row > strong { font-size: 11px; color: var(--foreground); }
@@ -2671,6 +2680,16 @@ function summarizeFrota(list) {
 }
 
 const FROTA_CLASSE_TONE = { "Operando": "tone-positive", "Backup": "tone-info", "Manutenção": "tone-warning", "JDI": "tone-neutral", "Inoperante": "tone-warning" };
+const fmtLiberado = (iso) => (iso ? new Date(iso).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" }).replace(",", "") : "—");
+/* Célula "% Disponível": verde = em funcionamento (Operando + Backup), vermelho = parado (negativo). */
+function FrotaAvail({ r }) {
+  const up = r.total ? r.disponivel : 0;
+  const down = r.total ? 1 - r.disponivel : 0;
+  return <span className="diag-avail">
+    <span className="diag-avail-track" role="img" aria-label={`${frotaPct(up)} em funcionamento, ${frotaPct(down)} parado`}><i className="up" style={{ width: `${up * 100}%` }} /><i className="down" style={{ width: `${down * 100}%` }} /></span>
+    <b className="up">{frotaPct(up)}</b><b className={`down ${down > 0 ? "" : "zero"}`}>{down > 0 ? "-" : ""}{frotaPct(down)}</b>
+  </span>;
+}
 const FROTA_CLASSE_ORDER = { "Inoperante": 0, "Manutenção": 1, "JDI": 2, "Backup": 3, "Operando": 4 };
 const FROTA_SCOPES = [{ key: "all", label: "Visão geral" }, { key: "FROTA", label: "Frota (própria)" }, { key: "AGREGADO", label: "Agregado" }];
 
@@ -2712,6 +2731,12 @@ function DiagnosticoVeiculos() {
     setAdjPlaca(""); setAdjMotivo(""); setAdjError(null);
   }
   function removeAdj(key) { const next = { ...adj }; delete next[key]; persistAdj(next); }
+  /* "Liberado": o veículo passa a constar como Operando (por cima da planilha) e guarda a data/hora da liberação. */
+  function liberar(r) {
+    const key = frotaPlateKey(r.placa);
+    const now = new Date().toISOString();
+    persistAdj({ ...adj, [key]: { placa: r.placa, classe: "Operando", motivo: adj[key]?.motivo ?? "", at: adj[key]?.at ?? now, liberadoAt: now, classeAnterior: r.classe } });
+  }
 
   /* Tempo real: ajustes (e nova base) feitos por outra pessoa aparecem aqui sem recarregar. */
   useEffect(() => {
@@ -2782,8 +2807,11 @@ function DiagnosticoVeiculos() {
 
   const effRows = useMemo(() => data.rows.map((r) => { const a = adj[frotaPlateKey(r.placa)]; return a ? { ...r, classe: a.classe, ajuste: a } : r; }), [data, adj]);
   const scoped = useMemo(() => (scope === "all" ? effRows : effRows.filter((r) => r.categoria === scope)), [effRows, scope]);
-  const adjList = useMemo(() => Object.entries(adj).map(([key, a]) => ({ key, ...a, categoria: effRows.find((r) => frotaPlateKey(r.placa) === key)?.categoria ?? "" }))
-    .filter((a) => scope === "all" || a.categoria === scope).sort((a, b) => String(b.at).localeCompare(String(a.at))), [adj, effRows, scope]);
+  /* Todos os veículos em manutenção/inoperante (da planilha + registrados à mão); registros manuais primeiro. */
+  const manutList = useMemo(() => scoped.filter((r) => r.classe === "Manutenção" || r.classe === "Inoperante")
+    .slice().sort((a, b) => (b.ajuste ? 1 : 0) - (a.ajuste ? 1 : 0) || String(b.ajuste?.at ?? "").localeCompare(String(a.ajuste?.at ?? "")) || a.placa.localeCompare(b.placa)), [scoped]);
+  const liberadosList = useMemo(() => scoped.filter((r) => r.ajuste && r.ajuste.classe === "Operando")
+    .slice().sort((a, b) => String(b.ajuste.liberadoAt ?? "").localeCompare(String(a.ajuste.liberadoAt ?? ""))), [scoped]);
   const plateOptions = useMemo(() => scoped.map((r) => r.placa), [scoped]);
   const cmp = useMemo(() => FROTA_SCOPES.slice(1).map((s) => ({ key: s.key, label: s.label, ...summarizeFrota(effRows.filter((r) => r.categoria === s.key)) })), [effRows]);
   const summary = useMemo(() => summarizeFrota(scoped), [scoped]);
@@ -2877,11 +2905,20 @@ function DiagnosticoVeiculos() {
         <button className="add-button" type="submit"><Plus size={14} /> Registrar</button>
       </form>
       {adjError && <div className="import-error client-import-error">{adjError}</div>}
-      {adjList.length > 0 && <div className="diag-adj-list">
-        {adjList.map((a) => <div className="diag-adj-item" key={a.key}>
-          <strong>{a.placa}</strong><span className={`status-pill ${FROTA_CLASSE_TONE[a.classe]}`}>{a.classe}</span>
-          <small>{a.categoria === "FROTA" ? "Frota" : a.categoria === "AGREGADO" ? "Agregado" : a.categoria}{a.motivo ? ` · ${a.motivo}` : ""} · {relativeTime(a.at)}</small>
-          <button type="button" className="secondary-action" onClick={() => removeAdj(a.key)}>Voltou a operar</button>
+      <div className="diag-adj-count">{numberInt.format(manutList.length)} veículo(s) em manutenção / inoperante · clique em "Liberado" quando voltar a operar</div>
+      {manutList.length > 0 && <div className="diag-adj-list">
+        {manutList.map((r) => { const a = r.ajuste; return <div className="diag-adj-item" key={frotaPlateKey(r.placa)}>
+          <strong>{r.placa}</strong><span className={`status-pill ${FROTA_CLASSE_TONE[r.classe]}`}>{r.classe}</span>
+          <small>{r.categoria === "FROTA" ? "Frota" : r.categoria === "AGREGADO" ? "Agregado" : r.categoria}{a ? `${a.motivo ? ` · ${a.motivo}` : " · ajuste manual"} · ${relativeTime(a.at)}` : ` · ${r.status} · ${r.situacao}`}{!r.semMotorista && r.motorista ? ` · ${r.motorista}` : ""}</small>
+          <button type="button" className="secondary-action" onClick={() => liberar(r)}>Liberado</button>
+        </div>; })}
+      </div>}
+      {liberadosList.length > 0 && <div className="diag-adj-list diag-released">
+        <div className="diag-adj-count">Liberados · voltaram a operar</div>
+        {liberadosList.map((r) => <div className="diag-adj-item" key={frotaPlateKey(r.placa)}>
+          <strong>{r.placa}</strong><span className={`status-pill ${FROTA_CLASSE_TONE[r.classe]}`}>{r.classe}</span>
+          <small>{r.categoria === "FROTA" ? "Frota" : r.categoria === "AGREGADO" ? "Agregado" : r.categoria} · Liberado em {fmtLiberado(r.ajuste.liberadoAt)}{r.ajuste.classeAnterior ? ` (estava em ${r.ajuste.classeAnterior.toLowerCase()})` : ""}{r.ajuste.motivo ? ` · ${r.ajuste.motivo}` : ""}</small>
+          <button type="button" className="secondary-action" onClick={() => removeAdj(frotaPlateKey(r.placa))}>Desfazer</button>
         </div>)}
       </div>}
     </section>
@@ -2892,11 +2929,11 @@ function DiagnosticoVeiculos() {
         <div className="diag-sum-head"><span>Categoria / Tipo</span><span>Total</span><span>Operando</span><span>Backup</span><span>Manutenção</span><span>JDI</span><span>Inoperante</span><span>Sem motorista</span><span>% Disponível</span></div>
         {tiposVisiveis.map((r) => <div className="diag-sum-row" key={r.tipo}>
           <strong>{r.tipo}</strong><span>{numberInt.format(r.total)}</span><span>{numberInt.format(r.operando)}</span><span>{numberInt.format(r.backup)}</span><span>{numberInt.format(r.manutencao)}</span><span>{numberInt.format(r.jdi)}</span><span>{numberInt.format(r.inoperante)}</span><span>{numberInt.format(r.semMotorista)}</span>
-          <span className="diag-avail"><span className="diag-avail-track"><i style={{ width: `${Math.round(r.disponivel * 100)}%` }} /></span><b>{frotaPct(r.disponivel)}</b></span>
+          <FrotaAvail r={r} />
         </div>)}
         <div className="diag-sum-row diag-sum-total">
           <strong>TOTAL</strong><span>{numberInt.format(t.total)}</span><span>{numberInt.format(t.operando)}</span><span>{numberInt.format(t.backup)}</span><span>{numberInt.format(t.manutencao)}</span><span>{numberInt.format(t.jdi)}</span><span>{numberInt.format(t.inoperante)}</span><span>{numberInt.format(t.semMotorista)}</span>
-          <span className="diag-avail"><span className="diag-avail-track"><i style={{ width: `${Math.round(t.disponivel * 100)}%` }} /></span><b>{frotaPct(t.disponivel)}</b></span>
+          <FrotaAvail r={t} />
         </div>
       </div>
     </section>
@@ -2944,18 +2981,19 @@ function DiagnosticoVeiculos() {
       </div>
       <div className="diag-list-count">{numberInt.format(listRows.length)} de {numberInt.format(scoped.length)} veículo(s) · problemas primeiro (manutenção, JDI, backup)</div>
       <div className="diag-scroll">
-        <div className="diag-grid-head"><span>Placa</span><span>Tipo</span><span>Categoria</span><span>Classificação</span><span>Status / Situação</span><span>Motorista</span></div>
+        <div className="diag-grid-head"><span>Placa</span><span>Tipo</span><span>Categoria</span><span>Classificação</span><span>Status / Situação</span><span>Motorista</span><span>Ação</span></div>
         {listRows.map((r, i) => <div className="diag-grid-row" key={`${r.placa}-${i}`}>
           <strong>{r.placa}</strong>
           <span className="vehicle-tag"><Truck size={13} /> {r.tipoOriginal || r.tipo}</span>
           <span>{r.categoria === "FROTA" ? "Frota" : r.categoria === "AGREGADO" ? "Agregado" : r.categoria}</span>
           <span><span className={`status-pill ${FROTA_CLASSE_TONE[r.classe]}`}>{r.classe}</span></span>
-          <span>{r.ajuste ? `Ajuste manual${r.ajuste.motivo ? ` · ${r.ajuste.motivo}` : ""}` : `${r.status} · ${r.situacao}`}</span>
+          <span>{r.ajuste ? (r.ajuste.classe === "Operando" ? `Liberado em ${fmtLiberado(r.ajuste.liberadoAt)}` : `Ajuste manual${r.ajuste.motivo ? ` · ${r.ajuste.motivo}` : ""}`) : `${r.status} · ${r.situacao}`}</span>
           <span className="diag-driver">{r.semMotorista ? <><span className="status-pill tone-warning">Sem motorista</span>{r.motorista && <small>{r.motorista}</small>}</> : r.motorista}</span>
+          <span>{(r.classe === "Manutenção" || r.classe === "Inoperante") && <button type="button" className="secondary-action diag-release-btn" onClick={() => liberar(r)}>Liberado</button>}</span>
         </div>)}
         {listRows.length === 0 && <div className="empty-client-state"><Truck size={16} /> Nenhum veículo encontrado para os filtros atuais.</div>}
       </div>
-      <div className="client-footnote"><span>Regras:</span> Disponível = (Operando + Backup) ÷ Total. "Sem motorista" = campo motorista vazio, "MANUTENÇÃO" ou "PENDENTE". Classificação: status MANUTENÇÃO → Manutenção; status JDI → JDI; situação BACKUP → Backup; demais → Operando. Inoperante = placa marcada manualmente no painel (não conta como disponível); "Voltou a operar" remove o ajuste e a classificação volta a seguir a planilha. Fonte: aba Base do Resumo Gerencial da Frota.</div>
+      <div className="client-footnote"><span>Regras:</span> Disponível = (Operando + Backup) ÷ Total. "Sem motorista" = campo motorista vazio, "MANUTENÇÃO" ou "PENDENTE". Classificação: status MANUTENÇÃO → Manutenção; status JDI → JDI; situação BACKUP → Backup; demais → Operando. Inoperante = placa marcada manualmente no painel (não conta como disponível); "Liberado" marca o veículo como Operando (com data e hora da liberação) por cima da planilha; "Desfazer" volta a seguir a planilha. % Disponível: verde = em funcionamento (Operando + Backup) ÷ Total; vermelho = parado (Manutenção + JDI + Inoperante) ÷ Total. Fonte: aba Base do Resumo Gerencial da Frota.</div>
     </section>
   </main>;
 }
