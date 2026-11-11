@@ -623,6 +623,66 @@ html:not(.dark) .sim-grid-row > div strong { color: #17301f; }
 @media (max-width: 760px) { .diag-adj-form { grid-template-columns: 1fr; } .diag-adj-item { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 1080px) { .diag-kpi-grid { grid-template-columns: repeat(4, 1fr); } .diag-attention { grid-template-columns: 1fr; } .diag-bar-row { grid-template-columns: 110px 1fr; } .diag-bar-row small { grid-column: 1 / -1; } }
 @media (max-width: 760px) { .diag-kpi-grid { grid-template-columns: repeat(2, 1fr); } .diag-legend { margin-left: 0; } }
+
+/* ===== Análise Devoluções ===== */
+.dev-scope { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 12px 0 10px; }
+.dev-scope-label, .dev-facet-label { color: var(--muted-foreground); font-family: 'IBM Plex Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: .03em; margin-right: 4px; }
+.dev-chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--border); background: var(--card); color: var(--foreground); padding: 4px 9px; font-size: 10px; font-family: inherit; cursor: pointer; }
+.dev-chip b { font-family: 'IBM Plex Mono', monospace; font-weight: 700; color: var(--muted-foreground); }
+.dev-chip:hover { border-color: var(--green); }
+.dev-chip:focus-visible, .dev-cat:focus-visible, .dev-funnel-row:focus-visible, .dev-th:focus-visible, .dev-expand:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.dev-chip.active { border-color: var(--green); box-shadow: 0 0 0 1px var(--green) inset; }
+.dev-chip-fixed { cursor: default; border-style: dashed; }
+.dev-chip-warn:not(.active) { border-color: var(--red); }
+.dev-link { border: none; background: none; color: var(--muted-foreground); font-family: inherit; font-size: 10px; text-decoration: underline; cursor: pointer; padding: 2px 4px; white-space: nowrap; }
+.dev-link.on { color: var(--green); }
+.dev-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 6px; margin-bottom: 10px; }
+.diag-kpi.dev-bad strong { color: var(--red); }
+.dev-page .client-table-card { margin-bottom: 10px; }
+.dev-facet { display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; border-top: 1px solid var(--border); }
+.dev-facet-label { width: 112px; flex: none; padding-top: 6px; }
+.dev-facet-chips, .dev-active { display: flex; flex-wrap: wrap; gap: 5px; }
+.dev-active { padding-top: 8px; border-top: 1px solid var(--border); }
+.dev-cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 6px; }
+.dev-cat { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; text-align: left; font-family: inherit; cursor: pointer; background: var(--card); color: var(--foreground); border: 1px solid var(--border); padding: 10px 12px; }
+.dev-cat strong { font-size: 12px; }
+.dev-cat span, .dev-cat small { color: var(--muted-foreground); font-size: 10px; font-family: 'IBM Plex Mono', monospace; }
+.dev-cat:hover { border-color: var(--green); }
+.dev-cat.active { border-color: var(--green); box-shadow: 0 0 0 1px var(--green) inset; }
+.dev-cat-bar { display: block; width: 100%; height: 5px; background: var(--muted); border-radius: 2px; overflow: hidden; margin: 4px 0; }
+.dev-cat-bar > i { display: block; height: 100%; background: var(--green); }
+.dev-bad-text { color: var(--red) !important; font-weight: 700; }
+.dev-funnel { display: grid; gap: 2px; }
+.dev-funnel-row { display: grid; grid-template-columns: minmax(190px, 300px) 1fr 64px 110px; gap: 12px; align-items: center; background: none; border: 1px solid transparent; font-family: inherit; color: var(--foreground); cursor: pointer; padding: 5px 8px; text-align: left; font-size: 11px; }
+.dev-funnel-row:hover { border-color: var(--border); }
+.dev-funnel-row.active { border-color: var(--green); }
+.dev-funnel-track { display: block; height: 10px; background: var(--muted); border-radius: 2px; overflow: hidden; }
+.dev-funnel-track > i { display: block; height: 100%; background: var(--green); }
+.dev-funnel-row b { text-align: right; font-variant-numeric: tabular-nums; }
+.dev-funnel-row small { color: var(--muted-foreground); text-align: right; font-size: 10px; }
+.dev-head, .dev-row { display: grid; grid-template-columns: minmax(230px, 2fr) 150px 160px 62px 62px 70px 112px 92px 86px 82px 82px; gap: 10px; align-items: center; min-width: 1240px; }
+.dev-head { padding: 10px 8px 7px; border-top: 1px solid var(--border); }
+.dev-th { background: none; border: none; padding: 0; text-align: left; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 9px; text-transform: uppercase; color: var(--muted-foreground); }
+.dev-th.active { color: var(--foreground); font-weight: 700; }
+.dev-th:nth-child(n+4), .dev-row > span:nth-child(n+4) { text-align: right; }
+.dev-row { border-top: 1px solid var(--border); padding: 6px 8px; font-size: 11px; color: var(--foreground); font-variant-numeric: tabular-nums; }
+.dev-row small { color: var(--muted-foreground); font-size: 9px; }
+.dev-name { display: flex; align-items: center; gap: 6px; min-width: 0; text-align: left !important; }
+.dev-name strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; }
+.dev-expand { flex: none; width: 20px; height: 20px; border: 1px solid var(--border); background: var(--card); color: var(--foreground); font-family: inherit; font-size: 13px; line-height: 1; cursor: pointer; }
+.dev-edit { width: 100%; box-sizing: border-box; padding: 4px 6px; font-size: 10px; font-family: inherit; border: 1px solid var(--border); background: transparent; color: var(--foreground); text-align: left; }
+.dev-edit.empty::placeholder { color: var(--red); opacity: 1; font-style: italic; }
+.dev-total { border-top: 2px solid var(--border); font-weight: 800; }
+.dev-detail { display: grid; grid-template-columns: 1.7fr 1fr; gap: 18px; padding: 10px 12px 14px 34px; background: var(--muted); border-top: 1px solid var(--border); min-width: 1240px; box-sizing: border-box; }
+.dev-detail, .dev-mini-row { color: var(--foreground); }
+.dev-detail-title { display: block; font-size: 10px; text-transform: uppercase; color: var(--muted-foreground); font-family: 'IBM Plex Mono', monospace; margin: 4px 0 6px; }
+.dev-detail-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.dev-mini-head, .dev-mini-row { display: grid; grid-template-columns: minmax(0, 1fr) 48px 48px 100px 60px; gap: 8px; font-size: 10px; padding: 3px 0; }
+.dev-mini-head { color: var(--muted-foreground); border-bottom: 1px solid var(--border); }
+.dev-mini-row > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dev-mini-head > span:nth-child(n+2), .dev-mini-row > span:nth-child(n+2) { text-align: right; }
+@media (max-width: 900px) { .topnav { flex-wrap: wrap; } }
+@media (max-width: 900px) { .dev-facet { flex-direction: column; gap: 2px; } .dev-funnel-row { grid-template-columns: 1fr 60px; } .dev-funnel-track, .dev-funnel-row small { display: none; } .dev-detail { grid-template-columns: 1fr; } }
 `;
 
 
@@ -1267,6 +1327,7 @@ const modules = [
   { label: "Distribuição", icon: Boxes },
   { label: "Recursos - Veículos", icon: Truck, page: "vehicles" },
   { label: "Diagnóstico Veículos", icon: Wrench, page: "diagnostico" },
+  { label: "Análise Devoluções", icon: Repeat, page: "devolucoes" },
   { label: "Monitor de filiais", icon: Warehouse },
 ];
 
@@ -1288,6 +1349,7 @@ function TopBar({ page, setPage }) {
       <button type="button" className={`topnav-link ${page === "clients" ? "active" : ""}`} onClick={() => setPage("clients")}><Building2 size={14} /> Análise por cliente</button>
       <button type="button" className={`topnav-link ${page === "vehicles" ? "active" : ""}`} onClick={() => setPage("vehicles")}><Truck size={14} /> Recursos - Veículos</button>
       <button type="button" className={`topnav-link ${page === "diagnostico" ? "active" : ""}`} onClick={() => setPage("diagnostico")}><Wrench size={14} /> Diagnóstico Veículos</button>
+      <button type="button" className={`topnav-link ${page === "devolucoes" ? "active" : ""}`} onClick={() => setPage("devolucoes")}><Repeat size={14} /> Análise Devoluções</button>
     </nav>
     <div className="topbar-meta"><span className="status-dot" /> Simulação operacional <span className="date-chip">{dateLabel}</span></div>
   </header>;
@@ -2887,6 +2949,583 @@ function DiagnosticoVeiculos() {
 }
 
 
+/* =============================================================================================
+   ANÁLISE DEVOLUÇÕES — base: aba "PBI CS - Devolução" da planilha Analise_PBI_CS_-_Distribuicao.xlsm.
+   Só as colunas A:AP (até "Serie NF") são dados colados do relatório; da AQ em diante a planilha tem
+   fórmulas, que aqui são recalculadas (Dias na filial, Idade da NF, CTe único). O painel lê TODAS as
+   linhas, sem nenhum dos filtros/segmentações da planilha. Grupo = coluna "Grupo Cliente".
+   ============================================================================================= */
+const DEV_HEADER_ALIASES = {
+  filAtual: ["filial atual"], filOrigem: ["filial origem"], cte: ["n cte"], nf: ["n nf"],
+  dtNf: ["dt emissao n f"], emissaoCte: ["emissao cte"], tipoCte: ["tipo cte"],
+  cnpjRem: ["cnpj remetente"], nomeRem: ["nome remetente"], cnpjDest: ["cnpj destinatario"], nomeDest: ["nome destinatario"],
+  prevEntrega: ["previsao entrega"], agendamento: ["agendamento"], statusEntrega: ["status entrega"], cidade: ["cidade destino"],
+  chegadaMac: ["chegada real mac"], statusOcor: ["status ocorrencia"], tipoOcor: ["tipo ocorrencia"],
+  volume: ["total volume"], peso: ["total peso kg"], valor: ["total nota fiscais"], grupo: ["grupo cliente"],
+};
+const DEV_REQUIRED = ["cte", "nf", "grupo", "filAtual", "statusEntrega", "valor", "dtNf"];
+const DEV_COLS = [["filAtual", "s"], ["filOrigem", "s"], ["cte", "s"], ["nf", "s"], ["dtNf", "d"], ["emissaoCte", "d"], ["tipoCte", "s"],
+  ["cnpjRem", "s"], ["nomeRem", "s"], ["cnpjDest", "s"], ["nomeDest", "s"], ["prevEntrega", "d"], ["agendamento", "d"], ["statusEntrega", "s"],
+  ["cidade", "s"], ["chegadaMac", "d"], ["statusOcor", "s"], ["tipoOcor", "s"], ["volume", "n"], ["peso", "n"], ["valor", "n"], ["grupo", "s"]];
+const DEV_CATEGORIES = ["Farma / Saúde", "Eletro / Eletrônicos", "Moda / Calçados", "Consumo / Beleza", "Pet", "Varejo / E-commerce", "Indústria / Casa", "Logística", "Outros"];
+const DEV_CAT_RULES = [
+  ["Farma / Saúde", ["ABBOTT", "ACHE", "APSEN", "ASTRAZENECA", "BIOPAS", "BOEHRINGER", "EUROFARMA", "FAGRON", "FRESENIUS", "GENOMMA", "HYPERA", "LIBBS", "MARJAN", "MEDLEY", "NAZARIA", "NOVARTIS", "OPELLA", "ORGAFARMA", "PROMEFARMA", "RAIA DROGASIL", "SANDOZ", "SANOFI", "SULMEDIC", "SUPERA FARMA", "SUPERMED", "SUPLEY", "BRG SUPLEMENTOS", "TAKEDA", "TRIANGULO DROGARIA"]],
+  ["Eletro / Eletrônicos", ["SEMP TCL", "SAMSUNG", "PANASONIC", "POSITIVO", "HP BRASIL", "CANON", "FUJIFILM", "FUJIOKA", "FAST SHOP", "TAIFF", "LEGRAND", "SIEMENS", "ROBERT BOSCH", "MIRANDA COMPUTACAO"]],
+  ["Moda / Calçados", ["ADIDAS", "ALPARGATAS", "HANESBRANDS", "PETTENATTI", "BLOWTEX"]],
+  ["Consumo / Beleza", ["RECKITT", "LOREAL", "BOTICARIO", "CANTU", "HALEON", "J&J", "FOREVER LISS", "QUESALON", "BRONZEARTE", "HADASSAH", "FABER CASTELL", "TILIBRA"]],
+  ["Pet", ["PETSUPERMARKET"]],
+  ["Varejo / E-commerce", ["AMAZON", "MAGAZINE LUIZA", "LOJAS AMERICANAS", "CASA BRASIL", "ELIZEU MARTINS"]],
+  ["Indústria / Casa", ["DURATEX", "TRAMONTINA", "TARKETT", "STARRETT", "NGK", "DRIV BRASIL", "TEMFER", "ATLAS"]],
+  ["Logística", ["DATA LOGISTICA", "UNILOG", "AUTLOG", "NEW TAKE"]],
+];
+const DEV_FAIXAS = ["No Prazo", "Abaixo de 30 dias", "Risco em até 30 dias", "Risco de 61 a 89 dias", "Acima 90 Dias", "Verificar data", "Sem data emissão"];
+const DEV_STATUS_ENTREGA = ["Vencido", "Vence Hoje", "Vence Amanhã", "Vence em 2 ou Mais Dias"];
+const DEV_SEM_RESP = "Sem responsável";
+const DEV_AG = "AGUARDANDO AGENDAMENTO";
+const DEV_SEM_OCOR = "SEM OCORRÊNCIA";
+
+function devNorm(v) { return String(v ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); }
+function devStr(v) {
+  if (v === null || v === undefined) return "";
+  if (typeof v === "number") return Number.isInteger(v) ? String(v) : String(v);
+  if (v instanceof Date) return "";
+  return String(v).replace(/\s+/g, " ").trim();
+}
+function devDigits(v) {
+  if (v === null || v === undefined || v === "") return "";
+  const d = (typeof v === "number" ? String(Math.round(v)) : String(v)).replace(/\D/g, "");
+  return d && d.length <= 14 ? d.padStart(14, "0") : d;
+}
+function devRoot(cnpj) { return cnpj ? cnpj.slice(0, 8) : ""; }
+function devDefaultCat(grupo) {
+  const g = String(grupo || "").toUpperCase();
+  for (const [cat, keys] of DEV_CAT_RULES) if (keys.some((k) => g.includes(k))) return cat;
+  return "Outros";
+}
+const devPad2 = (n) => String(n).padStart(2, "0");
+function devToDayOffset(v) {
+  if (v === null || v === undefined || v === "") return null;
+  if (v instanceof Date) {
+    if (isNaN(v.getTime())) return null;
+    const d = new Date(v.getTime() + 30000); // folga p/ imprecisão de segundos do SheetJS na meia-noite
+    return isoToDayOffset(`${d.getFullYear()}-${devPad2(d.getMonth() + 1)}-${devPad2(d.getDate())}`);
+  }
+  if (typeof v === "number") {
+    if (v < 20000 || v > 80000) return null;
+    const d = new Date(Math.round((v - 25569) * 86400000) + 30000);
+    return isoToDayOffset(`${d.getUTCFullYear()}-${devPad2(d.getUTCMonth() + 1)}-${devPad2(d.getUTCDate())}`);
+  }
+  const s = String(v).trim();
+  let m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return isoToDayOffset(`${m[1]}-${m[2]}-${m[3]}`);
+  m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) return isoToDayOffset(`${m[3]}-${devPad2(m[2])}-${devPad2(m[1])}`);
+  return null;
+}
+
+/* Lê as linhas da aba (matriz). Acha o cabeçalho sozinho, corta nas colunas após "Serie NF" (fórmulas)
+   e devolve registros compactos. auxRows (opcional) = aba "Auxiliar" para sugerir o responsável. */
+function parseDevolucoes(rows, auxRows) {
+  let h = -1;
+  for (let i = 0; i < Math.min(rows.length, 40); i++) {
+    const norm = (rows[i] || []).map(normalizeHeader);
+    if (norm.includes("n cte") && norm.includes("grupo cliente")) { h = i; break; }
+  }
+  if (h < 0) throw new Error('Não encontrei o cabeçalho do relatório de devoluções (colunas "Nº CTe" e "Grupo Cliente") na aba "PBI CS - Devolução".');
+  const head = rows[h].map(normalizeHeader);
+  let last = head.indexOf("serie nf");
+  if (last < 0) last = Math.min(head.length - 1, 41);
+  const col = {};
+  for (const [key, aliases] of Object.entries(DEV_HEADER_ALIASES)) {
+    const idx = head.findIndex((x, i) => i <= last && aliases.includes(x));
+    if (idx >= 0) col[key] = idx;
+  }
+  const missing = DEV_REQUIRED.filter((k) => col[k] === undefined);
+  if (missing.length) throw new Error(`Colunas obrigatórias não encontradas até a coluna "Serie NF": ${missing.join(", ")}.`);
+  const out = [];
+  for (let i = h + 1; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r) continue;
+    const cte = devStr(r[col.cte]);
+    const nf = devStr(r[col.nf]);
+    if (!cte && !nf) continue;
+    const rec = {};
+    for (const [key, type] of DEV_COLS) {
+      const raw = col[key] === undefined ? "" : r[col[key]];
+      if (type === "d") rec[key] = devToDayOffset(raw);
+      else if (type === "n") rec[key] = numeric(raw);
+      else if (key === "cnpjRem" || key === "cnpjDest") rec[key] = devDigits(raw);
+      else rec[key] = devStr(raw);
+    }
+    rec.grupo = (rec.grupo || "SEM GRUPO").toUpperCase();
+    out.push(rec);
+  }
+  if (!out.length) throw new Error("O relatório não tem linhas de dados abaixo do cabeçalho.");
+  return { rows: out, aux: auxRows ? parseDevAux(auxRows, out) : null };
+}
+
+/* Aba Auxiliar (CNPJ do cliente | Nome do cliente | Responsavel) → sugestão de responsável por Grupo. */
+function parseDevAux(auxRows, recs) {
+  let h = -1;
+  for (let i = 0; i < Math.min(auxRows.length, 10); i++) {
+    const n = (auxRows[i] || []).slice(0, 4).map(normalizeHeader);
+    if (n.includes("cnpj do cliente") && n.includes("responsavel")) { h = i; break; }
+  }
+  if (h < 0) return null;
+  const n = auxRows[h].map(normalizeHeader);
+  const iC = n.indexOf("cnpj do cliente"), iN = n.indexOf("nome do cliente"), iR = n.indexOf("responsavel");
+  const byRoot = new Map(), byName = new Map();
+  for (let i = h + 1; i < auxRows.length; i++) {
+    const r = auxRows[i];
+    if (!r) continue;
+    const resp = devStr(r[iR]);
+    if (!resp) continue;
+    const root = devRoot(devDigits(r[iC]));
+    if (root) byRoot.set(root, resp);
+    const nm = devNorm(r[iN]).trim();
+    if (nm) byName.set(nm, resp);
+  }
+  const perGroup = new Map();
+  for (const r of recs) {
+    if (!perGroup.has(r.grupo)) perGroup.set(r.grupo, { n: 0, counts: new Map() });
+    const g = perGroup.get(r.grupo);
+    g.n++;
+    const resp = byRoot.get(devRoot(r.cnpjDest)) ?? byRoot.get(devRoot(r.cnpjRem));
+    if (resp) g.counts.set(resp, (g.counts.get(resp) || 0) + 1);
+  }
+  const seeds = {};
+  for (const [grupo, g] of perGroup) {
+    const byN = byName.get(devNorm(grupo).trim());
+    if (byN) { seeds[grupo] = byN; continue; }
+    let best = null, bestN = 0;
+    for (const [resp, c] of g.counts) if (c > bestN) { best = resp; bestN = c; }
+    if (best && bestN / g.n >= 0.5) seeds[grupo] = best;
+  }
+  return seeds;
+}
+
+/* Compacta (dicionário por coluna) para caber no localStorage e na nuvem. */
+function devPack(rows) {
+  const dicts = {}, idx = {};
+  DEV_COLS.forEach(([k, t]) => { if (t === "s") { dicts[k] = []; idx[k] = new Map(); } });
+  const packed = rows.map((r) => DEV_COLS.map(([k, t]) => {
+    const v = r[k];
+    if (t !== "s") return v;
+    if (!v) return -1;
+    let i = idx[k].get(v);
+    if (i === undefined) { i = dicts[k].length; dicts[k].push(v); idx[k].set(v, i); }
+    return i;
+  }));
+  return { v: 1, cols: DEV_COLS.map((c) => c[0]), dicts, rows: packed };
+}
+function devUnpack(p) {
+  if (!p || !Array.isArray(p.rows)) return [];
+  const types = Object.fromEntries(DEV_COLS);
+  return p.rows.map((arr) => {
+    const r = {};
+    p.cols.forEach((k, i) => { r[k] = types[k] === "s" ? (arr[i] >= 0 ? p.dicts[k][arr[i]] : "") : arr[i]; });
+    return r;
+  });
+}
+
+function devFaixaNf(dtOff, today) {
+  if (dtOff === null || dtOff === undefined) return "Sem data emissão";
+  const d = today - dtOff;
+  if (d < 0) return "Verificar data";
+  if (d <= 7) return "No Prazo";
+  if (d < 30) return "Abaixo de 30 dias";
+  if (d <= 60) return "Risco em até 30 dias";
+  if (d < 90) return "Risco de 61 a 89 dias";
+  return "Acima 90 Dias";
+}
+/* Enriquece com o que a planilha calcula nas colunas AQ:BA (recalculado a cada dia, como o TODAY()). */
+function devEnrich(rows, today) {
+  return rows.map((r) => {
+    const dias = r.chegadaMac === null || r.chegadaMac === undefined ? null : Math.max(0, today - r.chegadaMac);
+    return {
+      ...r,
+      ck: `${r.filOrigem}-${r.cte}`,
+      dias,
+      faixa: devFaixaNf(r.dtNf, today),
+      ocorLabel: r.tipoOcor || DEV_SEM_OCOR,
+      hay: devNorm(`${r.grupo} ${r.nomeRem} ${r.nomeDest} ${r.cnpjRem} ${r.cnpjDest} ${r.nf} ${r.cte} ${r.cidade}`),
+    };
+  });
+}
+
+function devSummarize(list) {
+  const s = { nf: list.length, vol: 0, valor: 0, venc: 0, hoje: 0, amanha: 0, ag: 0, a90: 0, diasSum: 0, diasN: 0, aberta: 0 };
+  const ctes = new Set();
+  for (const r of list) {
+    ctes.add(r.ck);
+    s.vol += r.volume || 0;
+    s.valor += r.valor || 0;
+    if (r.statusEntrega === "Vencido") s.venc++;
+    else if (r.statusEntrega === "Vence Hoje") s.hoje++;
+    else if (r.statusEntrega === "Vence Amanhã") s.amanha++;
+    if (r.ocorLabel === DEV_AG) s.ag++;
+    if (r.faixa === "Acima 90 Dias") s.a90++;
+    if (r.statusOcor === "OCORRÊNCIA EM ABERTO") s.aberta++;
+    if (r.dias !== null) { s.diasSum += r.dias; s.diasN++; }
+  }
+  s.cte = ctes.size;
+  s.dias = s.diasN ? s.diasSum / s.diasN : null;
+  return s;
+}
+const DEV_FACETS = [
+  { key: "cat", label: "Categoria", get: (r) => r.cat },
+  { key: "resp", label: "Responsável", get: (r) => r.respLabel },
+  { key: "tipoCte", label: "Tipo de CTe", get: (r) => r.tipoCte || "—" },
+  { key: "statusEntrega", label: "Status de entrega", get: (r) => r.statusEntrega || "—", order: DEV_STATUS_ENTREGA },
+  { key: "faixa", label: "Idade da NF", get: (r) => r.faixa, order: DEV_FAIXAS },
+  { key: "ocor", label: "Ocorrência", get: (r) => r.ocorLabel },
+  { key: "grupo", label: "Grupo", get: (r) => r.grupo },
+];
+const DEV_EMPTY_FILTER = () => ({ cat: [], resp: [], tipoCte: [], statusEntrega: [], faixa: [], ocor: [], grupo: [] });
+function devFilter(rows, f, q, skip) {
+  const active = DEV_FACETS.filter((fc) => fc.key !== skip && f[fc.key].length);
+  const needle = q ? devNorm(q).trim() : "";
+  if (!active.length && !needle) return rows;
+  return rows.filter((r) => {
+    for (const fc of active) if (!f[fc.key].includes(fc.get(r))) return false;
+    return !needle || r.hay.includes(needle);
+  });
+}
+function devCount(rows, get) {
+  const m = new Map();
+  for (const r of rows) { const k = get(r); m.set(k, (m.get(k) || 0) + 1); }
+  return m;
+}
+/* Remetentes de um grupo consolidados pela RAIZ do CNPJ (8 primeiros dígitos = mesma empresa/matriz). */
+function devByRemetenteRoot(list) {
+  const m = new Map();
+  for (const r of list) {
+    const key = devRoot(r.cnpjRem) || `nome:${r.nomeRem}`;
+    if (!m.has(key)) m.set(key, { key, names: new Map(), rows: [] });
+    const e = m.get(key);
+    e.rows.push(r);
+    e.names.set(r.nomeRem, (e.names.get(r.nomeRem) || 0) + 1);
+  }
+  return [...m.values()].map((e) => {
+    let name = "", n = 0;
+    for (const [nm, c] of e.names) if (c > n) { name = nm; n = c; }
+    return { key: e.key, name: name || "(sem nome)", filiais: new Set(e.rows.map((r) => r.cnpjRem)).size, ...devSummarize(e.rows) };
+  }).sort((a, b) => b.nf - a.nf);
+}
+
+const devMoney0 = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+const devPct = (a, b) => (b ? `${Math.round((a / b) * 100)}%` : "—");
+const devSame = (a, b) => a.length === b.length && b.every((x) => a.includes(x));
+function devResp(cfg, aux, grupo) { const c = cfg[grupo]; return c && c.resp !== undefined ? c.resp : (aux && aux[grupo]) || ""; }
+function devCat(cfg, grupo) { return (cfg[grupo] && cfg[grupo].cat) || devDefaultCat(grupo); }
+
+/* Campo de texto que só grava ao sair do campo / Enter (Esc cancela) — usado no responsável. */
+function DevEdit({ value, placeholder, onCommit, listId }) {
+  const [draft, setDraft] = useState(value);
+  const cancel = useRef(false);
+  useEffect(() => { setDraft(value); }, [value]);
+  function commit() {
+    if (cancel.current) { cancel.current = false; setDraft(value); return; }
+    const v = draft.trim();
+    if (v !== value) onCommit(v); else setDraft(value);
+  }
+  return <input className={`dev-edit ${value ? "" : "empty"}`} list={listId} value={draft} placeholder={placeholder} aria-label={placeholder}
+    onChange={(e) => setDraft(e.target.value)} onBlur={commit}
+    onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); else if (e.key === "Escape") { cancel.current = true; e.currentTarget.blur(); } }} />;
+}
+
+function AnaliseDevolucoes() {
+  const todayOff = useMemo(() => { const d = new Date(); return isoToDayOffset(`${d.getFullYear()}-${devPad2(d.getMonth() + 1)}-${devPad2(d.getDate())}`); }, []);
+  const [data, setData] = useState(() => {
+    const s = lsLoad("devolucoes");
+    if (s && s.data && s.data.pack) return { rows: devUnpack(s.data.pack), aux: s.data.aux || {}, label: s.label, updatedAt: s.updatedAt };
+    return { rows: [], aux: {}, label: "Nenhum relatório de devoluções carregado", updatedAt: null };
+  });
+  const [cfg, setCfg] = useState(() => lsLoad("devol_grupos")?.items ?? {});
+  const [f, setF] = useState(DEV_EMPTY_FILTER);
+  const [q, setQ] = useState("");
+  const [extra, setExtra] = useState([]);
+  const [expanded, setExpanded] = useState(() => new Set());
+  const [sort, setSort] = useState({ key: "nf", dir: "desc" });
+  const [importError, setImportError] = useState(null);
+  const [importing, setImporting] = useState(false);
+  const fileRef = useRef(null);
+
+  function applyRemoteBase(row) {
+    if (!row || !row.data || !row.data.pack) return;
+    const label = row.label ?? "Devoluções (da nuvem)";
+    setData({ rows: devUnpack(row.data.pack), aux: row.data.aux || {}, label, updatedAt: row.updated_at });
+    lsSave("devolucoes", { data: row.data, label, updatedAt: row.updated_at });
+  }
+  /* Abre a página já com a versão mais nova (pode ter sido importada por outra pessoa) e acompanha em tempo real. */
+  useEffect(() => {
+    let cancelled = false;
+    cloudLoad("devolucoes").then((row) => {
+      if (cancelled || !row || !row.data || !row.data.pack) return;
+      const localAt = lsLoad("devolucoes")?.updatedAt;
+      if (!localAt || new Date(row.updated_at) > new Date(localAt)) applyRemoteBase(row);
+    });
+    cloudLoad("devol_grupos").then((row) => {
+      if (cancelled || !row || !row.data || !row.data.items) return;
+      const localAt = lsLoad("devol_grupos")?.updatedAt;
+      if (!localAt || new Date(row.updated_at) > new Date(localAt)) { setCfg(row.data.items); lsSave("devol_grupos", { items: row.data.items, updatedAt: row.updated_at }); }
+    });
+    if (!supabaseClient) return () => { cancelled = true; };
+    const channel = supabaseClient.channel("painel_reports_sync_devolucoes").on(
+      "postgres_changes", { event: "*", schema: "public", table: "painel_reports" },
+      (payload) => {
+        const row = payload.new;
+        if (!row) return;
+        if (row.id === "devol_grupos" && row.data && row.data.items) { setCfg(row.data.items); lsSave("devol_grupos", { items: row.data.items, updatedAt: row.updated_at }); }
+        else if (row.id === "devolucoes") cloudLoad("devolucoes").then(applyRemoteBase); // base grande: busca de novo em vez de confiar no payload do realtime
+      }
+    ).subscribe();
+    return () => { cancelled = true; supabaseClient.removeChannel(channel); };
+  }, []);
+
+  async function handleImport(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setImportError(null);
+    setImporting(true);
+    try {
+      const buf = await file.arrayBuffer();
+      const names = XLSX.read(buf, { type: "array", bookSheets: true }).SheetNames;
+      const main = names.find((n) => normalizeHeader(n) === "pbi cs devolucao")
+        ?? names.find((n) => { const x = normalizeHeader(n); return x.includes("pbi cs") && x.includes("devolu"); })
+        ?? names[0];
+      const auxName = names.find((n) => normalizeHeader(n) === "auxiliar");
+      const wb = XLSX.read(buf, { type: "array", cellDates: true, sheets: [main, auxName].filter(Boolean) });
+      const toRows = (n) => XLSX.utils.sheet_to_json(wb.Sheets[n], { header: 1, defval: "", raw: true });
+      const parsed = parseDevolucoes(toRows(main), auxName ? toRows(auxName) : null);
+      const aux = parsed.aux ?? data.aux ?? {};
+      const label = `${file.name} · ${numberInt.format(parsed.rows.length)} NF(s) · ${numberInt.format(new Set(parsed.rows.map((r) => `${r.filOrigem}-${r.cte}`)).size)} CTe(s)`;
+      const updatedAt = new Date().toISOString();
+      const payload = { pack: devPack(parsed.rows), aux };
+      setData({ rows: parsed.rows, aux, label, updatedAt });
+      lsSave("devolucoes", { data: payload, label, updatedAt });
+      cloudSave("devolucoes", payload, label);
+    } catch (error) {
+      setImportError(error instanceof Error ? error.message : "Não foi possível ler a planilha de devoluções.");
+    } finally { setImporting(false); event.target.value = ""; }
+  }
+
+  /* Responsável / categoria por grupo: editável aqui, vale por cima da sugestão da aba Auxiliar e é compartilhado na nuvem. */
+  async function persistCfg(next, changedGroup) {
+    setCfg(next);
+    const updatedAt = new Date().toISOString();
+    lsSave("devol_grupos", { items: next, updatedAt });
+    const row = await cloudLoad("devol_grupos"); // mescla com o que outra pessoa gravou nesse meio-tempo
+    const remote = (row && row.data && row.data.items) || {};
+    const merged = { ...remote };
+    for (const [g, v] of Object.entries(next)) if (!remote[g] || g === changedGroup || String(v.at || "") >= String(remote[g].at || "")) merged[g] = v;
+    cloudSave("devol_grupos", { items: merged }, `${Object.keys(merged).length} grupo(s) com responsável/categoria definidos`);
+  }
+  function setGroupCfg(grupo, patch) {
+    persistCfg({ ...cfg, [grupo]: { ...(cfg[grupo] || {}), ...patch, at: new Date().toISOString() } }, grupo);
+  }
+
+  const base = useMemo(() => devEnrich(data.rows, todayOff), [data.rows, todayOff]);
+  const view = useMemo(() => base.map((r) => { const resp = devResp(cfg, data.aux, r.grupo); return { ...r, cat: devCat(cfg, r.grupo), resp, respLabel: resp || DEV_SEM_RESP }; }), [base, cfg, data.aux]);
+  const filialCounts = useMemo(() => [...devCount(view, (r) => r.filAtual || "—").entries()].sort((a, b) => b[1] - a[1]), [view]);
+  const scoped = useMemo(() => view.filter((r) => r.filAtual === "GRU" || extra.includes(r.filAtual)), [view, extra]);
+  const rows = useMemo(() => devFilter(scoped, f, q, null), [scoped, f, q]);
+  const tot = useMemo(() => devSummarize(rows), [rows]);
+
+  const facetOptions = useMemo(() => {
+    const out = {};
+    for (const fc of DEV_FACETS) {
+      if (fc.key === "ocor" || fc.key === "grupo") continue;
+      const counts = devCount(devFilter(scoped, f, q, fc.key), fc.get);
+      f[fc.key].forEach((v) => { if (!counts.has(v)) counts.set(v, 0); });
+      let list = [...counts.entries()];
+      if (fc.order) list.sort((a, b) => (fc.order.indexOf(a[0]) + 1 || 99) - (fc.order.indexOf(b[0]) + 1 || 99));
+      else if (fc.key === "cat") list.sort((a, b) => (DEV_CATEGORIES.indexOf(a[0]) + 1 || 99) - (DEV_CATEGORIES.indexOf(b[0]) + 1 || 99));
+      else if (fc.key === "resp") list.sort((a, b) => (a[0] === DEV_SEM_RESP) - (b[0] === DEV_SEM_RESP) || b[1] - a[1]);
+      else list.sort((a, b) => b[1] - a[1]);
+      out[fc.key] = list;
+    }
+    return out;
+  }, [scoped, f, q]);
+
+  const catCards = useMemo(() => {
+    const catRows = devFilter(scoped, f, q, "cat");
+    const m = new Map();
+    for (const r of catRows) { if (!m.has(r.cat)) m.set(r.cat, []); m.get(r.cat).push(r); }
+    f.cat.forEach((c) => { if (!m.has(c)) m.set(c, []); });
+    return [...m.entries()].map(([cat, list]) => ({ cat, grupos: new Set(list.map((r) => r.grupo)).size, ...devSummarize(list) }))
+      .sort((a, b) => (DEV_CATEGORIES.indexOf(a.cat) + 1 || 99) - (DEV_CATEGORIES.indexOf(b.cat) + 1 || 99));
+  }, [scoped, f, q]);
+
+  const ocorFunnel = useMemo(() => {
+    const ocorRows = devFilter(scoped, f, q, "ocor");
+    const m = new Map();
+    for (const r of ocorRows) { if (!m.has(r.ocorLabel)) m.set(r.ocorLabel, { nf: 0, valor: 0 }); const e = m.get(r.ocorLabel); e.nf++; e.valor += r.valor || 0; }
+    f.ocor.forEach((o) => { if (!m.has(o)) m.set(o, { nf: 0, valor: 0 }); });
+    return [...m.entries()].map(([label, e]) => ({ label, ...e })).sort((a, b) => b.nf - a.nf);
+  }, [scoped, f, q]);
+
+  const groups = useMemo(() => {
+    const m = new Map();
+    for (const r of rows) { if (!m.has(r.grupo)) m.set(r.grupo, []); m.get(r.grupo).push(r); }
+    return [...m.entries()].map(([grupo, list]) => ({ grupo, list, cat: list[0].cat, resp: list[0].resp, ...devSummarize(list) }));
+  }, [rows]);
+  const sortedGroups = useMemo(() => {
+    const dir = sort.dir === "asc" ? 1 : -1;
+    const val = (g) => sort.key === "grupo" ? g.grupo : sort.key === "cat" ? g.cat : sort.key === "resp" ? (g.resp || "~") : sort.key === "pctVenc" ? (g.nf ? g.venc / g.nf : 0) : (g[sort.key] ?? -1);
+    return [...groups].sort((a, b) => { const x = val(a), y = val(b); const c = typeof x === "string" ? x.localeCompare(y, "pt-BR") : x - y; return c * dir || b.nf - a.nf; });
+  }, [groups, sort]);
+  const respSuggestions = useMemo(() => [...new Set([...Object.values(data.aux || {}), ...Object.values(cfg).map((c) => c.resp).filter(Boolean)])].sort((a, b) => a.localeCompare(b, "pt-BR")), [data.aux, cfg]);
+  const semRespGrupos = useMemo(() => new Set(scoped.filter((r) => !r.resp).map((r) => r.grupo)).size, [scoped]);
+
+  function toggleFacet(key, value) { setF((p) => ({ ...p, [key]: p[key].includes(value) ? p[key].filter((x) => x !== value) : [...p[key], value] })); }
+  function setFacet(key, values) { setF((p) => ({ ...p, [key]: devSame(p[key], values) ? [] : values })); }
+  function toggleSort(key) { setSort((p) => p.key === key ? { key, dir: p.dir === "asc" ? "desc" : "asc" } : { key, dir: key === "grupo" || key === "cat" || key === "resp" ? "asc" : "desc" }); }
+  function toggleExpanded(g) { setExpanded((p) => { const n = new Set(p); if (n.has(g)) n.delete(g); else n.add(g); return n; }); }
+  function clearAll() { setF(DEV_EMPTY_FILTER()); setQ(""); }
+  const activeChips = DEV_FACETS.flatMap((fc) => f[fc.key].map((v) => ({ key: fc.key, label: fc.label, value: v })));
+
+  function exportRows() {
+    const header = ["Grupo", "Categoria", "Responsável", "Filial atual", "Tipo CTe", "Nº CTe", "Nº NF", "Dt. emissão NF", "Idade da NF", "Dias na filial", "Status entrega", "Previsão entrega", "Ocorrência", "Remetente", "CNPJ remetente", "Cidade destino", "Volumes", "Peso (kg)", "Valor NF"];
+    const iso = (o) => (o === null || o === undefined ? "" : formatDatePtBR(dayOffsetToISO(o)));
+    const body = rows.map((r) => [r.grupo, r.cat, r.resp || DEV_SEM_RESP, r.filAtual, r.tipoCte, r.cte, r.nf, iso(r.dtNf), r.faixa, r.dias ?? "", r.statusEntrega, iso(r.prevEntrega), r.ocorLabel, r.nomeRem, r.cnpjRem, r.cidade, r.volume, r.peso, r.valor]);
+    const ws = XLSX.utils.aoa_to_sheet([header, ...body]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Devoluções");
+    const d = new Date();
+    XLSX.writeFile(wb, `Devolucoes_filtradas_${d.getFullYear()}-${devPad2(d.getMonth() + 1)}-${devPad2(d.getDate())}.xlsx`);
+  }
+
+  const hasData = data.rows.length > 0;
+  const kpis = [
+    { label: "CTes únicos", value: numberInt.format(tot.cte), sub: `${numberInt.format(tot.nf)} NF(s)` },
+    { label: "Volumes", value: numberInt.format(tot.vol), sub: "total de volumes" },
+    { label: "Valor das NFs", value: devMoney0.format(tot.valor), sub: "soma Total Nota Fiscais" },
+    { label: "Vencidas", value: numberInt.format(tot.venc), sub: `${devPct(tot.venc, tot.nf)} das NFs`, onClick: () => setFacet("statusEntrega", ["Vencido"]), active: devSame(f.statusEntrega, ["Vencido"]), tone: "bad" },
+    { label: "Vencem hoje / amanhã", value: numberInt.format(tot.hoje + tot.amanha), sub: `${numberInt.format(tot.hoje)} hoje · ${numberInt.format(tot.amanha)} amanhã`, onClick: () => setFacet("statusEntrega", ["Vence Hoje", "Vence Amanhã"]), active: devSame(f.statusEntrega, ["Vence Hoje", "Vence Amanhã"]) },
+    { label: "Aguardando agendamento", value: numberInt.format(tot.ag), sub: `${devPct(tot.ag, tot.nf)} das NFs`, onClick: () => setFacet("ocor", [DEV_AG]), active: devSame(f.ocor, [DEV_AG]), tone: "bad" },
+    { label: "NF acima de 90 dias", value: numberInt.format(tot.a90), sub: `${devPct(tot.a90, tot.nf)} das NFs`, onClick: () => setFacet("faixa", ["Acima 90 Dias"]), active: devSame(f.faixa, ["Acima 90 Dias"]), tone: "bad" },
+    { label: "Dias médios na filial", value: tot.dias === null ? "—" : number.format(tot.dias), sub: "desde a chegada em GRU/filial" },
+    { label: "Sem responsável", value: numberInt.format(semRespGrupos), sub: "grupo(s) a definir", onClick: () => setFacet("resp", [DEV_SEM_RESP]), active: devSame(f.resp, [DEV_SEM_RESP]), tone: semRespGrupos ? "bad" : "" },
+  ];
+  const maxOcor = ocorFunnel.reduce((m, o) => Math.max(m, o.nf), 1);
+  const maxCatValor = catCards.reduce((m, c) => Math.max(m, c.nf), 1);
+  const cols = [["grupo", "Grupo"], ["cat", "Categoria"], ["resp", "Responsável"], ["cte", "CTes"], ["nf", "NFs"], ["vol", "Volumes"], ["valor", "Valor NF"], ["pctVenc", "Vencidas"], ["ag", "Aguard. agend."], ["a90", "NF +90 dias"], ["dias", "Dias na filial"]];
+
+  return <main className="client-page diag-page dev-page">
+    <input ref={fileRef} className="hidden-file-input" type="file" accept=".xlsm,.xlsx,.xls,.csv" onChange={handleImport} />
+    <div className="client-page-heading">
+      <div>
+        <span className="section-kicker">08 / ANÁLISE DEVOLUÇÕES</span>
+        <h2>Devoluções por grupo de cliente</h2>
+        <p>Base da aba "PBI CS - Devolução" (colunas A:AP). Suba a planilha atualizada e o painel recalcula tudo — sem filtros prévios, visão geral. GRU fixa; as demais filiais são opcionais.</p>
+      </div>
+      <div className="client-source"><Database size={15} /> {data.label}{data.updatedAt && <small>{relativeTime(data.updatedAt)}</small>}</div>
+    </div>
+
+    <div className="client-toolbar import-toolbar">
+      <button className="secondary-action" type="button" disabled={importing} onClick={() => fileRef.current?.click()}><UploadCloud size={15} /> {importing ? "Lendo planilha…" : "Atualizar relatório de devoluções"}</button>
+      {hasData && <button className="secondary-action" type="button" onClick={exportRows}><FileDown size={15} /> Exportar lista filtrada ({numberInt.format(rows.length)})</button>}
+      {importError && <div className="import-error client-import-error">{importError}</div>}
+    </div>
+
+    {!hasData ? <section className="client-table-card"><div className="empty-client-state"><Repeat size={16} /> Cole o relatório na aba "PBI CS - Devolução" da planilha e use o botão acima para subir o arquivo (.xlsm / .xlsx). O painel lê só até a coluna "Serie NF".</div></section> : <>
+
+    <div className="dev-scope" role="group" aria-label="Filiais">
+      <span className="dev-scope-label">Filial atual</span>
+      <span className="dev-chip dev-chip-fixed" title="GRU é sempre considerada">GRU <b>{numberInt.format(filialCounts.find((x) => x[0] === "GRU")?.[1] ?? 0)}</b> · fixa</span>
+      {filialCounts.filter((x) => x[0] !== "GRU").map(([fil, n]) => <button key={fil} type="button" aria-pressed={extra.includes(fil)} className={`dev-chip ${extra.includes(fil) ? "active" : ""}`} onClick={() => setExtra((p) => p.includes(fil) ? p.filter((x) => x !== fil) : [...p, fil])}>{fil} <b>{numberInt.format(n)}</b></button>)}
+      {filialCounts.length > 1 && <button type="button" className="dev-link" onClick={() => setExtra(extra.length ? [] : filialCounts.filter((x) => x[0] !== "GRU").map((x) => x[0]))}>{extra.length ? "Só GRU" : "Incluir todas as filiais"}</button>}
+    </div>
+
+    <div className="dev-kpi-grid">
+      {kpis.map((k) => k.onClick
+        ? <button key={k.label} type="button" className={`diag-kpi ${k.active ? "active" : ""} ${k.tone === "bad" ? "dev-bad" : ""}`} aria-pressed={!!k.active} onClick={k.onClick}><span>{k.label}</span><strong>{k.value}</strong><small>{k.sub}</small></button>
+        : <div key={k.label} className="diag-kpi static"><span>{k.label}</span><strong>{k.value}</strong><small>{k.sub}</small></div>)}
+    </div>
+
+    <section className="client-table-card dev-filters">
+      <div className="client-toolbar">
+        <div className="client-search"><Search size={16} /><input aria-label="Pesquisar grupo, remetente, destinatário, NF, CTe, CNPJ ou cidade" placeholder="Pesquisar grupo, remetente, NF, CTe, CNPJ ou cidade" value={q} onChange={(e) => setQ(e.target.value)} /></div>
+        {(activeChips.length > 0 || q) && <div className="client-filters"><button type="button" onClick={clearAll}>Limpar tudo</button></div>}
+      </div>
+      {["resp", "tipoCte", "statusEntrega", "faixa"].map((key) => { const fc = DEV_FACETS.find((x) => x.key === key); return <div className="dev-facet" key={key}>
+        <span className="dev-facet-label">{fc.label}</span>
+        <div className="dev-facet-chips">{facetOptions[key].map(([val, n]) => <button key={val} type="button" aria-pressed={f[key].includes(val)} className={`dev-chip ${f[key].includes(val) ? "active" : ""} ${val === DEV_SEM_RESP ? "dev-chip-warn" : ""}`} onClick={() => toggleFacet(key, val)}>{val} <b>{numberInt.format(n)}</b></button>)}</div>
+      </div>; })}
+      {activeChips.length > 0 && <div className="dev-active">{activeChips.map((c) => <button key={`${c.key}:${c.value}`} type="button" className="dev-chip active" title="Remover filtro" onClick={() => toggleFacet(c.key, c.value)}>{c.label}: {c.value} ×</button>)}</div>}
+    </section>
+
+    <section className="client-table-card">
+      <div className="client-toolbar"><div><strong>Categorias de cliente</strong><small>clique para filtrar tudo por categoria · a categoria de cada grupo pode ser ajustada na tabela abaixo</small></div></div>
+      <div className="dev-cat-grid">
+        {catCards.map((c) => <button key={c.cat} type="button" aria-pressed={f.cat.includes(c.cat)} className={`dev-cat ${f.cat.includes(c.cat) ? "active" : ""}`} onClick={() => toggleFacet("cat", c.cat)}>
+          <strong>{c.cat}</strong>
+          <span>{numberInt.format(c.grupos)} grupo(s) · {numberInt.format(c.cte)} CTe(s) · {numberInt.format(c.nf)} NF(s)</span>
+          <span>{devMoney0.format(c.valor)}</span>
+          <i className="dev-cat-bar"><i style={{ width: `${Math.max(3, Math.round((c.nf / maxCatValor) * 100))}%` }} /></i>
+          <small className={c.nf && c.venc / c.nf > 0.5 ? "dev-bad-text" : ""}>{devPct(c.venc, c.nf)} vencidas · {devPct(c.ag, c.nf)} aguard. agend.</small>
+        </button>)}
+        {catCards.length === 0 && <div className="empty-client-state">Nenhuma categoria para os filtros atuais.</div>}
+      </div>
+    </section>
+
+    <section className="client-table-card">
+      <div className="client-toolbar"><div><strong>Funil de ocorrências</strong><small>NFs por tipo de ocorrência · clique para filtrar</small></div></div>
+      <div className="dev-funnel">
+        {ocorFunnel.map((o) => <button key={o.label} type="button" aria-pressed={f.ocor.includes(o.label)} className={`dev-funnel-row ${f.ocor.includes(o.label) ? "active" : ""}`} onClick={() => toggleFacet("ocor", o.label)}>
+          <span className="dev-funnel-name">{o.label}</span>
+          <span className="dev-funnel-track"><i style={{ width: `${Math.max(2, Math.round((o.nf / maxOcor) * 100))}%` }} /></span>
+          <b>{numberInt.format(o.nf)}</b><small>{devMoney0.format(o.valor)}</small>
+        </button>)}
+      </div>
+    </section>
+
+    <section className="client-table-card">
+      <div className="client-toolbar"><div><strong>Grupos de cliente</strong><small>{numberInt.format(groups.length)} grupo(s) · Grupo Cliente da planilha · expanda para ver remetentes (consolidados pela raiz do CNPJ), ocorrências e cidades · responsável e categoria são editáveis</small></div></div>
+      <datalist id="dev-resp-list">{respSuggestions.map((r) => <option key={r} value={r} />)}</datalist>
+      <div className="diag-scroll">
+        <div className="dev-head">{cols.map(([key, label]) => <button key={key} type="button" className={`dev-th ${sort.key === key ? "active" : ""}`} onClick={() => toggleSort(key)}>{label}{sort.key === key ? (sort.dir === "asc" ? " ▲" : " ▼") : ""}</button>)}</div>
+        {sortedGroups.map((g) => { const open = expanded.has(g.grupo); const filtered = f.grupo.includes(g.grupo); return <div key={g.grupo} className="dev-group">
+          <div className="dev-row">
+            <span className="dev-name"><button type="button" className="dev-expand" aria-expanded={open} aria-label={`${open ? "Recolher" : "Expandir"} ${g.grupo}`} onClick={() => toggleExpanded(g.grupo)}>{open ? "−" : "+"}</button><strong title={g.grupo}>{g.grupo}</strong><button type="button" className={`dev-link ${filtered ? "on" : ""}`} onClick={() => toggleFacet("grupo", g.grupo)} title="Filtrar só este grupo">{filtered ? "✓ filtrado" : "filtrar"}</button></span>
+            <select className="dev-edit" aria-label={`Categoria de ${g.grupo}`} value={g.cat} onChange={(e) => setGroupCfg(g.grupo, { cat: e.target.value })}>{DEV_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}</select>
+            <DevEdit value={g.resp} placeholder={DEV_SEM_RESP} listId="dev-resp-list" onCommit={(v) => setGroupCfg(g.grupo, { resp: v })} />
+            <span>{numberInt.format(g.cte)}</span><span>{numberInt.format(g.nf)}</span><span>{numberInt.format(g.vol)}</span><span>{devMoney0.format(g.valor)}</span>
+            <span className={g.nf && g.venc / g.nf > 0.5 ? "dev-bad-text" : ""}>{numberInt.format(g.venc)} <small>{devPct(g.venc, g.nf)}</small></span>
+            <span>{numberInt.format(g.ag)}</span><span className={g.a90 ? "dev-bad-text" : ""}>{numberInt.format(g.a90)}</span><span>{g.dias === null ? "—" : number.format(g.dias)}</span>
+          </div>
+          {open && <GrupoDetalheDevolucao list={g.list} />}
+        </div>; })}
+        {sortedGroups.length === 0 && <div className="empty-client-state"><Repeat size={16} /> Nenhuma devolução encontrada para os filtros atuais.</div>}
+        {sortedGroups.length > 0 && <div className="dev-row dev-total"><strong>TOTAL</strong><span /><span /><span>{numberInt.format(tot.cte)}</span><span>{numberInt.format(tot.nf)}</span><span>{numberInt.format(tot.vol)}</span><span>{devMoney0.format(tot.valor)}</span><span>{numberInt.format(tot.venc)} <small>{devPct(tot.venc, tot.nf)}</small></span><span>{numberInt.format(tot.ag)}</span><span>{numberInt.format(tot.a90)}</span><span>{tot.dias === null ? "—" : number.format(tot.dias)}</span></div>}
+      </div>
+      <div className="client-footnote"><span>Regras:</span> CTes únicos = Filial origem + Nº CTe distintos (equivale à "Qtde CTe" da planilha); vencidas, aguardando agendamento e +90 dias contam NFs. Idade da NF e Dias na filial (hoje − Chegada Real Mac) são recalculados todo dia, como as fórmulas AQ:BA. "Sem responsável" = grupo ainda sem focal; a sugestão inicial vem da aba Auxiliar (CNPJ/nome) e o que você digitar aqui prevalece e fica salvo para todos.</div>
+    </section>
+    </>}
+  </main>;
+}
+
+function GrupoDetalheDevolucao({ list }) {
+  const rem = useMemo(() => devByRemetenteRoot(list).slice(0, 12), [list]);
+  const ocor = useMemo(() => [...devCount(list, (r) => r.ocorLabel).entries()].sort((a, b) => b[1] - a[1]), [list]);
+  const cid = useMemo(() => [...devCount(list, (r) => r.cidade || "—").entries()].sort((a, b) => b[1] - a[1]).slice(0, 6), [list]);
+  return <div className="dev-detail">
+    <div>
+      <strong className="dev-detail-title">Remetentes (raiz do CNPJ)</strong>
+      <div className="dev-mini-head"><span>Remetente</span><span>CTes</span><span>NFs</span><span>Valor NF</span><span>Vencidas</span></div>
+      {rem.map((r) => <div className="dev-mini-row" key={r.key}><span title={r.name}>{r.name}{r.filiais > 1 && <small> · {r.filiais} CNPJs</small>}</span><span>{numberInt.format(r.cte)}</span><span>{numberInt.format(r.nf)}</span><span>{devMoney0.format(r.valor)}</span><span>{devPct(r.venc, r.nf)}</span></div>)}
+    </div>
+    <div>
+      <strong className="dev-detail-title">Ocorrências</strong>
+      <div className="dev-detail-chips">{ocor.map(([o, n]) => <span key={o} className="status-pill tone-neutral">{o} · {numberInt.format(n)}</span>)}</div>
+      <strong className="dev-detail-title">Cidades de destino</strong>
+      <div className="dev-detail-chips">{cid.map(([c, n]) => <span key={c} className="status-pill tone-neutral">{c} · {numberInt.format(n)}</span>)}</div>
+    </div>
+  </div>;
+}
+
+
 /* Barra de status global — visível em todas as telas, mostra os 3 relatórios (Coleta/Manifesto/
    Receita) e quando cada um foi atualizado pela última vez, pra nunca mais um relatório "sumir"
    silenciosamente sem ninguém perceber (foi o que gerou o bug de contagem por placa). */
@@ -2984,13 +3623,13 @@ function App() {
   }
 
   return (
-    <div className={`app-shell ${page === "clients" || page === "vehicles" || page === "diagnostico" ? "client-analysis-shell" : ""}`}>
+    <div className={`app-shell ${page === "clients" || page === "vehicles" || page === "diagnostico" || page === "devolucoes" ? "client-analysis-shell" : ""}`}>
       <style>{CSS_TEXT}</style>
       <input ref={manifestFileInputRef} className="hidden-file-input" type="file" accept=".xlsx,.xls" onChange={handleManifestImport} />
       <DashboardLayout page={page} setPage={setPage} theme={theme} toggleTheme={toggleTheme} />
       <TopBar page={page} setPage={setPage} />
       <GlobalStatusBar coletaStatus={coletaStatus} manifestSourceLabel={manifestSourceLabel} manifestUpdatedAt={manifestUpdatedAt} manifestLoaded={!!manifestDataset} receitaStatus={receitaStatus} />
-      {page === "home" ? <Home /> : page === "clients" ? <ClientAnalysis manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} onColetaStatusChange={setColetaStatus} onReceitaStatusChange={setReceitaStatus} /> : page === "diagnostico" ? <DiagnosticoVeiculos /> : <VehicleResources manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} />}
+      {page === "home" ? <Home /> : page === "clients" ? <ClientAnalysis manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} onColetaStatusChange={setColetaStatus} onReceitaStatusChange={setReceitaStatus} /> : page === "diagnostico" ? <DiagnosticoVeiculos /> : page === "devolucoes" ? <AnaliseDevolucoes /> : <VehicleResources manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} />}
     </div>
   );
 }
