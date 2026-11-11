@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Tragetta · Simulador de Frete GRU</title>
+<title>Painel - Distribuição - Coleta</title>
 <meta name="description" content="Simulador de frete e análise de coletas por cliente — GRU / Jundiaí" />
 
 <!-- React 18 (UMD) -->
@@ -1343,7 +1343,7 @@ function DashboardLayout({ page, setPage, theme, toggleTheme }) {
 function TopBar({ page, setPage }) {
   const dateLabel = new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" }).replace(".", "").toUpperCase();
   return <header className="topbar">
-    <div className="brand"><div className="brand-mark"><Truck size={18} /></div><div><span className="eyebrow">FRETE GRU / COLETA & ENTREGA</span><h1><span className="wordmark-route">Análise</span> Frete Tráfego GRU</h1></div></div>
+    <div className="brand"><div className="brand-mark"><Truck size={18} /></div><div><span className="eyebrow">FRETE GRU / COLETA & ENTREGA</span><h1><span className="wordmark-route">Painel</span> - Distribuição - Coleta</h1></div></div>
     <nav className="topnav">
       <button type="button" className={`topnav-link ${page === "home" ? "active" : ""}`} onClick={() => setPage("home")}><Truck size={14} /> Simulador</button>
       <button type="button" className={`topnav-link ${page === "clients" ? "active" : ""}`} onClick={() => setPage("clients")}><Building2 size={14} /> Análise por cliente</button>
