@@ -612,6 +612,11 @@ html:not(.dark) .sim-grid-row > div strong { color: #17301f; }
 .diag-release-btn { padding: 4px 10px; min-height: 0; font-size: 10px; }
 .diag-adj-count { padding-top: 12px; color: var(--muted-foreground); font-size: 10px; font-family: 'IBM Plex Mono', monospace; }
 .diag-released { margin-top: 6px; }
+.diag-released .diag-adj-item { grid-template-columns: 130px 110px 1fr auto; }
+.diag-inline-input, .diag-inline-select { width: 100%; min-width: 0; min-height: 30px; padding: 0 8px; border: 1px solid var(--border); border-radius: 0; background: var(--input); color: var(--foreground); font: 10px 'IBM Plex Mono', monospace; }
+.diag-inline-input:focus, .diag-inline-select:focus { outline: 1px solid var(--green); border-color: var(--green); }
+.diag-inline-select.is-empty { border-color: var(--red); color: var(--red); }
+.diag-notice { margin-top: 10px; padding: 8px 12px; border-left: 3px solid var(--green); background: var(--muted); font-size: 11px; color: var(--foreground); }
 .diag-grid-head { padding: 10px 8px 7px; color: var(--muted-foreground); font-family: 'IBM Plex Mono', monospace; font-size: 9px; text-transform: uppercase; border-top: 1px solid var(--border); }
 .diag-grid-row { border-top: 1px solid var(--border); padding: 7px 8px; font-size: 10px; color: var(--muted-foreground); }
 .diag-grid-row > strong { font-size: 11px; color: var(--foreground); }
@@ -623,7 +628,7 @@ html:not(.dark) .sim-grid-row > div strong { color: #17301f; }
 .diag-adj-form input, .diag-adj-form select { min-height: 36px; padding: 0 10px; border: 1px solid var(--border); border-radius: 0; background: var(--input); color: var(--foreground); font: 11px 'IBM Plex Mono', monospace; }
 .diag-adj-form .add-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 14px; min-height: 36px; cursor: pointer; border: 0; font-weight: 800; font-size: 11px; }
 .diag-adj-list { display: grid; gap: 6px; padding-top: 12px; }
-.diag-adj-item { display: grid; grid-template-columns: 150px 110px 1fr auto; gap: 10px; align-items: center; border-top: 1px solid var(--border); padding-top: 8px; font-size: 11px; color: var(--foreground); }
+.diag-adj-item { display: grid; grid-template-columns: 130px 110px minmax(130px, .8fr) minmax(170px, 1.3fr) minmax(190px, 1.2fr) auto; gap: 10px; align-items: center; border-top: 1px solid var(--border); padding-top: 8px; font-size: 11px; color: var(--foreground); }
 .diag-adj-item small { color: var(--muted-foreground); font-size: 10px; }
 .diag-cmp-head, .diag-cmp-row { display: grid; grid-template-columns: 1.5fr repeat(5, 1fr); gap: 10px; align-items: center; min-width: 640px; }
 .diag-cmp-head { padding: 14px 10px 8px; color: var(--muted-foreground); font-family: 'IBM Plex Mono', monospace; font-size: 9px; text-transform: uppercase; }
@@ -2690,6 +2695,29 @@ function FrotaAvail({ r }) {
     <b className="up">{frotaPct(up)}</b><b className={`down ${down > 0 ? "" : "zero"}`}>{down > 0 ? "-" : ""}{frotaPct(down)}</b>
   </span>;
 }
+/* Campo de motivo editável: salva ao sair do campo (ou Enter). */
+function FrotaMotivoInput({ value, onSave }) {
+  const [text, setText] = useState(value ?? "");
+  useEffect(() => { setText(value ?? ""); }, [value]);
+  const commit = () => { const v = text.trim(); if (v !== String(value ?? "").trim()) onSave(v); };
+  return <input className="diag-inline-input" aria-label="Motivo do bloqueio" placeholder="Motivo do bloqueio (clique para editar)" value={text}
+    onChange={(e) => setText(e.target.value)} onBlur={commit} onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }} />;
+}
+/* Lista de motoristas por veículo; "SEM MOTORISTA" limpa o campo. */
+function FrotaDriverSelect({ row, options, onChange }) {
+  const current = row.semMotorista ? "" : row.motorista;
+  const handle = (e) => {
+    let v = e.target.value;
+    if (v === "__novo__") { v = (window.prompt("Nome do motorista:") || "").replace(/\s+/g, " ").trim().toUpperCase(); if (!v) return; }
+    if (v !== current) onChange(row, v);
+  };
+  return <select className={`diag-inline-select ${row.semMotorista ? "is-empty" : ""}`} aria-label={`Motorista de ${row.placa}`} value={current}
+    title={row.semMotorista && row.motorista ? `Planilha: ${row.motorista}` : undefined} onChange={handle}>
+    <option value="">SEM MOTORISTA</option>
+    {options.map((n) => <option key={n} value={n}>{n}</option>)}
+    <option value="__novo__">+ Novo motorista…</option>
+  </select>;
+}
 const FROTA_CLASSE_ORDER = { "Inoperante": 0, "Manutenção": 1, "JDI": 2, "Backup": 3, "Operando": 4 };
 const FROTA_SCOPES = [{ key: "all", label: "Visão geral" }, { key: "FROTA", label: "Frota (própria)" }, { key: "AGREGADO", label: "Agregado" }];
 
@@ -2714,6 +2742,10 @@ function DiagnosticoVeiculos() {
   const [adjClasse, setAdjClasse] = useState("Manutenção");
   const [adjMotivo, setAdjMotivo] = useState("");
   const [adjError, setAdjError] = useState(null);
+  /* Troca de motorista por veículo (vale por cima da planilha): { PLACA: { motorista: "NOME" | "" (= sem motorista), at } } */
+  const [mot, setMot] = useState(() => lsLoad("frota_motoristas")?.items ?? {});
+  const [motNotice, setMotNotice] = useState(null);
+  useEffect(() => { if (!motNotice) return undefined; const id = setTimeout(() => setMotNotice(null), 9000); return () => clearTimeout(id); }, [motNotice]);
 
   function persistAdj(next) {
     setAdj(next);
@@ -2731,6 +2763,32 @@ function DiagnosticoVeiculos() {
     setAdjPlaca(""); setAdjMotivo(""); setAdjError(null);
   }
   function removeAdj(key) { const next = { ...adj }; delete next[key]; persistAdj(next); }
+  /* Atualiza o motivo do bloqueio (grava como ajuste manual, mantendo a classificação atual). */
+  function setMotivo(r, texto) {
+    const key = frotaPlateKey(r.placa);
+    const now = new Date().toISOString();
+    const prev = adj[key];
+    persistAdj({ ...adj, [key]: prev ? { ...prev, motivo: texto, motivoAt: now } : { placa: r.placa, classe: r.classe, motivo: texto, at: now, motivoAt: now } });
+  }
+  function persistMot(next) {
+    setMot(next);
+    lsSave("frota_motoristas", { items: next, updatedAt: new Date().toISOString() });
+    cloudSave("frota_motoristas", { items: next }, `${Object.keys(next).length} troca(s) de motorista`);
+  }
+  /* Troca o motorista do veículo; se o motorista já estava em outro veículo, o anterior fica SEM MOTORISTA. */
+  function assignDriver(r, nome) {
+    const key = frotaPlateKey(r.placa);
+    const now = new Date().toISOString();
+    const next = { ...mot };
+    const liberados = [];
+    if (nome) effRows.forEach((o) => {
+      const k = frotaPlateKey(o.placa);
+      if (k !== key && !o.semMotorista && frotaNorm(o.motorista) === frotaNorm(nome)) { next[k] = { motorista: "", at: now, de: nome }; liberados.push(o.placa); }
+    });
+    next[key] = { motorista: nome, at: now };
+    persistMot(next);
+    setMotNotice(nome ? `${nome} agora está em ${r.placa}${liberados.length ? ` · ${liberados.join(", ")} ficou SEM MOTORISTA` : ""}.` : `${r.placa} ficou SEM MOTORISTA.`);
+  }
   /* "Liberado": o veículo passa a constar como Operando (por cima da planilha) e guarda a data/hora da liberação. */
   function liberar(r) {
     const key = frotaPlateKey(r.placa);
@@ -2749,6 +2807,14 @@ function DiagnosticoVeiculos() {
         lsSave("frota_ajustes", { items: row.data.items, updatedAt: row.updated_at });
       }
     });
+    cloudLoad("frota_motoristas").then((row) => {
+      if (cancelled || !row || !row.data || !row.data.items) return;
+      const localAt = lsLoad("frota_motoristas")?.updatedAt;
+      if (!localAt || new Date(row.updated_at) > new Date(localAt)) {
+        setMot(row.data.items);
+        lsSave("frota_motoristas", { items: row.data.items, updatedAt: row.updated_at });
+      }
+    });
     if (!supabaseClient) return () => { cancelled = true; };
     const channel = supabaseClient.channel("painel_reports_sync_frota").on(
       "postgres_changes", { event: "*", schema: "public", table: "painel_reports" },
@@ -2758,6 +2824,9 @@ function DiagnosticoVeiculos() {
         if (row.id === "frota_ajustes" && row.data.items) {
           setAdj(row.data.items);
           lsSave("frota_ajustes", { items: row.data.items, updatedAt: row.updated_at });
+        } else if (row.id === "frota_motoristas" && row.data.items) {
+          setMot(row.data.items);
+          lsSave("frota_motoristas", { items: row.data.items, updatedAt: row.updated_at });
         } else if (row.id === "frota" && Array.isArray(row.data.rows) && row.data.rows.length) {
           const next = { rows: row.data.rows, label: row.label ?? "Frota (da nuvem)", updatedAt: row.updated_at };
           setData(next);
@@ -2805,7 +2874,21 @@ function DiagnosticoVeiculos() {
     } finally { event.target.value = ""; }
   }
 
-  const effRows = useMemo(() => data.rows.map((r) => { const a = adj[frotaPlateKey(r.placa)]; return a ? { ...r, classe: a.classe, ajuste: a } : r; }), [data, adj]);
+  const effRows = useMemo(() => data.rows.map((r) => {
+    const k = frotaPlateKey(r.placa);
+    const a = adj[k];
+    const m = mot[k];
+    let x = a ? { ...r, classe: a.classe, ajuste: a } : r;
+    if (m) x = { ...x, motorista: m.motorista, semMotorista: !m.motorista };
+    return x;
+  }), [data, adj, mot]);
+  /* Lista de motoristas conhecidos (base + os digitados à mão) para os campos de seleção. */
+  const driverOptions = useMemo(() => {
+    const names = new Map();
+    data.rows.forEach((r) => { if (!r.semMotorista && r.motorista) names.set(frotaNorm(r.motorista), r.motorista); });
+    Object.values(mot).forEach((m) => { if (m.motorista) names.set(frotaNorm(m.motorista), m.motorista); });
+    return [...names.values()].sort((a, b) => a.localeCompare(b, "pt-BR"));
+  }, [data, mot]);
   const scoped = useMemo(() => (scope === "all" ? effRows : effRows.filter((r) => r.categoria === scope)), [effRows, scope]);
   /* Todos os veículos em manutenção/inoperante (da planilha + registrados à mão); registros manuais primeiro. */
   const manutList = useMemo(() => scoped.filter((r) => r.classe === "Manutenção" || r.classe === "Inoperante")
@@ -2906,10 +2989,13 @@ function DiagnosticoVeiculos() {
       </form>
       {adjError && <div className="import-error client-import-error">{adjError}</div>}
       <div className="diag-adj-count">{numberInt.format(manutList.length)} veículo(s) em manutenção / inoperante · clique em "Liberado" quando voltar a operar</div>
+      {motNotice && <div className="diag-notice" role="status">{motNotice}</div>}
       {manutList.length > 0 && <div className="diag-adj-list">
         {manutList.map((r) => { const a = r.ajuste; return <div className="diag-adj-item" key={frotaPlateKey(r.placa)}>
           <strong>{r.placa}</strong><span className={`status-pill ${FROTA_CLASSE_TONE[r.classe]}`}>{r.classe}</span>
-          <small>{r.categoria === "FROTA" ? "Frota" : r.categoria === "AGREGADO" ? "Agregado" : r.categoria}{a ? `${a.motivo ? ` · ${a.motivo}` : " · ajuste manual"} · ${relativeTime(a.at)}` : ` · ${r.status} · ${r.situacao}`}{!r.semMotorista && r.motorista ? ` · ${r.motorista}` : ""}</small>
+          <small>{r.categoria === "FROTA" ? "Frota" : r.categoria === "AGREGADO" ? "Agregado" : r.categoria}{a ? ` · ${relativeTime(a.at)}` : ` · ${r.status} · ${r.situacao}`}</small>
+          <FrotaMotivoInput value={a?.motivo ?? ""} onSave={(v) => setMotivo(r, v)} />
+          <FrotaDriverSelect row={r} options={driverOptions} onChange={assignDriver} />
           <button type="button" className="secondary-action" onClick={() => liberar(r)}>Liberado</button>
         </div>; })}
       </div>}
@@ -2988,12 +3074,12 @@ function DiagnosticoVeiculos() {
           <span>{r.categoria === "FROTA" ? "Frota" : r.categoria === "AGREGADO" ? "Agregado" : r.categoria}</span>
           <span><span className={`status-pill ${FROTA_CLASSE_TONE[r.classe]}`}>{r.classe}</span></span>
           <span>{r.ajuste ? (r.ajuste.classe === "Operando" ? `Liberado em ${fmtLiberado(r.ajuste.liberadoAt)}` : `Ajuste manual${r.ajuste.motivo ? ` · ${r.ajuste.motivo}` : ""}`) : `${r.status} · ${r.situacao}`}</span>
-          <span className="diag-driver">{r.semMotorista ? <><span className="status-pill tone-warning">Sem motorista</span>{r.motorista && <small>{r.motorista}</small>}</> : r.motorista}</span>
+          <span className="diag-driver"><FrotaDriverSelect row={r} options={driverOptions} onChange={assignDriver} /></span>
           <span>{(r.classe === "Manutenção" || r.classe === "Inoperante") && <button type="button" className="secondary-action diag-release-btn" onClick={() => liberar(r)}>Liberado</button>}</span>
         </div>)}
         {listRows.length === 0 && <div className="empty-client-state"><Truck size={16} /> Nenhum veículo encontrado para os filtros atuais.</div>}
       </div>
-      <div className="client-footnote"><span>Regras:</span> Disponível = (Operando + Backup) ÷ Total. "Sem motorista" = campo motorista vazio, "MANUTENÇÃO" ou "PENDENTE". Classificação: status MANUTENÇÃO → Manutenção; status JDI → JDI; situação BACKUP → Backup; demais → Operando. Inoperante = placa marcada manualmente no painel (não conta como disponível); "Liberado" marca o veículo como Operando (com data e hora da liberação) por cima da planilha; "Desfazer" volta a seguir a planilha. % Disponível: verde = em funcionamento (Operando + Backup) ÷ Total; vermelho = parado (Manutenção + JDI + Inoperante) ÷ Total. Fonte: aba Base do Resumo Gerencial da Frota.</div>
+      <div className="client-footnote"><span>Regras:</span> Disponível = (Operando + Backup) ÷ Total. "Sem motorista" = campo motorista vazio, "MANUTENÇÃO" ou "PENDENTE". Classificação: status MANUTENÇÃO → Manutenção; status JDI → JDI; situação BACKUP → Backup; demais → Operando. Inoperante = placa marcada manualmente no painel (não conta como disponível); "Liberado" marca o veículo como Operando (com data e hora da liberação) por cima da planilha; "Desfazer" volta a seguir a planilha. % Disponível: verde = em funcionamento (Operando + Backup) ÷ Total; vermelho = parado (Manutenção + JDI + Inoperante) ÷ Total. Motivo e motorista podem ser alterados direto no painel (ficam salvos na base compartilhada, por cima da planilha); ao escolher um motorista que já estava em outro veículo, o veículo anterior passa a SEM MOTORISTA. Fonte: aba Base do Resumo Gerencial da Frota.</div>
     </section>
   </main>;
 }
