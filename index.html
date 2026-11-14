@@ -2891,7 +2891,7 @@ function DiagnosticoVeiculos() {
   }
   /* Grava a data em que cada veículo foi visto parado pela 1ª vez (sempre fica a mais antiga, também entre usuários). */
   function persistSince(add) {
-    const merge = (a, b) => { const o = { ...(a || {}) }; for (const [k, v] of Object.entries(b || {})) if (!o[k] || String(v) < String(o[k])) o[k] = v; return o; };
+    const merge = (a, b) => { const o = { ...(a || {}) }; for (const [k, v] of Object.entries(b || {})) if (k.endsWith("|parada") || !o[k] || String(v) < String(o[k])) o[k] = v; return o; };
     const next = merge(since, add);
     setSince(next);
     lsSave("frota_desde", { items: next, updatedAt: new Date().toISOString() });
@@ -2902,17 +2902,15 @@ function DiagnosticoVeiculos() {
   }
   /* Corrige a data em que o veículo parou (vale a data informada, mesmo que seja mais recente que a já gravada). */
   function setDesde(r, dateStr) {
-    if (!dateStr) return;
-    const key = frotaPlateKey(r.placa);
-    const iso = new Date(`${dateStr}T08:00:00-03:00`).toISOString();
+    const key = frotaPlateKey(r.placa) + "|parada";
+    const iso = dateStr ? new Date(`${dateStr}T08:00:00-03:00`).toISOString() : "";
     const next = { ...since, [key]: iso };
     setSince(next);
     lsSave("frota_desde", { items: next, updatedAt: new Date().toISOString() });
     Promise.resolve(cloudLoad("frota_desde")).then((row) => {
       const merged = { ...((row && row.data && row.data.items) || {}), [key]: iso };
-      cloudSave("frota_desde", { items: merged }, `${Object.keys(merged).length} veículo(s) com data de parada`);
+      cloudSave("frota_desde", { items: merged }, `${Object.keys(merged).length} registro(s) de data`);
     }).catch(() => {});
-    if (adj[key] && adj[key].at) persistAdj({ ...adj, [key]: { ...adj[key], at: iso } });
   }
   /* Troca o motorista do veículo; se o motorista já estava em outro veículo, o anterior fica SEM MOTORISTA. */
   function assignDriver(r, nome) {
@@ -3036,11 +3034,13 @@ function DiagnosticoVeiculos() {
   }, [data, mot]);
   const scoped = useMemo(() => (scope === "all" ? effRows : effRows.filter((r) => r.categoria === scope)), [effRows, scope]);
   /* Todos os veículos em manutenção/inoperante (da planilha + registrados à mão); registros manuais primeiro. */
-  const desdeOf = (r) => (r.ajuste && r.ajuste.at) || since[frotaPlateKey(r.placa)] || "";
+  const registroOf = (r) => (r.ajuste && r.ajuste.at) || since[frotaPlateKey(r.placa)] || "";
+  const paradaOf = (r) => since[frotaPlateKey(r.placa) + "|parada"] || "";
+  const desdeOf = (r) => paradaOf(r) || registroOf(r);
   const manutAll = useMemo(() => scoped.filter((r) => r.classe === "Manutenção" || r.classe === "Inoperante"), [scoped]);
   const manutTipos = useMemo(() => FROTA_TIPOS.map((t) => [t, manutAll.filter((r) => r.tipo === t).length]).filter(([, n]) => n > 0), [manutAll]);
   const manutList = useMemo(() => manutAll.filter((r) => tipoSel === "all" || r.tipo === tipoSel)
-    .slice().sort((a, b) => { const da = (a.ajuste && a.ajuste.at) || since[frotaPlateKey(a.placa)] || "9999"; const db = (b.ajuste && b.ajuste.at) || since[frotaPlateKey(b.placa)] || "9999";
+    .slice().sort((a, b) => { const da = desdeOf(a) || "9999"; const db = desdeOf(b) || "9999";
       return da.localeCompare(db) || FROTA_TIPOS.indexOf(a.tipo) - FROTA_TIPOS.indexOf(b.tipo) || a.placa.localeCompare(b.placa); }), [manutAll, since, tipoSel]);
   /* Registra a data de parada dos veículos que vieram da planilha (uma vez; só depois de ler o que já está salvo na nuvem). */
   useEffect(() => {
@@ -3152,8 +3152,9 @@ function DiagnosticoVeiculos() {
         {manutList.map((r) => { const a = r.ajuste; return <div className="diag-adj-item" key={frotaPlateKey(r.placa)}>
           <strong>{r.placa}</strong><span className="vehicle-tag diag-tipo"><Truck size={13} /> {r.tipoOriginal || r.tipo}</span><span className={`status-pill ${FROTA_CLASSE_TONE[r.classe]}`}>{r.classe}</span>
           <small className="diag-desde">{r.categoria === "FROTA" ? "Frota" : r.categoria === "AGREGADO" ? "Agregado" : r.categoria}
-            {desdeOf(r) ? <><b>parado há {Math.max(0, Math.floor((Date.now() - new Date(desdeOf(r)).getTime()) / 86400000))} dia(s)</b>
-              <label>desde <input type="date" aria-label={`Parado desde — ${r.placa}`} max={new Date().toISOString().slice(0, 10)} value={new Date(new Date(desdeOf(r)).getTime() - 3 * 3600000).toISOString().slice(0, 10)} onChange={(e) => setDesde(r, e.target.value)} /></label></> : null}</small>
+            {desdeOf(r) ? <b>parado há {Math.max(0, Math.floor((Date.now() - new Date(desdeOf(r)).getTime()) / 86400000))} dia(s){paradaOf(r) ? "" : " (contando do registro)"}</b> : null}
+            {registroOf(r) ? <span>registrado em {new Date(registroOf(r)).toLocaleDateString("pt-BR")}</span> : null}
+            <label>data da parada <input type="date" aria-label={`Data da parada — ${r.placa}`} max={new Date().toISOString().slice(0, 10)} value={paradaOf(r) ? new Date(new Date(paradaOf(r)).getTime() - 3 * 3600000).toISOString().slice(0, 10) : ""} onChange={(e) => setDesde(r, e.target.value)} /></label></small>
           <FrotaMotivoInput value={a?.motivo ?? ""} onSave={(v) => setMotivo(r, v)} />
           <FrotaDriverSelect row={r} options={driverOptions} onChange={assignDriver} />
           <button type="button" className="secondary-action" onClick={() => liberar(r)}>Liberado</button>
