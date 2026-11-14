@@ -628,9 +628,14 @@ html:not(.dark) .sim-grid-row > div strong { color: #17301f; }
 .diag-adj-form input, .diag-adj-form select { min-height: 36px; padding: 0 10px; border: 1px solid var(--border); border-radius: 0; background: var(--input); color: var(--foreground); font: 11px 'IBM Plex Mono', monospace; }
 .diag-adj-form .add-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 14px; min-height: 36px; cursor: pointer; border: 0; font-weight: 800; font-size: 11px; }
 .diag-adj-list { display: grid; gap: 6px; padding-top: 12px; }
-.diag-adj-item { display: grid; grid-template-columns: 110px 130px 110px minmax(130px, .8fr) minmax(160px, 1.2fr) minmax(180px, 1.1fr) auto; gap: 10px; align-items: center; border-top: 1px solid var(--border); padding-top: 8px; font-size: 11px; color: var(--foreground); }
+.diag-adj-item { display: grid; grid-template-columns: 78px 92px 96px 58px 226px minmax(140px, 1fr) minmax(170px, .9fr) auto; gap: 8px; align-items: center; border-top: 1px solid var(--border); padding-top: 8px; font-size: 11px; color: var(--foreground); }
 .diag-adj-item small { color: var(--muted-foreground); font-size: 10px; }
-.diag-desde { display: flex; flex-direction: column; gap: 2px; }
+.diag-desde { display: flex; flex-direction: column; gap: 2px; line-height: 1.25; white-space: nowrap; }
+.diag-desde-row { display: flex; align-items: center; gap: 6px; }
+.diag-desde label { display: inline-flex; align-items: center; gap: 4px; }
+.diag-desde input { width: 118px; }
+.diag-adj-item .status-pill { justify-self: start; }
+.diag-cat { color: var(--muted-foreground); font-size: 10px; text-transform: uppercase; letter-spacing: .04em; }
 .diag-desde b { color: var(--red); font-size: 11px; }
 .diag-desde input { font: inherit; font-size: 10px; border: 1px solid var(--border); background: var(--input); color: var(--foreground); padding: 1px 3px; }
 .diag-tipo-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
@@ -819,6 +824,36 @@ button.dev-top-row:hover { background: var(--muted); }
 .dev-per-total { border-top: 1px solid var(--border); font-weight: 800; }
 @media (max-width: 900px) { .topnav { flex-wrap: wrap; } }
 @media (max-width: 900px) { .dev-facet { flex-direction: column; gap: 2px; } .dev-funnel-row { grid-template-columns: 1fr 60px; } .dev-funnel-track, .dev-funnel-row small { display: none; } .dev-detail { grid-template-columns: 1fr; } }
+
+/* ===== Densidade: layout compacto e alinhado em todos os painéis (mantém todos os dados visíveis) ===== */
+.client-page { padding: 24px 34px 40px; }
+.results-area { padding: 24px 34px 32px; }
+.client-page-heading, .results-heading { margin-bottom: 14px; min-height: 0; }
+.client-page-heading h1, .client-page-heading h2, .results-heading h1, .results-heading h2 { font-size: 24px; line-height: 1.15; margin-bottom: 6px; }
+.client-page-heading p, .results-heading p { font-size: 12px; line-height: 1.45; margin-top: 4px; }
+.client-source { padding: 8px 12px; }
+.client-table-card, .consolidated-card, .rules-card, .comparison-card, .clients-card { padding: 14px 16px; }
+.client-toolbar { padding-bottom: 10px; }
+.client-toolbar small { font-size: 11px; }
+.hero-metric { padding: 18px 22px; }
+.metric { padding: 10px 12px; }
+.cost-chart, .rule-comparison-chart { padding: 11px 14px 12px; }
+.multi-comparison-row { padding-top: 8px; padding-bottom: 9px; }
+.comparison-col { padding: 10px 14px; }
+.sidebar-link { padding-top: 5px; padding-bottom: 5px; }
+.vehicle-registry-grid-head, .client-grid-head, .table-head, .consolidated-head, .diag-grid-head, .diag-cmp-head, .diag-sum-head { padding-top: 7px; padding-bottom: 6px; }
+.vehicle-registry-grid-row { padding-top: 6px; padding-bottom: 6px; }
+.table-row { padding-top: 6px; padding-bottom: 6px; }
+.client-grid-row { padding-top: 8px; padding-bottom: 8px; }
+.consolidated-row { padding-top: 8px; padding-bottom: 8px; }
+.diag-grid-row { padding-top: 5px; padding-bottom: 5px; }
+.diag-sum-row, .diag-cmp-row { padding-top: 6px; padding-bottom: 6px; }
+.diag-adj-form { padding-top: 10px; }
+.diag-adj-list { gap: 4px; padding-top: 8px; }
+.diag-adj-item { padding-top: 6px; }
+.frequency-plate-block { padding: 8px 12px; }
+.dev-tb td { padding: 6px 10px; }
+.dev-tb th { padding: 6px 10px; }
 `;
 
 
@@ -3145,16 +3180,18 @@ function DiagnosticoVeiculos() {
         <button className="add-button" type="submit"><Plus size={14} /> Registrar</button>
       </form>
       {adjError && <div className="import-error client-import-error">{adjError}</div>}
-      <div className="diag-adj-count">{numberInt.format(manutList.length)} veículo(s) em manutenção / inoperante · do que está parado há mais tempo ao mais recente · clique em "Liberado" quando voltar a operar</div>
+      <div className="diag-adj-count">{numberInt.format(manutList.length)} veículo(s) em manutenção / inoperante · do que está parado há mais tempo ao mais recente · clique em "Liberado" quando voltar a operar · * = contando do registro (informe a data da parada)</div>
       {manutTipos.length > 1 && <div className="diag-tipo-chips" role="group" aria-label="Filtrar por categoria"><button type="button" aria-pressed={tipoSel === "all"} className={`dev-chip ${tipoSel === "all" ? "active" : ""}`} onClick={() => setTipoSel("all")}>Todas <b>{numberInt.format(manutAll.length)}</b></button>{manutTipos.map(([t, n]) => <button key={t} type="button" aria-pressed={tipoSel === t} className={`dev-chip ${tipoSel === t ? "active" : ""}`} onClick={() => setTipoSel(t)}>{t} <b>{numberInt.format(n)}</b></button>)}</div>}
       {motNotice && <div className="diag-notice" role="status">{motNotice}</div>}
       {manutList.length > 0 && <div className="diag-adj-list">
         {manutList.map((r) => { const a = r.ajuste; return <div className="diag-adj-item" key={frotaPlateKey(r.placa)}>
           <strong>{r.placa}</strong><span className="vehicle-tag diag-tipo"><Truck size={13} /> {r.tipoOriginal || r.tipo}</span><span className={`status-pill ${FROTA_CLASSE_TONE[r.classe]}`}>{r.classe}</span>
-          <small className="diag-desde">{r.categoria === "FROTA" ? "Frota" : r.categoria === "AGREGADO" ? "Agregado" : r.categoria}
-            {desdeOf(r) ? <b>parado há {Math.max(0, Math.floor((Date.now() - new Date(desdeOf(r)).getTime()) / 86400000))} dia(s){paradaOf(r) ? "" : " (contando do registro)"}</b> : null}
-            {registroOf(r) ? <span>registrado em {new Date(registroOf(r)).toLocaleDateString("pt-BR")}</span> : null}
-            <label>data da parada <input type="date" aria-label={`Data da parada — ${r.placa}`} max={new Date().toISOString().slice(0, 10)} value={paradaOf(r) ? new Date(new Date(paradaOf(r)).getTime() - 3 * 3600000).toISOString().slice(0, 10) : ""} onChange={(e) => setDesde(r, e.target.value)} /></label></small>
+          <span className="diag-cat">{r.categoria === "FROTA" ? "Frota" : r.categoria === "AGREGADO" ? "Agregado" : r.categoria}</span>
+          <small className="diag-desde">
+            {desdeOf(r) ? <b>parado há {Math.max(0, Math.floor((Date.now() - new Date(desdeOf(r)).getTime()) / 86400000))} dia(s){paradaOf(r) ? "" : " *"}</b> : <b>—</b>}
+            <span className="diag-desde-row">{registroOf(r) ? <span title="Data de registro no painel">reg. {new Date(registroOf(r)).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" })}</span> : null}
+              <label title="Data em que o veículo parou (vazio = conta do registro)">parou <input type="date" aria-label={`Data da parada — ${r.placa}`} max={new Date().toISOString().slice(0, 10)} value={paradaOf(r) ? new Date(new Date(paradaOf(r)).getTime() - 3 * 3600000).toISOString().slice(0, 10) : ""} onChange={(e) => setDesde(r, e.target.value)} /></label></span>
+          </small>
           <FrotaMotivoInput value={a?.motivo ?? ""} onSave={(v) => setMotivo(r, v)} />
           <FrotaDriverSelect row={r} options={driverOptions} onChange={assignDriver} />
           <button type="button" className="secondary-action" onClick={() => liberar(r)}>Liberado</button>
