@@ -628,16 +628,16 @@ html:not(.dark) .sim-grid-row > div strong { color: #17301f; }
 .diag-adj-form input, .diag-adj-form select { min-height: 36px; padding: 0 10px; border: 1px solid var(--border); border-radius: 0; background: var(--input); color: var(--foreground); font: 11px 'IBM Plex Mono', monospace; }
 .diag-adj-form .add-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 14px; min-height: 36px; cursor: pointer; border: 0; font-weight: 800; font-size: 11px; }
 .diag-adj-list { display: grid; gap: 6px; padding-top: 12px; }
-.diag-adj-item { display: grid; grid-template-columns: 78px 92px 96px 58px 226px minmax(140px, 1fr) minmax(170px, .9fr) auto; gap: 8px; align-items: center; border-top: 1px solid var(--border); padding-top: 8px; font-size: 11px; color: var(--foreground); }
+.diag-adj-item { display: grid; grid-template-columns: 78px 92px 96px 58px 84px minmax(140px, 1fr) minmax(170px, .9fr) auto; gap: 8px; align-items: center; border-top: 1px solid var(--border); padding-top: 8px; font-size: 11px; color: var(--foreground); }
 .diag-adj-item small { color: var(--muted-foreground); font-size: 10px; }
-.diag-desde { display: flex; flex-direction: column; gap: 2px; line-height: 1.25; white-space: nowrap; }
-.diag-desde-row { display: flex; align-items: center; gap: 6px; }
-.diag-desde label { display: inline-flex; align-items: center; gap: 4px; }
-.diag-desde input { width: 118px; }
+.diag-desde { display: flex; flex-direction: column; gap: 1px; line-height: 1.25; white-space: nowrap; }
+.diag-desde.red b, .diag-desde.red .diag-date { color: var(--red); }
+.diag-desde.amb b, .diag-desde.amb .diag-date { color: #d19a00; }
+.diag-desde b { font-size: 12px; }
+.diag-date { position: relative; display: inline-block; font-size: 10px; cursor: pointer; border-bottom: 1px dotted currentColor; align-self: flex-start; }
+.diag-date input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: none; padding: 0; }
 .diag-adj-item .status-pill { justify-self: start; }
 .diag-cat { color: var(--muted-foreground); font-size: 10px; text-transform: uppercase; letter-spacing: .04em; }
-.diag-desde b { color: var(--red); font-size: 11px; }
-.diag-desde input { font: inherit; font-size: 10px; border: 1px solid var(--border); background: var(--input); color: var(--foreground); padding: 1px 3px; }
 .diag-tipo-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
 .diag-adj-item .diag-tipo { font-weight: 700; }
 .diag-cmp-head, .diag-cmp-row { display: grid; grid-template-columns: 1.5fr repeat(5, 1fr); gap: 10px; align-items: center; min-width: 640px; }
@@ -3180,17 +3180,19 @@ function DiagnosticoVeiculos() {
         <button className="add-button" type="submit"><Plus size={14} /> Registrar</button>
       </form>
       {adjError && <div className="import-error client-import-error">{adjError}</div>}
-      <div className="diag-adj-count">{numberInt.format(manutList.length)} veículo(s) em manutenção / inoperante · do que está parado há mais tempo ao mais recente · clique em "Liberado" quando voltar a operar · * = contando do registro (informe a data da parada)</div>
+      <div className="diag-adj-count">{numberInt.format(manutList.length)} veículo(s) em manutenção / inoperante · do que está parado há mais tempo ao mais recente · clique em "Liberado" quando voltar a operar · <span style={{ color: "var(--red)" }}>vermelho = data da parada</span> · <span style={{ color: "#d19a00" }}>amarelo = contando do registro</span> (clique na data para informar a parada)</div>
       {manutTipos.length > 1 && <div className="diag-tipo-chips" role="group" aria-label="Filtrar por categoria"><button type="button" aria-pressed={tipoSel === "all"} className={`dev-chip ${tipoSel === "all" ? "active" : ""}`} onClick={() => setTipoSel("all")}>Todas <b>{numberInt.format(manutAll.length)}</b></button>{manutTipos.map(([t, n]) => <button key={t} type="button" aria-pressed={tipoSel === t} className={`dev-chip ${tipoSel === t ? "active" : ""}`} onClick={() => setTipoSel(t)}>{t} <b>{numberInt.format(n)}</b></button>)}</div>}
       {motNotice && <div className="diag-notice" role="status">{motNotice}</div>}
       {manutList.length > 0 && <div className="diag-adj-list">
         {manutList.map((r) => { const a = r.ajuste; return <div className="diag-adj-item" key={frotaPlateKey(r.placa)}>
           <strong>{r.placa}</strong><span className="vehicle-tag diag-tipo"><Truck size={13} /> {r.tipoOriginal || r.tipo}</span><span className={`status-pill ${FROTA_CLASSE_TONE[r.classe]}`}>{r.classe}</span>
           <span className="diag-cat">{r.categoria === "FROTA" ? "Frota" : r.categoria === "AGREGADO" ? "Agregado" : r.categoria}</span>
-          <small className="diag-desde">
-            {desdeOf(r) ? <b>parado há {Math.max(0, Math.floor((Date.now() - new Date(desdeOf(r)).getTime()) / 86400000))} dia(s){paradaOf(r) ? "" : " *"}</b> : <b>—</b>}
-            <span className="diag-desde-row">{registroOf(r) ? <span title="Data de registro no painel">reg. {new Date(registroOf(r)).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" })}</span> : null}
-              <label title="Data em que o veículo parou (vazio = conta do registro)">parou <input type="date" aria-label={`Data da parada — ${r.placa}`} max={new Date().toISOString().slice(0, 10)} value={paradaOf(r) ? new Date(new Date(paradaOf(r)).getTime() - 3 * 3600000).toISOString().slice(0, 10) : ""} onChange={(e) => setDesde(r, e.target.value)} /></label></span>
+          <small className={`diag-desde ${paradaOf(r) ? "red" : "amb"}`}>
+            <b>{desdeOf(r) ? `${Math.max(0, Math.floor((Date.now() - new Date(desdeOf(r)).getTime()) / 86400000))} dia(s)` : "—"}</b>
+            <label className="diag-date" title={paradaOf(r) ? "Data da parada (clique para alterar)" : "Contando da data de registro — clique para informar a data da parada"}>
+              <span>{paradaOf(r) ? "parou " : "reg. "}{desdeOf(r) ? new Date(desdeOf(r)).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" }) : "—"}</span>
+              <input type="date" aria-label={`Data da parada — ${r.placa}`} max={new Date().toISOString().slice(0, 10)} value={paradaOf(r) ? new Date(new Date(paradaOf(r)).getTime() - 3 * 3600000).toISOString().slice(0, 10) : ""} onClick={(e) => { try { e.currentTarget.showPicker(); } catch (x) {} }} onChange={(e) => setDesde(r, e.target.value)} />
+            </label>
           </small>
           <FrotaMotivoInput value={a?.motivo ?? ""} onSave={(v) => setMotivo(r, v)} />
           <FrotaDriverSelect row={r} options={driverOptions} onChange={assignDriver} />
