@@ -626,6 +626,8 @@ html:not(.dark) .sim-grid-row > div strong { color: #17301f; }
 .seg-in { background: var(--diag-in); }
 .diag-adj-form { display: grid; grid-template-columns: 1.2fr 1fr 2fr auto; gap: 8px; padding-top: 14px; }
 .diag-adj-form input, .diag-adj-form select { min-height: 36px; padding: 0 10px; border: 1px solid var(--border); border-radius: 0; background: var(--input); color: var(--foreground); font: 11px 'IBM Plex Mono', monospace; }
+.diag-adj-novo { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 11px; color: var(--muted-foreground); }
+.diag-adj-novo select { min-width: 150px; }
 .diag-adj-form .add-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 14px; min-height: 36px; cursor: pointer; border: 0; font-weight: 800; font-size: 11px; }
 .diag-adj-list { display: grid; gap: 6px; padding-top: 12px; }
 .diag-adj-item { display: grid; grid-template-columns: 78px 92px 96px 58px 84px minmax(140px, 1fr) minmax(170px, .9fr) auto; gap: 8px; align-items: center; border-top: 1px solid var(--border); padding-top: 8px; font-size: 11px; color: var(--foreground); }
@@ -2886,6 +2888,9 @@ function DiagnosticoVeiculos() {
   const [adjPlaca, setAdjPlaca] = useState("");
   const [adjClasse, setAdjClasse] = useState("Manutenção");
   const [adjMotivo, setAdjMotivo] = useState("");
+  const [adjNovo, setAdjNovo] = useState(false);
+  const [adjTipo, setAdjTipo] = useState(FROTA_TIPOS[0]);
+  const [adjCat, setAdjCat] = useState("FROTA");
   const [adjError, setAdjError] = useState(null);
   /* Troca de motorista por veículo (vale por cima da planilha): { PLACA: { motorista: "NOME" | "" (= sem motorista), at } } */
   const [mot, setMot] = useState(() => lsLoad("frota_motoristas")?.items ?? {});
@@ -2906,7 +2911,15 @@ function DiagnosticoVeiculos() {
     const key = frotaPlateKey(adjPlaca);
     if (!key) { setAdjError("Informe a placa."); return; }
     const found = data.rows.find((r) => frotaPlateKey(r.placa) === key);
-    if (!found) { setAdjError(`Placa ${key} não encontrada na base da frota.`); return; }
+    if (!found) {
+      /* Veículo fora da base: pede tipo e categoria e inclui na lista (guardado na base compartilhada). */
+      if (!adjNovo) { setAdjNovo(true); if (scope !== "all") setAdjCat(scope); setAdjError(null); return; }
+      const cat = scope !== "all" ? scope : adjCat;
+      const placaNova = adjPlaca.trim().toUpperCase().replace(/\s+/g, " ");
+      persistAdj({ ...adj, [key]: { placa: placaNova, classe: adjClasse, motivo: adjMotivo.trim(), at: new Date().toISOString(), novo: { tipo: adjTipo, tipoOriginal: adjTipo, categoria: cat } } });
+      setAdjPlaca(""); setAdjMotivo(""); setAdjError(null); setAdjNovo(false);
+      return;
+    }
     if (scope !== "all" && found.categoria !== scope) { setAdjError(`${found.placa} pertence a ${found.categoria === "FROTA" ? "Frota (própria)" : "Agregado"} — troque a aba para registrar.`); return; }
     persistAdj({ ...adj, [key]: { placa: found.placa, classe: adjClasse, motivo: adjMotivo.trim(), at: new Date().toISOString() } });
     setAdjPlaca(""); setAdjMotivo(""); setAdjError(null);
@@ -2965,7 +2978,7 @@ function DiagnosticoVeiculos() {
   function liberar(r) {
     const key = frotaPlateKey(r.placa);
     const now = new Date().toISOString();
-    persistAdj({ ...adj, [key]: { placa: r.placa, classe: "Operando", motivo: adj[key]?.motivo ?? "", at: adj[key]?.at ?? now, liberadoAt: now, classeAnterior: r.classe } });
+    persistAdj({ ...adj, [key]: { placa: r.placa, classe: "Operando", motivo: adj[key]?.motivo ?? "", at: adj[key]?.at ?? now, liberadoAt: now, classeAnterior: r.classe, ...(adj[key]?.novo ? { novo: adj[key].novo } : {}) } });
   }
 
   /* Tempo real: ajustes (e nova base) feitos por outra pessoa aparecem aqui sem recarregar. */
@@ -3052,14 +3065,22 @@ function DiagnosticoVeiculos() {
     } finally { event.target.value = ""; }
   }
 
-  const effRows = useMemo(() => data.rows.map((r) => {
-    const k = frotaPlateKey(r.placa);
-    const a = adj[k];
-    const m = mot[k];
-    let x = a ? { ...r, classe: a.classe, ajuste: a } : r;
-    if (m) x = { ...x, motorista: m.motorista, semMotorista: !m.motorista };
-    return x;
-  }), [data, adj, mot]);
+  const effRows = useMemo(() => {
+    const inBase = new Set(data.rows.map((r) => frotaPlateKey(r.placa)));
+    /* Veículos incluídos à mão (não estão na planilha): entram como linhas normais até a base trazê-los. */
+    const extras = Object.entries(adj).filter(([k, a]) => a && a.novo && !inBase.has(k)).map(([, a]) => ({
+      placa: a.placa, status: "MANUAL", situacao: "Incluído manualmente", tipo: a.novo.tipo, tipoOriginal: a.novo.tipoOriginal || a.novo.tipo,
+      categoria: a.novo.categoria, motorista: "", classe: a.classe, semMotorista: true, manual: true,
+    }));
+    return [...data.rows, ...extras].map((r) => {
+      const k = frotaPlateKey(r.placa);
+      const a = adj[k];
+      const m = mot[k];
+      let x = a ? { ...r, classe: a.classe, ajuste: a } : r;
+      if (m) x = { ...x, motorista: m.motorista, semMotorista: !m.motorista };
+      return x;
+    });
+  }, [data, adj, mot]);
   /* Lista de motoristas conhecidos (base + os digitados à mão) para os campos de seleção. */
   const driverOptions = useMemo(() => {
     const names = new Map();
@@ -3131,6 +3152,27 @@ function DiagnosticoVeiculos() {
     { key: "SEM_MOTORISTA", label: "Sem motorista", value: t.semMotorista, sub: t.total ? frotaPct(t.semMotorista / t.total) : "—" },
   ];
   const filterLabel = classFilter === "SEM_MOTORISTA" ? "Sem motorista" : classFilter;
+  /* Exporta o relatório como está no painel: resumo, veículos parados (ordem do painel), lista completa e liberados. */
+  function exportDiagnostico() {
+    const fmtD = (iso) => (iso ? new Date(iso).toLocaleDateString("pt-BR") : "");
+    const catTxt = (r) => (r.categoria === "FROTA" ? "Frota" : r.categoria === "AGREGADO" ? "Agregado" : r.categoria);
+    const motTxt = (r) => (r.semMotorista ? "SEM MOTORISTA" : r.motorista);
+    const dias = (r) => (desdeOf(r) ? Math.max(0, Math.floor((Date.now() - new Date(desdeOf(r)).getTime()) / 86400000)) : "");
+    const sumRow = (nome, x) => [nome, x.total, x.operando, x.backup, x.manutencao, x.jdi, x.inoperante, x.semMotorista, x.total ? Number(x.disponivel.toFixed(4)) : ""];
+    const resumo = [["Categoria / Tipo", "Total", "Operando", "Backup", "Manutenção", "JDI", "Inoperante", "Sem motorista", "% Disponível"], ...tiposVisiveis.map((x) => sumRow(x.tipo, x)), sumRow("TOTAL", t)];
+    const parados = manutAll.slice().sort((a, b) => (desdeOf(a) || "9999").localeCompare(desdeOf(b) || "9999") || FROTA_TIPOS.indexOf(a.tipo) - FROTA_TIPOS.indexOf(b.tipo) || a.placa.localeCompare(b.placa))
+      .map((r) => [r.placa, r.tipoOriginal || r.tipo, r.classe, catTxt(r), dias(r), fmtD(paradaOf(r)), fmtD(registroOf(r)), paradaOf(r) ? "Data da parada" : "Data do registro", r.ajuste?.motivo ?? "", motTxt(r)]);
+    const lista = listRows.map((r) => [r.placa, r.tipoOriginal || r.tipo, catTxt(r), r.classe, r.ajuste ? (r.ajuste.classe === "Operando" ? `Liberado em ${fmtLiberado(r.ajuste.liberadoAt)}` : `Ajuste manual${r.ajuste.motivo ? ` · ${r.ajuste.motivo}` : ""}`) : `${r.status} · ${r.situacao}`, motTxt(r)]);
+    const liberados = liberadosList.map((r) => [r.placa, r.tipoOriginal || r.tipo, catTxt(r), fmtLiberado(r.ajuste.liberadoAt), r.ajuste.classeAnterior ?? "", r.ajuste.motivo ?? "", motTxt(r)]);
+    const wb = XLSX.utils.book_new();
+    const add = (nome, head, body, widths) => { const ws = XLSX.utils.aoa_to_sheet([head, ...body]); ws["!cols"] = widths.map((w) => ({ wch: w })); XLSX.utils.book_append_sheet(wb, ws, nome); };
+    XLSX.utils.book_append_sheet(wb, (() => { const ws = XLSX.utils.aoa_to_sheet(resumo); ws["!cols"] = [20, 8, 10, 8, 12, 6, 11, 14, 12].map((w) => ({ wch: w })); for (let i = 1; i < resumo.length; i++) { const c = ws[XLSX.utils.encode_cell({ r: i, c: 8 })]; if (c && typeof c.v === "number") c.z = "0.0%"; } return ws; })(), "Resumo por categoria");
+    add("Veículos parados", ["Placa", "Categoria (tipo)", "Situação", "Frota / Agregado", "Dias parado", "Data da parada", "Data do registro", "Contagem pela", "Motivo do bloqueio", "Motorista"], parados, [14, 16, 12, 16, 11, 14, 15, 16, 36, 30]);
+    add("Lista de veículos", ["Placa", "Tipo", "Categoria", "Classificação", "Status / Situação", "Motorista"], lista, [14, 16, 12, 14, 40, 30]);
+    if (liberados.length) add("Liberados", ["Placa", "Tipo", "Categoria", "Liberado em", "Estava em", "Motivo", "Motorista"], liberados, [14, 16, 12, 20, 14, 36, 30]);
+    const d = new Date();
+    XLSX.writeFile(wb, `Diagnostico_Veiculos_${scopeLabel.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9]+/g, "_")}_${d.getFullYear()}-${devPad2(d.getMonth() + 1)}-${devPad2(d.getDate())}.xlsx`);
+  }
   const segs = [
     { cls: "seg-op", label: "Operando", key: "operando" },
     { cls: "seg-bk", label: "Backup", key: "backup" },
@@ -3152,6 +3194,7 @@ function DiagnosticoVeiculos() {
 
     <div className="client-toolbar import-toolbar">
       <button className="secondary-action" type="button" onClick={() => fileInputRef.current?.click()}><UploadCloud size={15} /> Atualizar Resumo Gerencial da Frota</button>
+      <button className="secondary-action" type="button" onClick={exportDiagnostico}><FileDown size={15} /> Extrair relatório (Excel)</button>
       {importError && <div className="import-error client-import-error">{importError}</div>}
     </div>
 
@@ -3173,11 +3216,17 @@ function DiagnosticoVeiculos() {
     <section className="client-table-card diag-adj-card">
       <div className="client-toolbar"><div><strong>Registrar veículo em manutenção / inoperante</strong><small>{scope === "all" ? "Frota e Agregados" : scopeLabel} · o painel atualiza na hora para todos que estiverem com ele aberto</small></div></div>
       <form className="diag-adj-form" onSubmit={addAdj}>
-        <input aria-label="Placa do veículo" list="diag-plates" placeholder="Placa (ex.: EZU9I31)" value={adjPlaca} onChange={(e) => { setAdjPlaca(e.target.value); setAdjError(null); }} />
+        <input aria-label="Placa do veículo" list="diag-plates" placeholder="Placa (ex.: EZU9I31)" value={adjPlaca} onChange={(e) => { setAdjPlaca(e.target.value); setAdjError(null); setAdjNovo(false); }} />
         <datalist id="diag-plates">{plateOptions.map((p) => <option key={p} value={frotaPlateKey(p)}>{p}</option>)}</datalist>
         <select aria-label="Situação" value={adjClasse} onChange={(e) => setAdjClasse(e.target.value)}><option value="Manutenção">Em manutenção</option><option value="Inoperante">Inoperante</option></select>
         <input aria-label="Motivo (opcional)" placeholder="Motivo (opcional)" value={adjMotivo} onChange={(e) => setAdjMotivo(e.target.value)} />
-        <button className="add-button" type="submit"><Plus size={14} /> Registrar</button>
+        <button className="add-button" type="submit"><Plus size={14} /> {adjNovo ? "Incluir e registrar" : "Registrar"}</button>
+        {adjNovo && <div className="diag-adj-novo">
+          <span>Placa fora da base — informe como incluir:</span>
+          <select aria-label="Tipo do veículo" value={adjTipo} onChange={(e) => setAdjTipo(e.target.value)}>{[...FROTA_TIPOS, FROTA_TIPO_OUTROS].map((t) => <option key={t} value={t}>{t}</option>)}</select>
+          {scope === "all" ? <select aria-label="Categoria do veículo" value={adjCat} onChange={(e) => setAdjCat(e.target.value)}><option value="FROTA">Frota (própria)</option><option value="AGREGADO">Agregado</option></select> : <span className="diag-cat">{scope === "FROTA" ? "Frota (própria)" : "Agregado"}</span>}
+          <button type="button" className="secondary-action" onClick={() => setAdjNovo(false)}>Cancelar</button>
+        </div>}
       </form>
       {adjError && <div className="import-error client-import-error">{adjError}</div>}
       <div className="diag-adj-count">{numberInt.format(manutList.length)} veículo(s) em manutenção / inoperante · do que está parado há mais tempo ao mais recente · clique em "Liberado" quando voltar a operar · <span style={{ color: "var(--red)" }}>vermelho = data da parada</span> · <span style={{ color: "#d19a00" }}>amarelo = contando do registro</span> (clique na data para informar a parada)</div>
