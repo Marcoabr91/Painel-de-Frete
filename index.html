@@ -856,6 +856,75 @@ button.dev-top-row:hover { background: var(--muted); }
 .frequency-plate-block { padding: 8px 12px; }
 .dev-tb td { padding: 6px 10px; }
 .dev-tb th { padding: 6px 10px; }
+/* Gestão - Equipes */
+.sidebar-link.sidebar-sub { padding-left: 30px; font-size: 12px; }
+.eq-page { color: var(--foreground); }
+.eq-notice { border: 1px solid var(--green); background: var(--card); color: var(--foreground); padding: 8px 12px; font-size: 12px; margin-bottom: 8px; }
+.eq-empty { border: 1px dashed var(--border); background: var(--card); color: var(--foreground); padding: 22px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.eq-kpis { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+.diag-kpi.static { cursor: default; }
+.diag-kpi.eq-bad strong { color: #b3363a; }
+.diag-kpi.eq-na { border-style: dashed; } .diag-kpi.eq-na strong { font-size: 15px; color: var(--muted-foreground); padding: 4px 0; }
+.eq-grid2 { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 10px; margin-bottom: 10px; }
+@media (max-width: 1080px) { .eq-grid2 { grid-template-columns: 1fr; } }
+.eq-card { background: var(--card); color: var(--foreground); border: 1px solid var(--border); padding: 10px 12px; margin-bottom: 10px; }
+.eq-grid2 .eq-card { margin-bottom: 0; }
+.eq-card h3, .eq-modal h3 { margin: 0 0 8px; font: 600 11px 'IBM Plex Mono', monospace; letter-spacing: .06em; text-transform: uppercase; color: var(--muted-foreground); }
+.eq-table { width: 100%; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; color: var(--foreground); }
+.eq-table th { font: 600 10px 'IBM Plex Mono', monospace; text-transform: uppercase; letter-spacing: .04em; color: var(--muted-foreground); text-align: right; padding: 5px 8px; border-bottom: 2px solid var(--foreground); }
+.eq-table td { padding: 5px 8px; border-bottom: 1px solid var(--border); text-align: right; }
+.eq-table th:first-child, .eq-table td:first-child { text-align: left; }
+.eq-table td:first-child { font-weight: 600; }
+.eq-click { cursor: pointer; } .eq-click:hover td { background: rgba(0,200,100,.07); }
+.eq-z { color: var(--muted-foreground); opacity: .6; }
+.eq-tot td { border-top: 2px solid var(--foreground); border-bottom: none; font-weight: 700; }
+.eq-fe { border-left: 1px dashed var(--border); color: var(--muted-foreground); }
+.eq-open { text-align: left !important; background: rgba(127,127,127,.06); }
+.eq-names { display: flex; flex-direction: column; gap: 2px; }
+.eq-name-row { display: grid; grid-template-columns: 150px minmax(0,1fr) 80px 70px 120px auto; gap: 8px; align-items: center; font-size: 11px; text-align: left; }
+.eq-note { margin: 8px 0 0; font: 400 11px 'IBM Plex Mono', monospace; color: var(--muted-foreground); line-height: 1.5; }
+.eq-bar-row { display: grid; grid-template-columns: 90px minmax(0,1fr) 48px; gap: 8px; align-items: center; font-size: 12px; margin-bottom: 6px; color: var(--foreground); }
+.eq-bar { height: 12px; background: rgba(127,127,127,.2); } .eq-bar i { display: block; height: 100%; background: #2f9e5f; }
+.eq-att { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.eq-att li { border: 1px solid var(--border); border-left: 4px solid #b3363a; padding: 6px 10px; font-size: 12px; color: var(--foreground); display: flex; flex-direction: column; gap: 2px; }
+.eq-att li.am { border-left-color: #d19a00; } .eq-att li small { color: var(--muted-foreground); font-size: 11px; line-height: 1.4; }
+.eq-rule { border: 1px solid var(--border); background: var(--card); color: var(--foreground); padding: 7px 12px; font-size: 12px; margin-bottom: 8px; }
+.eq-filters { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+.eq-search { border: 1px solid var(--border); background: var(--card); color: var(--foreground); padding: 6px 10px; font-size: 12px; min-width: 240px; font-family: inherit; }
+.eq-vlist { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+.eq-veh { background: var(--card); color: var(--foreground); border: 1px solid var(--border); border-left: 4px solid #2f9e5f; padding: 7px 10px; }
+.eq-veh.is-bad { border-left-color: #b3363a; } .eq-veh.is-stop { border-left-color: #d19a00; }
+.eq-veh-h { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 12px; }
+.eq-plate { font-family: 'IBM Plex Mono', monospace; min-width: 130px; }
+.eq-tipo { font: 500 10px 'IBM Plex Mono', monospace; text-transform: uppercase; color: var(--muted-foreground); }
+.eq-st { font: 600 10px 'IBM Plex Mono', monospace; padding: 1px 7px; border: 1px solid var(--border); color: var(--muted-foreground); }
+.eq-st-operando { color: #1f8a4c; border-color: #1f8a4c; } .eq-st-backup { color: #2a6fb0; border-color: #2a6fb0; }
+.eq-st-manutencao, .eq-st-inoperante { color: #b3363a; border-color: #b3363a; } .eq-st-jdi { color: #d19a00; border-color: #d19a00; }
+.eq-cap { font: 500 11px 'IBM Plex Mono', monospace; color: var(--muted-foreground); }
+.eq-issue { margin-top: 4px; font-size: 11px; font-weight: 600; color: #b3363a; } .eq-issue.am { color: #b07d00; font-weight: 500; }
+.eq-mems { display: flex; flex-direction: column; margin-top: 4px; }
+.eq-mem { display: grid; grid-template-columns: 90px minmax(0,1fr) auto auto auto; gap: 8px; align-items: center; font-size: 12px; padding: 2px 0; border-top: 1px dashed var(--border); }
+.eq-mem:first-child { border-top: none; }
+.eq-mem-name { font-weight: 500; } .eq-mem-mat { font: 400 10px 'IBM Plex Mono', monospace; color: var(--muted-foreground); }
+.eq-ft { font: 600 10px 'IBM Plex Mono', monospace; text-transform: uppercase; color: var(--muted-foreground); }
+.eq-ft-mot { color: #2a6fb0; } .eq-ft-conf { color: #8a5db5; } .eq-ft-ajud { color: #1f8a4c; }
+.eq-moved { font: 600 9px 'IBM Plex Mono', monospace; text-transform: uppercase; color: #d19a00; border: 1px solid #d19a00; padding: 0 4px; }
+.eq-link { border: 1px solid var(--border); background: transparent; color: var(--foreground); font: 600 10px 'IBM Plex Mono', monospace; text-transform: uppercase; padding: 2px 8px; cursor: pointer; }
+.eq-link:hover, .eq-link.strong { border-color: var(--green); } .eq-link.strong { margin-left: auto; }
+.eq-none { color: var(--muted-foreground); font-size: 12px; padding: 4px 0; }
+.eq-modal-bg { position: fixed; inset: 0; z-index: 90; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.eq-modal { background: var(--card); color: var(--foreground); border: 1px solid var(--border); width: min(560px, 100%); max-height: 86vh; display: flex; flex-direction: column; gap: 8px; padding: 14px; }
+.eq-pick { overflow: auto; display: flex; flex-direction: column; gap: 3px; min-height: 80px; }
+.eq-pick-row { display: flex; align-items: center; gap: 10px; text-align: left; border: 1px solid var(--border); background: transparent; color: var(--foreground); padding: 6px 10px; font-size: 12px; cursor: pointer; font-family: inherit; }
+.eq-pick-row:hover { border-color: var(--green); } .eq-pick-row small { margin-left: auto; color: var(--muted-foreground); font: 400 10px 'IBM Plex Mono', monospace; }
+.eq-modal-f { display: flex; gap: 8px; justify-content: flex-end; }
+.eq-acts { display: inline-flex; gap: 4px; justify-content: flex-end; } .eq-del { color: #b3363a; } .eq-link.eq-del:hover { border-color: #b3363a; }
+.eq-cap-in { width: 44px; border: 1px solid var(--border); background: var(--card); color: var(--foreground); font: 600 12px 'IBM Plex Mono', monospace; padding: 1px 4px; text-align: center; }
+.eq-form { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .eq-form label { display: flex; flex-direction: column; gap: 2px; font-size: 10px; color: var(--muted-foreground); font-family: 'IBM Plex Mono', monospace; text-transform: uppercase; }
+.eq-form input { border: 1px solid var(--border); background: var(--card); color: var(--foreground); padding: 6px 8px; font: 400 12px inherit; font-family: inherit; text-transform: none; }
+.eq-chips { display: flex; gap: 4px; flex-wrap: wrap; } .eq-chips button { border: 1px solid var(--border); background: var(--card); color: var(--foreground); font: 600 10px 'IBM Plex Mono', monospace; text-transform: uppercase; padding: 5px 10px; cursor: pointer; } .eq-chips button.active { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
+.eq-filters { margin-top: 4px; }
+
 `;
 
 
@@ -1498,6 +1567,7 @@ const modules = [
   { label: "Coletas", icon: ClipboardList },
   { label: "Tabelas vigentes", icon: FileSpreadsheet },
   { label: "Distribuição", icon: Boxes },
+  { label: "Gestão - Equipes", icon: UsersRound, page: "equipes", sub: true },
   { label: "Recursos - Veículos", icon: Truck, page: "vehicles" },
   { label: "Diagnóstico Veículos", icon: Wrench, page: "diagnostico" },
   { label: "Análise Devoluções", icon: Repeat, page: "devolucoes" },
@@ -1508,7 +1578,7 @@ function DashboardLayout({ page, setPage, theme, toggleTheme }) {
   return <aside className="powerbi-sidebar" aria-label="Navegação principal">
     <div className="sidebar-top"><div className="sidebar-brand-mark"><Truck size={20} /></div><span className="sidebar-brand-name">TRAGETTA</span></div>
     <div className="sidebar-section-label">MÓDULOS</div>
-    <nav className="sidebar-nav">{modules.map((item) => { const Icon = item.icon; const active = item.page === page; return item.page ? <button key={item.label} type="button" className={`sidebar-link ${active ? "active" : ""}`} title={item.label} onClick={() => setPage(item.page)}><Icon size={17} /><span>{item.label}</span></button> : <button key={item.label} type="button" className="sidebar-link sidebar-disabled" title={`${item.label} — módulo preparado para expansão`}><Icon size={17} /><span>{item.label}</span></button>; })}</nav>
+    <nav className="sidebar-nav">{modules.map((item) => { const Icon = item.icon; const active = item.page === page; return item.page ? <button key={item.label} type="button" className={`sidebar-link ${active ? "active" : ""} ${item.sub ? "sidebar-sub" : ""}`} title={item.label} onClick={() => setPage(item.page)}><Icon size={17} /><span>{item.label}</span></button> : <button key={item.label} type="button" className="sidebar-link sidebar-disabled" title={`${item.label} — módulo preparado para expansão`}><Icon size={17} /><span>{item.label}</span></button>; })}</nav>
     <div className="sidebar-footer"><button type="button" className="sidebar-link sidebar-theme-toggle" onClick={toggleTheme} title={theme === "dark" ? "Alternar para modo claro" : "Alternar para modo escuro"}>{theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}<span>{theme === "dark" ? "Modo claro" : "Modo escuro"}</span></button><button type="button" className="sidebar-link sidebar-disabled" title="Configurações — módulo preparado para expansão"><Settings2 size={17} /><span>Configurações</span></button><div className="sidebar-status"><span className="status-dot" /> Operação online</div></div>
   </aside>;
 }
@@ -1523,6 +1593,7 @@ function TopBar({ page, setPage }) {
       <button type="button" className={`topnav-link ${page === "vehicles" ? "active" : ""}`} onClick={() => setPage("vehicles")}><Truck size={14} /> Recursos - Veículos</button>
       <button type="button" className={`topnav-link ${page === "diagnostico" ? "active" : ""}`} onClick={() => setPage("diagnostico")}><Wrench size={14} /> Diagnóstico Veículos</button>
       <button type="button" className={`topnav-link ${page === "devolucoes" ? "active" : ""}`} onClick={() => setPage("devolucoes")}><Repeat size={14} /> Análise Devoluções</button>
+      <button type="button" className={`topnav-link ${page === "equipes" ? "active" : ""}`} onClick={() => setPage("equipes")}><UsersRound size={14} /> Gestão - Equipes</button>
     </nav>
     <div className="topbar-meta"><span className="status-dot" /> Simulação operacional <span className="date-chip">{dateLabel}</span></div>
   </header>;
@@ -4332,6 +4403,456 @@ function GlobalStatusBar({ coletaStatus, manifestSourceLabel, manifestUpdatedAt,
   );
 }
 
+/* ===================== Gestão - Equipes (Distribuição) ===================== */
+const EQ_FT = (f) => { const n = frotaNorm(f); if (n.startsWith("MOTORISTA")) return "mot"; if (n.startsWith("CONFERENTE")) return "conf"; if (n.startsWith("AJUD")) return "ajud"; return "adm"; };
+const EQ_FT_LABEL = { mot: "Motorista", conf: "Conferente", ajud: "Ajudante", adm: "Adm./apoio" };
+const EQ_FT_ORDER = { mot: 0, conf: 1, ajud: 2, adm: 3 };
+const eqCaminhao = (tipo) => tipo === "TRUCK" || tipo === "TOCO" || tipo === "VUC 3/4";
+const eqCavalo = (tipo) => tipo === "Cav. Mecanico";
+const eqStopped = (r) => !!r && (r.classe === "Manutenção" || r.classe === "Inoperante");
+function eqDate(v) {
+  if (v instanceof Date) return isNaN(v) ? "" : v.toISOString().slice(0, 10);
+  if (typeof v === "number" && v > 20000) return new Date(Math.round((v - 25569) * 86400) * 1000).toISOString().slice(0, 10);
+  return "";
+}
+function parseCdcDistribuicao(workbook) {
+  const name = workbook.SheetNames.find((n) => frotaNorm(n) === "CDC DISTRIBUICAO") ?? workbook.SheetNames.find((n) => frotaNorm(n).startsWith("CDC DISTRIB"));
+  if (!name) throw new Error('Não encontrei a aba "CDC DISTRIBUIÇÃO" nesta planilha.');
+  const raw = XLSX.utils.sheet_to_json(workbook.Sheets[name], { header: 1, defval: "", cellDates: true });
+  const hi = raw.findIndex((r) => r.some((c) => frotaNorm(c) === "MATRICULA"));
+  if (hi < 0) throw new Error('Na aba "CDC DISTRIBUIÇÃO" não achei a coluna MATRÍCULA.');
+  const head = raw[hi].map(frotaNorm);
+  const ix = (pred) => head.findIndex(pred);
+  const c = {
+    eq: ix((h) => h === "EQUIPE"), reemb: ix((h) => h.startsWith("REEMBOLSO")), aus: ix((h) => h.startsWith("AUSENCIA")), veic: ix((h) => h.startsWith("VEICULO")),
+    filial: ix((h) => h === "FILIAL"), mat: ix((h) => h === "MATRICULA"), nome: ix((h) => h === "NOME"), func: ix((h) => h.includes("FUNCAO")),
+    gestor: ix((h) => h === "GESTOR"), turno: ix((h) => h === "TURNO"), horario: ix((h) => h === "HORARIO"),
+  };
+  if (c.nome < 0 || c.func < 0) throw new Error("Faltam as colunas NOME / DESC.FUNÇÃO na aba CDC DISTRIBUIÇÃO.");
+  const g = (r, i) => (i < 0 ? "" : r[i]);
+  const s = (v) => String(v ?? "").replace(/\s+/g, " ").trim();
+  const people = [];
+  for (const r of raw.slice(hi + 1)) {
+    const nome = s(g(r, c.nome));
+    if (!nome) continue;
+    const mat = s(g(r, c.mat));
+    people.push({
+      mat: mat || `SEM-${frotaNorm(nome)}`, semMat: !mat, nome, func: s(g(r, c.func)), eq: s(g(r, c.eq)) || "Sem equipe", gestor: s(g(r, c.gestor)),
+      filial: s(g(r, c.filial)), turno: s(g(r, c.turno)), horario: s(g(r, c.horario)), veic: s(g(r, c.veic)), aus: s(g(r, c.aus)), reemb: eqDate(g(r, c.reemb)),
+    });
+  }
+  if (!people.length) throw new Error("A aba CDC DISTRIBUIÇÃO não tem colaboradores.");
+  return people;
+}
+const eqSameName = (a, b) => { const x = frotaNorm(a), y = frotaNorm(b); if (!x || !y) return true; if (x === y || x.startsWith(y) || y.startsWith(x)) return true; return x.split(" ").slice(0, 2).join(" ") === y.split(" ").slice(0, 2).join(" "); };
+/* Regra de lotação: no máximo `cap` colaboradores por veículo, de qualquer função. Devolve o motivo do bloqueio ou "". */
+function eqCanAdd(cap, members) { return members.length >= cap ? `limite de ${cap} colaboradores por veículo` : ""; }
+function eqIssues(cap, members) {
+  const out = [];
+  if (members.length > cap) out.push(`${members.length} colaboradores (máx. ${cap})`);
+  const nm = members.filter((m) => m.ft === "mot").length;
+  if (nm > 1) out.push(`${nm} motoristas na mesma placa`);
+  return out;
+}
+const eqCapText = (cap, members) => `${members.length}/${cap} colaboradores`;
+
+function GestaoEquipes() {
+  const [tab, setTab] = useState("resumo");
+  const [base, setBase] = useState(() => { const s = lsLoad("equipes_base"); return s && Array.isArray(s.rows) ? s : { rows: [], label: "", updatedAt: null }; });
+  const [ov, setOv] = useState(() => lsLoad("equipes_veic")?.items ?? {});
+  const [fleet, setFleet] = useState(() => {
+    const s = lsLoad("frota");
+    return s && Array.isArray(s.rows) && s.rows.length ? s.rows : frotaBaseDefault.map(([placa, status, situacao, tipo, categoria, motorista]) => buildFrotaRecord({ placa, status, situacao, tipo, categoria, motorista }));
+  });
+  const [adj, setAdj] = useState(() => lsLoad("frota_ajustes")?.items ?? {});
+  const [mot, setMot] = useState(() => lsLoad("frota_motoristas")?.items ?? {});
+  const [aj, setAj] = useState(() => lsLoad("equipes_ajustes")?.items ?? { added: {}, edits: {}, removed: {} });
+  const [cap, setCap] = useState(() => lsLoad("equipes_cfg")?.cap ?? 3);
+  const [form, setForm] = useState(null); // { mode: "add"|"edit"|"del", mat?, f: {...} }
+  const [err, setErr] = useState(null);
+  const [notice, setNotice] = useState(null);
+  const [openEq, setOpenEq] = useState(null);
+  const [search, setSearch] = useState("");
+  const [vFilter, setVFilter] = useState("equipe"); // equipe | alerta | parada | livre | todos
+  const [dlg, setDlg] = useState(null); // { mode: "person"|"team", ids: [mat], stage: "pick"|"conflict", target, reason, cands, q }
+  const fileRef = useRef(null);
+
+  useEffect(() => {
+    let off = false;
+    const pull = (id, apply) => cloudLoad(id).then((row) => {
+      if (off || !row || !row.data) return;
+      const localAt = lsLoad(id)?.updatedAt;
+      if (!localAt || new Date(row.updated_at) > new Date(localAt)) apply(row);
+    });
+    pull("equipes_base", (row) => { if (Array.isArray(row.data.rows)) { const n = { rows: row.data.rows, label: row.label ?? "", updatedAt: row.updated_at }; setBase(n); lsSave("equipes_base", n); } });
+    pull("equipes_ajustes", (row) => { if (row.data.items) { setAj(row.data.items); lsSave("equipes_ajustes", { items: row.data.items, updatedAt: row.updated_at }); } });
+    pull("equipes_cfg", (row) => { if (row.data.cap) { setCap(row.data.cap); lsSave("equipes_cfg", { cap: row.data.cap, updatedAt: row.updated_at }); } });
+    pull("equipes_veic", (row) => { if (row.data.items) { setOv(row.data.items); lsSave("equipes_veic", { items: row.data.items, updatedAt: row.updated_at }); } });
+    pull("frota", (row) => { if (Array.isArray(row.data.rows) && row.data.rows.length) { setFleet(row.data.rows); lsSave("frota", { rows: row.data.rows, label: row.label, updatedAt: row.updated_at }); } });
+    pull("frota_ajustes", (row) => { if (row.data.items) { setAdj(row.data.items); lsSave("frota_ajustes", { items: row.data.items, updatedAt: row.updated_at }); } });
+    pull("frota_motoristas", (row) => { if (row.data.items) { setMot(row.data.items); lsSave("frota_motoristas", { items: row.data.items, updatedAt: row.updated_at }); } });
+    return () => { off = true; };
+  }, []);
+  useEffect(() => { if (!notice) return undefined; const id = setTimeout(() => setNotice(null), 9000); return () => clearTimeout(id); }, [notice]);
+
+  async function handleImport(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setErr(null);
+    try {
+      const wb = XLSX.read(await file.arrayBuffer(), { type: "array", cellDates: true });
+      const rows = parseCdcDistribuicao(wb);
+      const label = `${file.name} · ${numberInt.format(rows.length)} colaborador(es)`;
+      const next = { rows, label, updatedAt: new Date().toISOString() };
+      setBase(next); lsSave("equipes_base", next); cloudSave("equipes_base", { rows }, label);
+      setNotice(`Planilha lida: ${rows.length} colaboradores. Movimentações feitas no painel foram mantidas (presas à matrícula).`);
+    } catch (e) { setErr(e instanceof Error ? e.message : "Não foi possível ler a planilha CDC."); }
+    finally { event.target.value = ""; }
+  }
+
+  /* Frota do Diagnóstico com os ajustes (manutenção etc.) e motoristas trocados por cima da planilha. */
+  const effFleet = useMemo(() => {
+    const inBase = new Set(fleet.map((r) => frotaPlateKey(r.placa)));
+    const extras = Object.entries(adj).filter(([k, a]) => a && a.novo && !inBase.has(k)).map(([, a]) => ({ placa: a.placa, status: "MANUAL", situacao: "Incluído manualmente", tipo: a.novo.tipo, tipoOriginal: a.novo.tipoOriginal || a.novo.tipo, categoria: a.novo.categoria, motorista: "", classe: a.classe, semMotorista: true }));
+    return [...fleet, ...extras].map((r) => {
+      const k = frotaPlateKey(r.placa); const a = adj[k]; const m = mot[k];
+      let x = a ? { ...r, classe: a.classe } : r;
+      if (m) x = { ...x, motorista: m.motorista, semMotorista: !m.motorista };
+      return x;
+    });
+  }, [fleet, adj, mot]);
+
+  const model = useMemo(() => {
+    const tokens = new Map();
+    effFleet.forEach((r) => { const key = frotaPlateKey(r.placa); String(r.placa).split(/\s*-\s*/).forEach((t) => { const n = frotaNorm(t); if (n && !tokens.has(n)) tokens.set(n, { key, r }); }); });
+    const resolve = (txt) => { const n = frotaNorm(txt); if (!n || n === "AFASTADO") return null; const h = tokens.get(n); return h ? { key: h.key, r: h.r } : { key: n, r: null }; };
+    const rowsAdj = [...base.rows.filter((p) => !(aj.removed || {})[p.mat]).map((p) => ((aj.edits || {})[p.mat] ? { ...p, ...aj.edits[p.mat] } : p)), ...Object.values(aj.added || {}).filter((p) => !(aj.removed || {})[p.mat])];
+    const people = rowsAdj.map((p) => {
+      const b = resolve(p.veic);
+      const o = ov[p.mat];
+      const afastado = frotaNorm(p.veic) === "AFASTADO";
+      const vkey = o ? o.v : (b ? b.key : "");
+      return { ...p, ft: EQ_FT(p.func), afastado, vkey, baseKey: b ? b.key : "", moved: !!o };
+    });
+    const veh = new Map();
+    effFleet.forEach((r) => veh.set(frotaPlateKey(r.placa), { key: frotaPlateKey(r.placa), r, label: r.placa, tipo: r.tipo, members: [] }));
+    people.forEach((p) => {
+      if (!p.vkey || p.afastado) return;
+      if (!veh.has(p.vkey)) veh.set(p.vkey, { key: p.vkey, r: null, label: `${p.vkey} (fora do Diagnóstico)`, tipo: "", members: [] });
+      veh.get(p.vkey).members.push(p);
+    });
+    const vlist = [...veh.values()].map((v) => {
+      v.members.sort((a, b) => EQ_FT_ORDER[a.ft] - EQ_FT_ORDER[b.ft] || a.nome.localeCompare(b.nome, "pt-BR"));
+      v.issues = eqIssues(cap, v.members);
+      const mt = v.members.find((m) => m.ft === "mot");
+      const dm = v.r && !v.r.semMotorista ? v.r.motorista : "";
+      v.diverge = !!(mt && dm && !eqSameName(mt.nome, dm));
+      v.diagMot = dm;
+      return v;
+    });
+    return { people, vlist, veh };
+  }, [base, ov, effFleet, aj, cap]);
+
+  const { people, vlist, veh } = model;
+  const eqNames = useMemo(() => { const o = []; people.forEach((p) => { if (!o.includes(p.eq)) o.push(p.eq); }); return o; }, [people]);
+
+  function persistOv(next) { setOv(next); lsSave("equipes_veic", { items: next, updatedAt: new Date().toISOString() }); cloudSave("equipes_veic", { items: next }, `${Object.keys(next).length} movimentação(ões) de equipe`); }
+  function persistAj(next) { setAj(next); lsSave("equipes_ajustes", { items: next, updatedAt: new Date().toISOString() }); cloudSave("equipes_ajustes", { items: next }, "ajustes de colaboradores (incluir/editar/excluir)"); }
+  function changeCap(v) { const n = Math.max(1, Math.min(12, Number(v) || 3)); setCap(n); lsSave("equipes_cfg", { cap: n, updatedAt: new Date().toISOString() }); cloudSave("equipes_cfg", { cap: n }, "limite de colaboradores por veículo"); }
+  const FORM_EMPTY = { nome: "", mat: "", func: "", eq: "", turno: "", gestor: "", veic: "" };
+  function openForm(mode, p) {
+    if (mode === "add") setForm({ mode, f: { ...FORM_EMPTY, eq: eqNames[0] || "", gestor: people[0]?.gestor || "" } });
+    else setForm({ mode, mat: p.mat, nome: p.nome, f: { ...FORM_EMPTY, nome: p.nome, mat: p.semMat ? "" : p.mat, func: p.func, eq: p.eq, turno: p.turno, gestor: p.gestor } });
+  }
+  function saveForm() {
+    const f = form.f; const nome = f.nome.trim().replace(/\s+/g, " ").toUpperCase(); const func = f.func.trim().toUpperCase();
+    if (!nome || !func) { setForm({ ...form, error: "Informe nome e função." }); return; }
+    const next = { added: { ...(aj.added || {}) }, edits: { ...(aj.edits || {}) }, removed: { ...(aj.removed || {}) } };
+    if (form.mode === "add") {
+      const mat = f.mat.trim() || `NOVO-${Date.now()}`;
+      if (people.some((p) => p.mat === mat) || (aj.removed || {})[mat]) { setForm({ ...form, error: "Já existe colaborador com essa matrícula." }); return; }
+      next.added[mat] = { mat, semMat: !f.mat.trim(), nome, func, eq: f.eq.trim() || "Sem equipe", gestor: f.gestor.trim(), filial: "", turno: f.turno.trim(), horario: "", veic: "", aus: "", reemb: "", manual: true };
+      persistAj(next);
+      const vk = f.veic.trim() && vlist.find((v) => frotaNorm(v.label) === frotaNorm(f.veic) || v.key === frotaNorm(f.veic) || frotaNorm(v.label).split(" - ").includes(frotaNorm(f.veic)));
+      if (vk) persistOv({ ...ov, [mat]: { v: vk.key, at: new Date().toISOString() } });
+      setNotice(`${nome} incluído${vk ? ` em ${vk.label}` : ""}.`);
+    } else {
+      const patch = { nome, func, eq: f.eq.trim() || "Sem equipe", turno: f.turno.trim(), gestor: f.gestor.trim() };
+      if (next.added[form.mat]) next.added[form.mat] = { ...next.added[form.mat], ...patch }; else next.edits[form.mat] = patch;
+      persistAj(next); setNotice(`${nome} atualizado.`);
+    }
+    setForm(null);
+  }
+  function removePerson(mat, nome) {
+    const next = { added: { ...(aj.added || {}) }, edits: { ...(aj.edits || {}) }, removed: { ...(aj.removed || {}) } };
+    if (next.added[mat]) delete next.added[mat]; else next.removed[mat] = { nome, at: new Date().toISOString() };
+    persistAj(next);
+    if (ov[mat]) { const o = { ...ov }; delete o[mat]; persistOv(o); }
+    setForm(null); setNotice(`${nome} excluído (some das equipes e do resumo).`);
+  }
+  function restorePerson(mat) { const next = { ...aj, removed: { ...(aj.removed || {}) } }; delete next.removed[mat]; persistAj(next); }
+  /* Mantém o Diagnóstico de Veículos coerente: o motorista da equipe vira o motorista da placa. */
+  function syncDiag(moves) {
+    const now = new Date().toISOString();
+    const next = { ...mot };
+    let changed = false;
+    moves.filter((m) => m.p.ft === "mot").forEach(({ p }) => { const k = p.vkey; if (k && veh.get(k)?.r) { next[k] = { motorista: "", at: now, de: p.nome }; changed = true; } });
+    moves.filter((m) => m.p.ft === "mot").forEach(({ p, to }) => { if (to && veh.get(to)?.r) { next[to] = { motorista: p.nome, at: now }; changed = true; } });
+    if (!changed) return;
+    setMot(next); lsSave("frota_motoristas", { items: next, updatedAt: now }); cloudSave("frota_motoristas", { items: next }, `${Object.keys(next).length} troca(s) de motorista`);
+  }
+  function applyMoves(moves, msg) {
+    const next = { ...ov };
+    moves.forEach(({ p, to }) => { next[p.mat] = { v: to, at: new Date().toISOString() }; });
+    persistOv(next); syncDiag(moves); setDlg(null); if (msg) setNotice(msg);
+  }
+  function requestMove(p, to) {
+    if (!to) { applyMoves([{ p, to: "" }], `${p.nome} ficou SEM VEÍCULO.`); return; }
+    const v = veh.get(to);
+    const others = v.members.filter((m) => m.mat !== p.mat);
+    const reason = eqCanAdd(cap, others);
+    if (!reason) { applyMoves([{ p, to }], `${p.nome} agora está em ${v.label}${p.vkey && p.vkey !== to && veh.get(p.vkey) ? ` (saiu de ${veh.get(p.vkey).label})` : ""}.`); return; }
+    const cands = others;
+    setDlg({ mode: "person", ids: [p.mat], stage: "conflict", target: to, reason, cands, q: "" });
+  }
+  function requestTeam(from, to) {
+    const src = veh.get(from); const dst = veh.get(to);
+    const sim = []; let reason = "";
+    for (const m of src.members) { const r = eqCanAdd(cap, sim); if (r) { reason = `${m.nome}: ${r}`; break; } sim.push(m); }
+    if (reason) { setDlg({ mode: "team", ids: src.members.map((m) => m.mat), stage: "blocked", target: to, reason, cands: [], q: "" }); return; }
+    applyMoves(src.members.map((p) => ({ p, to })), `Equipe de ${src.label} realocada para ${dst.label}.`);
+  }
+  function resolveConflict(p, to, out) {
+    applyMoves([{ p: out, to: "" }, { p, to }], `${p.nome} entrou em ${veh.get(to).label}; ${out.nome} ficou SEM VEÍCULO.`);
+  }
+
+  const ops = people.filter((p) => p.ft !== "adm");
+  const T = useMemo(() => {
+    const emVeic = people.filter((p) => p.vkey && !p.afastado).length;
+    const afast = people.filter((p) => p.afastado).length;
+    const alertas = vlist.filter((v) => v.issues.length).length;
+    return { total: people.length, emVeic, afast, sem: people.length - emVeic - afast, alertas, vagos: vlist.filter((v) => v.r && !v.members.length).length, vcom: vlist.filter((v) => v.members.length).length };
+  }, [people, vlist]);
+
+  const resumoRows = useMemo(() => eqNames.map((e) => {
+    const l = people.filter((p) => p.eq === e);
+    const n = (ft) => l.filter((p) => p.ft === ft).length;
+    const motCar = l.filter((p) => frotaNorm(p.func).includes("CARRETA")).length;
+    return { eq: e, ajud: n("ajud"), conf: n("conf"), mot: n("mot") - motCar, motCar, adm: n("adm"), total: l.length };
+  }), [eqNames, people]);
+
+  const coverage = useMemo(() => ["ajud", "conf", "mot"].map((ft) => { const l = people.filter((p) => p.ft === ft && !p.afastado); return { ft, tot: l.length, com: l.filter((p) => p.vkey).length }; }), [people]);
+
+  const attention = useMemo(() => {
+    const out = [];
+    eqNames.forEach((e) => {
+      const l = people.filter((p) => p.eq === e && p.ft !== "adm" && !p.afastado);
+      const com = l.filter((p) => p.vkey).length;
+      if (l.length && com / l.length >= 0.5) {
+        const sem = l.filter((p) => !p.vkey);
+        if (sem.length) out.push({ tone: "bad", t: `${sem.length} ${sem.length === 1 ? "colaborador operacional" : "colaboradores operacionais"} de "${e}" sem veículo`, d: sem.map((p) => `${p.nome} (${EQ_FT_LABEL[p.ft]})`).join(" · ") });
+      }
+    });
+    if (T.alertas) out.push({ tone: "bad", t: `${T.alertas} veículo(s) fora da regra de lotação`, d: vlist.filter((v) => v.issues.length).map((v) => `${v.label}: ${v.issues.join("; ")}`).slice(0, 6).join(" · ") });
+    const semMat = people.filter((p) => p.semMat);
+    if (semMat.length) out.push({ tone: "am", t: `${semMat.length} cadastro(s) sem matrícula`, d: semMat.map((p) => p.nome).join(" · ") });
+    const mode = (k) => { const c = {}; people.forEach((p) => { if (p[k]) c[p[k]] = (c[p[k]] || 0) + 1; }); return Object.entries(c).sort((a, b) => b[1] - a[1])[0]?.[0]; };
+    const gm = mode("gestor"), fm = mode("filial");
+    const odd = people.filter((p) => (gm && p.gestor && p.gestor !== gm) || (fm && p.filial && p.filial !== fm));
+    if (odd.length) out.push({ tone: "am", t: `${odd.length} colaborador(es) com gestor ou filial diferente do padrão`, d: odd.map((p) => `${p.nome} (${[p.gestor !== gm ? p.gestor : "", p.filial !== fm ? `filial ${p.filial}` : ""].filter(Boolean).join(", ")})`).join(" · ") });
+    const livres = vlist.filter((v) => v.r && !v.members.length);
+    const livresOp = livres.filter((v) => !eqStopped(v.r) && v.r.classe !== "JDI");
+    if (livres.length) out.push({ tone: "am", t: `${livres.length} placa(s) do Diagnóstico sem equipe (${livres.length - livresOp.length} em manutenção/inoperante/JDI)`, d: livresOp.slice(0, 10).map((v) => v.label).join(" · ") + (livresOp.length > 10 ? " …" : "") });
+    const fora = vlist.filter((v) => !v.r && v.members.length);
+    if (fora.length) out.push({ tone: "am", t: `${fora.length} veículo(s) da planilha CDC não constam no Diagnóstico`, d: fora.map((v) => v.key).join(" · ") });
+    const parados = vlist.filter((v) => v.members.length && eqStopped(v.r));
+    if (parados.length) out.push({ tone: "bad", t: `${parados.length} equipe(s) com veículo parado (${parados.reduce((s, v) => s + v.members.length, 0)} colaboradores)`, d: parados.map((v) => `${v.label} · ${v.r.classe}`).join(" · ") });
+    return out;
+  }, [eqNames, people, vlist, T]);
+
+  const vRows = useMemo(() => {
+    const q = frotaNorm(search);
+    return vlist.filter((v) => {
+      if (vFilter === "equipe" && !v.members.length) return false;
+      if (vFilter === "alerta" && !v.issues.length && !v.diverge) return false;
+      if (vFilter === "parada" && !(v.members.length && eqStopped(v.r))) return false;
+      if (vFilter === "livre" && (v.members.length || !v.r)) return false;
+      if (q && !frotaNorm(v.label).includes(q) && !v.members.some((m) => frotaNorm(m.nome).includes(q) || String(m.mat).includes(q))) return false;
+      return true;
+    }).sort((a, b) => (eqStopped(b.r) ? 1 : 0) - (eqStopped(a.r) ? 1 : 0) || (b.issues.length ? 1 : 0) - (a.issues.length ? 1 : 0) || a.label.localeCompare(b.label, "pt-BR", { numeric: true }));
+  }, [vlist, vFilter, search]);
+  const semVeic = useMemo(() => people.filter((p) => !p.vkey && !p.afastado && p.ft !== "adm").sort((a, b) => EQ_FT_ORDER[a.ft] - EQ_FT_ORDER[b.ft] || a.eq.localeCompare(b.eq) || a.nome.localeCompare(b.nome, "pt-BR")), [people]);
+
+  function exportEquipes() {
+    const wb = XLSX.utils.book_new();
+    const add = (nome, head, body, widths) => { const ws = XLSX.utils.aoa_to_sheet([head, ...body]); ws["!cols"] = widths.map((w) => ({ wch: w })); XLSX.utils.book_append_sheet(wb, ws, nome); };
+    add("Resumo", ["Equipe", "Ajudante", "Conferente", "Motorista", "Motorista carreta", "Adm./apoio", "Total"], [...resumoRows.map((r) => [r.eq, r.ajud, r.conf, r.mot, r.motCar, r.adm, r.total]), ["Total geral", ...["ajud", "conf", "mot", "motCar", "adm", "total"].map((k) => resumoRows.reduce((s, r) => s + r[k], 0))]], [22, 10, 11, 10, 16, 11, 8]);
+    add("Veículos e equipes", ["Veículo", "Tipo", "Situação (Diagnóstico)", "Motorista", "Conferente", "Ajudante(s)", "Outras funções", "Ocupação", "Alerta"],
+      vlist.filter((v) => v.members.length).sort((a, b) => a.label.localeCompare(b.label, "pt-BR", { numeric: true })).map((v) => [v.label, v.tipo || "—", v.r ? v.r.classe : "fora do Diagnóstico", v.members.filter((m) => m.ft === "mot").map((m) => m.nome).join(" / "), v.members.filter((m) => m.ft === "conf").map((m) => m.nome).join(" / "), v.members.filter((m) => m.ft === "ajud").map((m) => m.nome).join(" / "), v.members.filter((m) => m.ft === "adm").map((m) => `${m.nome} (${m.func})`).join(" / "), eqCapText(cap, v.members), v.issues.join("; ")]), [22, 14, 20, 32, 32, 44, 34, 20, 40]);
+    add("Colaboradores", ["Matrícula", "Nome", "Função", "Equipe", "Veículo", "Turno", "Gestor"], people.map((p) => [p.mat, p.nome, p.func, p.eq, p.afastado ? "AFASTADO" : (veh.get(p.vkey)?.label ?? ""), p.turno, p.gestor]), [12, 34, 20, 18, 22, 10, 32]);
+    const d = new Date();
+    XLSX.writeFile(wb, `Gestao_Equipes_${d.getFullYear()}-${devPad2(d.getMonth() + 1)}-${devPad2(d.getDate())}.xlsx`);
+  }
+
+  const empty = !people.length;
+  const pDlg = dlg && dlg.mode === "person" ? people.find((p) => p.mat === dlg.ids[0]) : null;
+  const tDlgSrc = dlg && dlg.mode === "team" ? veh.get(people.find((p) => p.mat === dlg.ids[0])?.vkey) : null;
+  const pickList = !dlg || dlg.stage !== "pick" ? [] : vlist.filter((v) => {
+    if (dlg.mode === "team" ? (v.members.length || !v.r || v.key === tDlgSrc?.key) : (pDlg && v.key === pDlg.vkey)) return false;
+    if (dlg.mode === "person" && !v.r && !v.members.length) return false;
+    const q = frotaNorm(dlg.q || "");
+    return !q || frotaNorm(v.label).includes(q) || v.members.some((m) => frotaNorm(m.nome).includes(q));
+  }).sort((a, b) => (eqStopped(a.r) ? 1 : 0) - (eqStopped(b.r) ? 1 : 0) || a.label.localeCompare(b.label, "pt-BR", { numeric: true })).slice(0, 80);
+
+  const memberRow = (m, v) => <div key={m.mat} className="eq-mem">
+    <span className={`eq-ft eq-ft-${m.ft}`}>{EQ_FT_LABEL[m.ft]}</span>
+    <span className="eq-mem-name" title={m.func}>{m.nome}</span>
+    <span className="eq-mem-mat">{m.semMat ? "s/ matrícula" : m.mat}</span>
+    {m.moved && <span className="eq-moved" title="Movido no painel (vale por cima da planilha)">movido</span>}
+    <span className="eq-acts"><button type="button" className="eq-link" onClick={() => setDlg({ mode: "person", ids: [m.mat], stage: "pick", q: "" })}>Mover</button><button type="button" className="eq-link" onClick={() => openForm("edit", m)}>Editar</button><button type="button" className="eq-link eq-del" onClick={() => setForm({ mode: "del", mat: m.mat, nome: m.nome })}>Excluir</button></span>
+  </div>;
+
+  return <main className="client-page diag-page eq-page">
+    <input ref={fileRef} className="hidden-file-input" type="file" accept=".xlsx,.xls" onChange={handleImport} />
+    <div className="client-page-heading">
+      <div>
+        <span className="section-kicker">08 / DISTRIBUIÇÃO · GESTÃO - EQUIPES</span>
+        <h2>Gestão - Equipes</h2>
+        <p>Base: aba CDC DISTRIBUIÇÃO da planilha CDC. Quem está em cada veículo, com a regra de lotação, ligada ao Diagnóstico de Veículos.</p>
+      </div>
+      <div className="client-source"><UsersRound size={15} /> {base.label || "Nenhuma planilha carregada"}{base.updatedAt && <small>{relativeTime(base.updatedAt)}</small>}</div>
+    </div>
+    <div className="client-toolbar import-toolbar">
+      <button className="secondary-action" type="button" onClick={() => fileRef.current?.click()}><UploadCloud size={15} /> Atualizar planilha CDC</button>
+      <button className="secondary-action" type="button" onClick={() => openForm("add")}><Plus size={15} /> Incluir colaborador</button>
+      {!empty && <button className="secondary-action" type="button" onClick={exportEquipes}><FileDown size={15} /> Extrair relatório (Excel)</button>}
+      {err && <div className="import-error client-import-error">{err}</div>}
+    </div>
+    {notice && <div className="eq-notice">{notice}</div>}
+
+    {empty ? <div className="eq-empty"><strong>Suba a planilha CDC para começar.</strong><span>Use "Atualizar planilha CDC" e escolha o arquivo CDC - OPL GERAL (a aba CDC DISTRIBUIÇÃO é lida). Nomes e matrículas ficam guardados na base compartilhada do painel.</span></div> : <>
+      <div className="view-tabs" role="tablist">
+        <button type="button" role="tab" aria-selected={tab === "resumo"} className={tab === "resumo" ? "active" : ""} onClick={() => setTab("resumo")}>Resumo das equipes</button>
+        <button type="button" role="tab" aria-selected={tab === "veic"} className={tab === "veic" ? "active" : ""} onClick={() => setTab("veic")}>Veículos e equipes</button>
+      </div>
+
+      <div className="diag-kpi-grid eq-kpis">
+        <div className="diag-kpi static"><span>Colaboradores</span><strong>{numberInt.format(T.total)}</strong><small>CDC Distribuição</small></div>
+        <div className="diag-kpi static"><span>Em veículo</span><strong>{numberInt.format(T.emVeic)}</strong><small>{T.vcom} veículo(s) com equipe</small></div>
+        <div className="diag-kpi static"><span>Sem veículo</span><strong>{numberInt.format(T.sem)}</strong><small>{semVeic.length} operacional(is)</small></div>
+        {T.afast > 0 && <div className="diag-kpi static"><span>Afastados</span><strong>{T.afast}</strong><small>veículo "AFASTADO"</small></div>}
+        <div className={`diag-kpi static ${T.alertas ? "eq-bad" : ""}`}><span>Fora da regra</span><strong>{T.alertas}</strong><small>veículos com excesso</small></div>
+        <div className="diag-kpi static"><span>Placas sem equipe</span><strong>{T.vagos}</strong><small>no Diagnóstico</small></div>
+        <div className="diag-kpi static eq-na"><span>Férias</span><strong>a incluir</strong><small>próxima etapa</small></div>
+      </div>
+
+      {tab === "resumo" && <div className="eq-resumo">
+        <div className="eq-grid2">
+          <section className="eq-card">
+            <h3>Equipe × função</h3>
+            <table className="eq-table">
+              <thead><tr><th>Equipe</th><th>Ajudante</th><th>Conferente</th><th>Motorista</th><th>Mot. carreta</th><th>Adm.</th><th>Total</th><th className="eq-fe">Em férias</th></tr></thead>
+              <tbody>
+                {resumoRows.map((r) => <React.Fragment key={r.eq}>
+                  <tr className="eq-click" onClick={() => setOpenEq(openEq === r.eq ? null : r.eq)}><td>{openEq === r.eq ? "▾" : "▸"} {r.eq}</td>{["ajud", "conf", "mot", "motCar", "adm"].map((k) => <td key={k} className={r[k] ? "" : "eq-z"}>{r[k]}</td>)}<td><b>{r.total}</b></td><td className="eq-fe">a incluir</td></tr>
+                  {openEq === r.eq && <tr><td colSpan={8} className="eq-open"><div className="eq-names">{people.filter((p) => p.eq === r.eq).sort((a, b) => EQ_FT_ORDER[a.ft] - EQ_FT_ORDER[b.ft] || a.nome.localeCompare(b.nome, "pt-BR")).map((p) => <div key={p.mat} className="eq-name-row"><span className={`eq-ft eq-ft-${p.ft}`}>{p.func}</span><span>{p.nome}</span><span className="eq-mem-mat">{p.semMat ? "s/ matrícula" : p.mat}</span><span className="eq-mem-mat">{p.turno}</span><span className="eq-mem-mat">{p.afastado ? "AFASTADO" : (veh.get(p.vkey)?.label ?? "sem veículo")}</span><span className="eq-acts"><button type="button" className="eq-link" onClick={() => openForm("edit", p)}>Editar</button><button type="button" className="eq-link eq-del" onClick={() => setForm({ mode: "del", mat: p.mat, nome: p.nome })}>Excluir</button></span></div>)}</div></td></tr>}
+                </React.Fragment>)}
+                <tr className="eq-tot"><td>Total geral</td>{["ajud", "conf", "mot", "motCar", "adm", "total"].map((k) => <td key={k}>{resumoRows.reduce((s, r) => s + r[k], 0)}</td>)}<td className="eq-fe">—</td></tr>
+              </tbody>
+            </table>
+            <p className="eq-note">Adm./apoio = funções que não vão em veículo (analista, assistente, auxiliar, coordenador, jovem aprendiz). Clique numa equipe para ver a lista nominal.</p>
+          </section>
+          <section className="eq-card">
+            <h3>Quem tem veículo, por função</h3>
+            {coverage.map((c) => <div key={c.ft} className="eq-bar-row"><span>{EQ_FT_LABEL[c.ft]}</span><div className="eq-bar"><i style={{ width: `${c.tot ? (c.com / c.tot) * 100 : 0}%` }} /></div><b>{c.com}/{c.tot}</b></div>)}
+            <p className="eq-note">Verde = em algum veículo. O restante sem veículo é esperado no Agendamento e no apoio.</p>
+          </section>
+        </div>
+        <section className="eq-card">
+          <h3>Pontos de atenção (calculados da planilha e do Diagnóstico)</h3>
+          {attention.length ? <ul className="eq-att">{attention.map((a, i) => <li key={i} className={a.tone === "bad" ? "bad" : "am"}><b>{a.t}</b>{a.d && <small>{a.d}</small>}</li>)}</ul> : <p className="eq-note">Nada a apontar.</p>}
+        </section>
+      </div>}
+
+      {tab === "veic" && <div className="eq-veic">
+        <div className="eq-rule"><b>Regra de lotação:</b> cada colaborador fica em 1 veículo e cada veículo comporta até <input className="eq-cap-in" type="number" min="1" max="12" value={cap} onChange={(e) => changeCap(e.target.value)} aria-label="Limite de colaboradores por veículo" /> colaboradores, de qualquer função (nome e função continuam registrados). Ao passar do limite o painel bloqueia e pede quem sai. Mais de 1 motorista na placa aparece como alerta.</div>
+        <div className="client-toolbar eq-filters">
+          <div className="eq-chips">
+            {[["equipe", `Com equipe (${T.vcom})`], ["alerta", "Alertas"], ["parada", "Equipe parada"], ["livre", `Placas sem equipe (${T.vagos})`], ["todos", "Todos"]].map(([k, l]) => <button key={k} type="button" className={vFilter === k ? "active" : ""} onClick={() => setVFilter(k)}>{l}</button>)}
+          </div>
+          <input className="eq-search" type="search" placeholder="Buscar placa, nome ou matrícula…" value={search} onChange={(e) => setSearch(e.target.value)} />
+        </div>
+        <div className="eq-vlist">
+          {vRows.map((v) => <div key={v.key} className={`eq-veh ${v.issues.length ? "is-bad" : ""} ${v.members.length && eqStopped(v.r) ? "is-stop" : ""}`}>
+            <div className="eq-veh-h">
+              <b className="eq-plate">{v.label}</b>
+              <span className="eq-tipo">{v.tipo || "tipo ?"}</span>
+              {v.r ? <span className={`eq-st eq-st-${frotaNorm(v.r.classe).toLowerCase()}`}>{v.r.classe}</span> : <span className="eq-st">fora do Diagnóstico</span>}
+              <span className="eq-cap">{eqCapText(cap, v.members)}</span>
+              {v.members.length > 0 && eqStopped(v.r) && <button type="button" className="eq-link strong" onClick={() => setDlg({ mode: "team", ids: v.members.map((m) => m.mat), stage: "pick", q: "" })}>Realocar equipe</button>}
+            </div>
+            {v.issues.length > 0 && <div className="eq-issue">{v.issues.join(" · ")}</div>}
+            {v.diverge && <div className="eq-issue am">Diagnóstico mostra motorista "{v.diagMot}"; a equipe tem "{v.members.find((m) => m.ft === "mot")?.nome}".</div>}
+            {v.members.length ? <div className="eq-mems">{v.members.map((m) => memberRow(m, v))}</div> : <div className="eq-none">Sem equipe nesta placa.</div>}
+          </div>)}
+          {!vRows.length && <div className="eq-none">Nenhum veículo neste filtro.</div>}
+        </div>
+        {semVeic.length > 0 && <section className="eq-card">
+          <h3>Colaboradores operacionais sem veículo ({semVeic.length})</h3>
+          <div className="eq-mems">{semVeic.map((m) => <div key={m.mat} className="eq-mem"><span className={`eq-ft eq-ft-${m.ft}`}>{EQ_FT_LABEL[m.ft]}</span><span className="eq-mem-name">{m.nome}</span><span className="eq-mem-mat">{m.eq}</span>{m.moved && <span className="eq-moved">movido</span>}<span className="eq-acts"><button type="button" className="eq-link" onClick={() => setDlg({ mode: "person", ids: [m.mat], stage: "pick", q: "" })}>Atribuir veículo</button><button type="button" className="eq-link" onClick={() => openForm("edit", m)}>Editar</button><button type="button" className="eq-link eq-del" onClick={() => setForm({ mode: "del", mat: m.mat, nome: m.nome })}>Excluir</button></span></div>)}</div>
+        </section>}
+      </div>}
+    </>}
+
+    {!empty && Object.keys(aj.removed || {}).length > 0 && tab === "veic" && <section className="eq-card"><h3>Excluídos ({Object.keys(aj.removed).length})</h3>{Object.entries(aj.removed).map(([mat, r]) => <div key={mat} className="eq-mem"><span className="eq-ft">excluído</span><span className="eq-mem-name">{r.nome}</span><span className="eq-mem-mat">{mat}</span><span /><span className="eq-acts"><button type="button" className="eq-link" onClick={() => restorePerson(mat)}>Restaurar</button></span></div>)}</section>}
+
+    {form && <div className="eq-modal-bg" onClick={() => setForm(null)}><div className="eq-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+      {form.mode === "del" ? <>
+        <h3>Excluir colaborador</h3>
+        <p className="eq-note">Excluir <b>{form.nome}</b>? Ele some das equipes, do resumo e dos relatórios (continua na planilha, mas não volta ao subir uma nova). Dá para restaurar depois.</p>
+        <div className="eq-modal-f"><button type="button" className="secondary-action" onClick={() => setForm(null)}>Cancelar</button><button type="button" className="secondary-action eq-del" onClick={() => removePerson(form.mat, form.nome)}>Excluir</button></div>
+      </> : <>
+        <h3>{form.mode === "add" ? "Incluir colaborador" : `Editar ${form.nome}`}</h3>
+        <div className="eq-form">
+          {[["nome", "Nome"], ["func", "Função"], ["eq", "Equipe"], ["turno", "Turno"], ["gestor", "Gestor"], ...(form.mode === "add" ? [["mat", "Matrícula (opcional)"], ["veic", "Veículo (opcional)"]] : [])].map(([k, l]) => <label key={k}><span>{l}</span><input value={form.f[k]} list={k === "func" ? "eq-dl-func" : k === "eq" ? "eq-dl-eq" : k === "veic" ? "eq-dl-veic" : undefined} onChange={(e) => setForm({ ...form, f: { ...form.f, [k]: e.target.value } })} /></label>)}
+          <datalist id="eq-dl-func">{[...new Set(people.map((p) => p.func))].map((f) => <option key={f} value={f} />)}</datalist>
+          <datalist id="eq-dl-eq">{eqNames.map((f) => <option key={f} value={f} />)}</datalist>
+          <datalist id="eq-dl-veic">{vlist.filter((v) => v.r).map((v) => <option key={v.key} value={v.label} />)}</datalist>
+        </div>
+        {form.error && <div className="eq-issue">{form.error}</div>}
+        <div className="eq-modal-f"><button type="button" className="secondary-action" onClick={() => setForm(null)}>Cancelar</button><button type="button" className="secondary-action" onClick={saveForm}>Salvar</button></div>
+      </>}
+    </div></div>}
+
+    {dlg && <div className="eq-modal-bg" onClick={() => setDlg(null)}><div className="eq-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+      {dlg.stage === "pick" && <>
+        <h3>{dlg.mode === "team" ? `Realocar equipe de ${tDlgSrc?.label ?? ""}` : `Mover ${pDlg?.nome ?? ""}`}</h3>
+        <input className="eq-search" autoFocus type="search" placeholder="Buscar placa…" value={dlg.q} onChange={(e) => setDlg({ ...dlg, q: e.target.value })} />
+        <div className="eq-pick">
+          {dlg.mode === "person" && pDlg?.vkey && <button type="button" className="eq-pick-row" onClick={() => requestMove(pDlg, "")}><b>Sem veículo</b><small>tirar de {veh.get(pDlg.vkey)?.label}</small></button>}
+          {pickList.map((v) => <button key={v.key} type="button" className="eq-pick-row" onClick={() => dlg.mode === "team" ? requestTeam(tDlgSrc.key, v.key) : requestMove(pDlg, v.key)}>
+            <b>{v.label}</b><span className="eq-tipo">{v.tipo || "?"}</span>{v.r && <span className={`eq-st eq-st-${frotaNorm(v.r.classe).toLowerCase()}`}>{v.r.classe}</span>}<small>{eqCapText(cap, v.members)}</small>
+          </button>)}
+          {!pickList.length && <div className="eq-none">Nenhum veículo encontrado.</div>}
+        </div>
+        <div className="eq-modal-f"><button type="button" className="secondary-action" onClick={() => setDlg(null)}>Cancelar</button></div>
+      </>}
+      {dlg.stage === "conflict" && pDlg && <>
+        <h3>Não cabe em {veh.get(dlg.target)?.label}</h3>
+        <p className="eq-note">{pDlg.nome} ({EQ_FT_LABEL[pDlg.ft]}): {dlg.reason}. Para entrar, alguém precisa sair (ficará SEM VEÍCULO e poderá ser reatribuído):</p>
+        <div className="eq-pick">{dlg.cands.map((m) => <button key={m.mat} type="button" className="eq-pick-row" onClick={() => resolveConflict(pDlg, dlg.target, m)}><b>Trocar com {m.nome}</b><span className={`eq-ft eq-ft-${m.ft}`}>{EQ_FT_LABEL[m.ft]}</span></button>)}
+          {!dlg.cands.length && <div className="eq-none">Não há quem substituir. Escolha outro veículo.</div>}</div>
+        <div className="eq-modal-f"><button type="button" className="secondary-action" onClick={() => setDlg({ ...dlg, stage: "pick" })}>Escolher outro veículo</button><button type="button" className="secondary-action" onClick={() => setDlg(null)}>Cancelar</button></div>
+      </>}
+      {dlg.stage === "blocked" && <>
+        <h3>Equipe não cabe em {veh.get(dlg.target)?.label}</h3>
+        <p className="eq-note">{dlg.reason}. Escolha outro veículo ou mova as pessoas uma a uma.</p>
+        <div className="eq-modal-f"><button type="button" className="secondary-action" onClick={() => setDlg({ ...dlg, stage: "pick" })}>Escolher outro veículo</button><button type="button" className="secondary-action" onClick={() => setDlg(null)}>Fechar</button></div>
+      </>}
+    </div></div>}
+  </main>;
+}
+
 function App() {
   const [page, setPage] = useState("home");
   const [theme, setTheme] = useState("light");
@@ -4416,13 +4937,13 @@ function App() {
   }
 
   return (
-    <div className={`app-shell ${page === "clients" || page === "vehicles" || page === "diagnostico" || page === "devolucoes" ? "client-analysis-shell" : ""}`}>
+    <div className={`app-shell ${page === "clients" || page === "vehicles" || page === "diagnostico" || page === "devolucoes" || page === "equipes" ? "client-analysis-shell" : ""}`}>
       <style>{CSS_TEXT}</style>
       <input ref={manifestFileInputRef} className="hidden-file-input" type="file" accept=".xlsx,.xls" onChange={handleManifestImport} />
       <DashboardLayout page={page} setPage={setPage} theme={theme} toggleTheme={toggleTheme} />
       <TopBar page={page} setPage={setPage} />
       <GlobalStatusBar coletaStatus={coletaStatus} manifestSourceLabel={manifestSourceLabel} manifestUpdatedAt={manifestUpdatedAt} manifestLoaded={!!manifestDataset} receitaStatus={receitaStatus} />
-      {page === "home" ? <Home /> : page === "clients" ? <ClientAnalysis manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} onColetaStatusChange={setColetaStatus} onReceitaStatusChange={setReceitaStatus} /> : page === "diagnostico" ? <DiagnosticoVeiculos /> : page === "devolucoes" ? <AnaliseDevolucoes /> : <VehicleResources manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} />}
+      {page === "home" ? <Home /> : page === "clients" ? <ClientAnalysis manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} onColetaStatusChange={setColetaStatus} onReceitaStatusChange={setReceitaStatus} /> : page === "diagnostico" ? <DiagnosticoVeiculos /> : page === "devolucoes" ? <AnaliseDevolucoes /> : page === "equipes" ? <GestaoEquipes /> : <VehicleResources manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} />}
     </div>
   );
 }
