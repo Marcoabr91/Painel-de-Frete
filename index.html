@@ -952,6 +952,19 @@ button.dev-top-row:hover { background: var(--muted); }
 .eq-user { display: grid; grid-template-columns: 160px 100px minmax(0,1fr) auto; gap: 10px; align-items: center; padding: 5px 0; border-top: 1px dashed var(--border); font-size: 12px; color: var(--foreground); } .eq-pw { min-width: 110px; width: 120px; }
 @media (max-width: 900px) { .eq-user { grid-template-columns: 1fr; } .eq-frow { grid-template-columns: 1fr 1fr; } }
 
+/* Frequência */
+.eq-fq-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 6px; color: var(--foreground); } .eq-fq-title { font-size: 13px; } .eq-date { min-width: 140px; }
+.eq-fq-chk { font-size: 11px; display: flex; gap: 4px; align-items: center; color: var(--foreground); } .eq-link.strong2 { border-color: var(--green); }
+.eq-fq-legend { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; font-size: 11px; color: var(--foreground); margin-bottom: 6px; }
+.eq-fq-blanks { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; font-size: 11px; color: var(--foreground); margin-bottom: 8px; }
+.eq-fq-pill { border: 1px solid #b3363a; color: #b3363a; background: transparent; font: 600 10px 'IBM Plex Mono', monospace; padding: 2px 7px; cursor: pointer; } .eq-fq-pill.on { background: #b3363a; color: #fff; }
+.eq-fq-row { display: flex; align-items: center; gap: 10px; padding: 3px 0; border-top: 1px dashed var(--border); } .eq-fq-row .eq-slot-t { flex: 1; min-width: 0; }
+.eq-fq-btns { display: flex; gap: 3px; }
+.eq-code { font: 700 11px 'IBM Plex Mono', monospace; min-width: 30px; height: 26px; border: 1px solid var(--border); background: transparent; color: var(--foreground); cursor: pointer; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; } .eq-code:disabled { cursor: default; opacity: .6; }
+span.eq-code, b.eq-code { cursor: default; height: 18px; min-width: 24px; }
+.eq-code.on.c-P { background: #1f8a4c; color: #fff; border-color: #1f8a4c; } .eq-code.on.c-F { background: #b3363a; color: #fff; border-color: #b3363a; } .eq-code.on.c-BH { background: #2a6fb0; color: #fff; border-color: #2a6fb0; }
+.eq-code.on.c-FE { background: #d19a00; color: #1b1500; border-color: #d19a00; } .eq-code.on.c-AT { background: #8a5db5; color: #fff; border-color: #8a5db5; }
+
 `;
 
 
@@ -4516,6 +4529,11 @@ function eqIssues(cap, members) {
 }
 const eqCapText = (cap, members) => `${members.length}/${cap} colaboradores`;
 
+const FQ_CODES = [["P", "Presente"], ["F", "Falta"], ["BH", "Banco de horas"], ["FE", "Férias"], ["AT", "Atestado"]];
+const eqDow = (iso) => new Date(`${iso}T12:00:00`).getDay();
+const eqDaysOfMonth = (m) => { const [y, mo] = m.split("-").map(Number); const n = new Date(y, mo, 0).getDate(); return Array.from({ length: n }, (_, i) => `${m}-${eqPad(i + 1)}`); };
+const eqMonthLabel = (m) => { const [y, mo] = m.split("-"); return `${["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"][Number(mo) - 1]} de ${y}`; };
+const eqShiftMonth = (m, n) => { const [y, mo] = m.split("-").map(Number); const d = new Date(y, mo - 1 + n, 1); return `${d.getFullYear()}-${eqPad(d.getMonth() + 1)}`; };
 function GestaoEquipes({ perm }) {
   const ro = perm ? !perm.canEdit : false;
   const [tab, setTab] = useState("resumo");
@@ -4532,6 +4550,20 @@ function GestaoEquipes({ perm }) {
   const [pct, setPct] = useState(() => lsLoad("equipes_cfg")?.pct ?? 10);
   const [ferias, setFerias] = useState(() => { const f = lsLoad("equipes_ferias"); return f && Array.isArray(f.rows) ? f : { rows: [], label: "", updatedAt: null }; });
   const ferRef = useRef(null);
+  const [fday, setFday] = useState(() => eqTodayISO());
+  const [fShowAll, setFShowAll] = useState(false);
+  const [freq, setFreq] = useState({}); // { "AAAA-MM-DD": { matrícula: código } } do mês aberto
+  const fmonth = fday.slice(0, 7);
+  useEffect(() => {
+    let off = false; const id = `equipes_freq_${fmonth}`;
+    setFreq(lsLoad(id)?.items ?? {});
+    cloudLoad(id).then((row) => {
+      if (off || !row || !row.data || !row.data.items) return;
+      const la = lsLoad(id)?.updatedAt;
+      if (!la || new Date(row.updated_at) > new Date(la)) { setFreq(row.data.items); lsSave(id, { items: row.data.items, updatedAt: row.updated_at }); }
+    });
+    return () => { off = true; };
+  }, [fmonth]);
   const [form, setForm] = useState(null); // { mode: "add"|"edit"|"del", mat?, f: {...} }
   const [err, setErr] = useState(null);
   const [notice, setNotice] = useState(null);
@@ -4629,6 +4661,13 @@ function GestaoEquipes({ perm }) {
   function saveCfg(c, p) { lsSave("equipes_cfg", { cap: c, pct: p, updatedAt: new Date().toISOString() }); cloudSave("equipes_cfg", { cap: c, pct: p }, "limites (colaboradores por veículo / férias simultâneas)"); }
   function changeCap(v) { const n = Math.max(1, Math.min(12, Number(v) || 3)); setCap(n); saveCfg(n, pct); }
   function changePct(v) { const n = Math.max(1, Math.min(50, Number(v) || 10)); setPct(n); saveCfg(cap, n); }
+  /* Frequência: grava no aparelho e mescla com a nuvem (várias pessoas podem marcar equipes diferentes no mesmo mês). */
+  function applyFreq(date, mats, code) {
+    const id = `equipes_freq_${date.slice(0, 7)}`;
+    const apply = (items) => { const out = { ...(items || {}) }; const day = { ...(out[date] || {}) }; mats.forEach((m) => { if (code) day[m] = code; else delete day[m]; }); out[date] = day; return out; };
+    const next = apply(freq); setFreq(next); lsSave(id, { items: next, updatedAt: new Date().toISOString() });
+    Promise.resolve(cloudLoad(id)).then((row) => { const merged = apply(row && row.data && row.data.items); cloudSave(id, { items: merged }, `frequência ${date.slice(0, 7)}`); }).catch(() => {});
+  }
   async function handleFerias(event) {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -4899,7 +4938,7 @@ function GestaoEquipes({ perm }) {
 
     {empty ? <div className="eq-empty"><strong>{ro ? "Ainda não há planilha carregada." : "Suba a planilha CDC para começar."}</strong><span>{ro ? "Peça ao coordenador para carregar a planilha." : 'Use "Atualizar planilha CDC" e escolha o arquivo CDC - OPL GERAL (a aba CDC DISTRIBUIÇÃO é lida). Depois "Atualizar férias" com a planilha de férias. Nomes e matrículas ficam guardados na base compartilhada do painel.'}</span></div> : <>
       <div className="view-tabs" role="tablist">
-        {[["resumo", "Resumo das equipes"], ["veic", "Veículos e equipes"], ["ferias", "Férias"]].map(([k, l]) => <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? "active" : ""} onClick={() => setTab(k)}>{l}</button>)}
+        {[["resumo", "Resumo das equipes"], ["veic", "Veículos e equipes"], ["ferias", "Férias"], ["freq", "Frequência"]].map(([k, l]) => <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? "active" : ""} onClick={() => setTab(k)}>{l}</button>)}
       </div>
 
       <div className="diag-kpi-grid eq-kpis">
@@ -4988,6 +5027,63 @@ function GestaoEquipes({ perm }) {
           </div>)}</div>
         </section>}
       </div>}
+
+      {tab === "freq" && (() => {
+        const codeOf = (p, d) => freq[d]?.[p.mat] || (p.fer && p.fer.ini && p.fer.ini <= d && d <= p.fer.fim ? "FE*" : "");
+        const order = [...opEq, ...admEq];
+        const dow = eqDow(fday); const weekend = dow === 0 || dow === 6;
+        const days = eqDaysOfMonth(fmonth);
+        const lastDay = fmonth === today.slice(0, 7) ? today : (fmonth < today.slice(0, 7) ? days[days.length - 1] : "");
+        const worked = days.filter((d) => d <= lastDay && eqDow(d) >= 1 && eqDow(d) <= 5);
+        const blanks = worked.map((d) => ({ d, n: people.filter((p) => !codeOf(p, d)).length })).filter((x) => x.n > 0);
+        const dayPeople = people.filter((p) => fShowAll || !codeOf(p, fday));
+        const done = people.length - people.filter((p) => !codeOf(p, fday)).length;
+        const stat = people.map((p) => { const c = { P: 0, F: 0, BH: 0, FE: 0, AT: 0 }; days.forEach((d) => { const k = (codeOf(p, d) || "").replace("*", ""); if (k) c[k]++; }); return { p, c, sem: worked.filter((d) => !codeOf(p, d)).length }; });
+        const byEq = order.map((e) => { const l = stat.filter((x) => x.p.eq === e); const t = { P: 0, F: 0, BH: 0, FE: 0, AT: 0 }; l.forEach((x) => Object.keys(t).forEach((k) => { t[k] += x.c[k]; })); return { e, n: l.length, t, sem: l.reduce((s, x) => s + x.sem, 0) }; });
+        const pctP = (c) => { const tot = c.P + c.F + c.BH + c.AT; return tot ? `${Math.round((c.P / tot) * 100)}%` : "—"; };
+        const exportFreq = () => {
+          const wb = XLSX.utils.book_new();
+          const add = (nome, head, body, widths) => { const ws = XLSX.utils.aoa_to_sheet([head, ...body]); ws["!cols"] = widths.map((w) => ({ wch: w })); XLSX.utils.book_append_sheet(wb, ws, nome); };
+          add("Resumo por pessoa", ["Matrícula", "Nome", "Função", "Equipe", "Presente", "Falta", "Banco de horas", "Férias", "Atestado", "% presença", "Dias úteis sem marcação"], stat.map((x) => [x.p.mat, x.p.nome, x.p.func, x.p.eq, x.c.P, x.c.F, x.c.BH, x.c.FE, x.c.AT, pctP(x.c), x.sem]), [12, 34, 20, 18, 9, 7, 14, 8, 9, 11, 22]);
+          add("Resumo por equipe", ["Equipe", "Colaboradores", "Presente", "Falta", "Banco de horas", "Férias", "Atestado", "% presença", "Dias úteis sem marcação"], byEq.map((x) => [x.e, x.n, x.t.P, x.t.F, x.t.BH, x.t.FE, x.t.AT, pctP(x.t), x.sem]), [20, 14, 9, 7, 14, 8, 9, 11, 22]);
+          add("Mapa do mês", ["Matrícula", "Nome", "Equipe", ...days.map((d) => d.slice(8))], people.map((p) => [p.mat, p.nome, p.eq, ...days.map((d) => (codeOf(p, d) || "").replace("*", ""))]), [12, 34, 18, ...days.map(() => 4)]);
+          XLSX.writeFile(wb, `Frequencia_${fmonth}.xlsx`);
+        };
+        return <div className="eq-freq">
+          <div className="eq-fq-bar">
+            <button type="button" className="eq-link" onClick={() => setFday(eqAddDays(fday, -1))}>◀ dia anterior</button>
+            <input type="date" className="eq-search eq-date" value={fday} onChange={(e) => e.target.value && setFday(e.target.value)} aria-label="Dia da frequência" />
+            <button type="button" className="eq-link" onClick={() => setFday(eqAddDays(fday, 1))}>próximo dia ▶</button>
+            <button type="button" className="eq-link strong2" onClick={() => setFday(today)}>Hoje</button>
+            <b className="eq-fq-title">{eqFmtFull(fday)} · {["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"][dow]}{weekend ? " (fim de semana)" : ""}</b>
+            <span className="eq-note" style={{ margin: 0 }}>{done}/{people.length} marcados</span>
+            <label className="eq-fq-chk"><input type="checkbox" checked={fShowAll} onChange={(e) => setFShowAll(e.target.checked)} /> mostrar já marcados</label>
+            <button type="button" className="eq-link" onClick={exportFreq}>Extrair frequência de {eqMonthLabel(fmonth)} (Excel)</button>
+          </div>
+          <div className="eq-fq-legend">{FQ_CODES.map(([k, l]) => <span key={k}><b className={`eq-code c-${k}`}>{k}</b> {l}</span>)}<span className="eq-note" style={{ margin: 0 }}>Quem está de férias na planilha entra como FE automaticamente.</span></div>
+          {blanks.length > 0 && <div className="eq-fq-blanks"><b>Dias úteis com marcação pendente:</b>{blanks.map((x) => <button key={x.d} type="button" className={`eq-fq-pill ${x.d === fday ? "on" : ""}`} onClick={() => setFday(x.d)}>{eqFmt(x.d)} · {x.n}</button>)}</div>}
+          {order.map((e) => {
+            const l = dayPeople.filter((p) => p.eq === e);
+            const pend = people.filter((p) => p.eq === e && !codeOf(p, fday));
+            if (!l.length) return null;
+            return <section key={e} className="eq-card">
+              <h3>{e} <span className="eq-pct">{pend.length ? `${pend.length} pendente(s)` : "tudo marcado"}{!ro && pend.length > 0 && <button type="button" className="eq-link" onClick={() => applyFreq(fday, pend.map((p) => p.mat), "P")}>Marcar todos pendentes como P</button>}</span></h3>
+              {l.map((p) => { const c = codeOf(p, fday); return <div key={p.mat} className="eq-fq-row">
+                <div className="eq-slot-t"><span className="eq-slot-name">{p.nome}</span><small>{p.func}{p.vkey && veh.get(p.vkey) ? ` · ${veh.get(p.vkey).label}` : ""}</small></div>
+                <div className="eq-fq-btns">{FQ_CODES.map(([k, l2]) => <button key={k} type="button" disabled={ro || (c === "FE*" && k === "FE")} title={l2} className={`eq-code c-${k} ${c === k || (c === "FE*" && k === "FE") ? "on" : ""}`} onClick={() => applyFreq(fday, [p.mat], c === k ? "" : k)}>{k}</button>)}</div>
+                {c === "FE*" && <span className="eq-fe-chip">férias (planilha)</span>}
+              </div>; })}
+            </section>;
+          })}
+          {!dayPeople.length && <div className="eq-empty"><strong>Todos marcados em {eqFmtFull(fday)}.</strong><span>Use "mostrar já marcados" para corrigir alguma marcação, ou escolha outro dia.</span></div>}
+          <section className="eq-card">
+            <h3>Relatório de {eqMonthLabel(fmonth)} <span className="eq-pct"><button type="button" className="eq-link" onClick={() => setFday(`${eqShiftMonth(fmonth, -1)}-01`)}>◀ mês anterior</button> <button type="button" className="eq-link" onClick={() => setFday(`${eqShiftMonth(fmonth, 1)}-01`)}>próximo mês ▶</button></span></h3>
+            <table className="eq-table eq-table-sug"><thead><tr><th>Equipe</th><th>Colab.</th><th>P</th><th>F</th><th>BH</th><th>FE</th><th>AT</th><th>% presença</th><th>Dias úteis sem marcação</th></tr></thead>
+              <tbody>{byEq.map((x) => <tr key={x.e}><td>{x.e}</td><td>{x.n}</td><td>{x.t.P}</td><td>{x.t.F}</td><td>{x.t.BH}</td><td>{x.t.FE}</td><td>{x.t.AT}</td><td>{pctP(x.t)}</td><td className={x.sem ? "eq-badtxt" : ""}>{x.sem}</td></tr>)}</tbody></table>
+            <p className="eq-note">% presença = presentes ÷ (presentes + faltas + banco de horas + atestados); férias ficam de fora. A lista por pessoa e o mapa dia a dia saem no Excel.</p>
+          </section>
+        </div>;
+      })()}
 
       {tab === "ferias" && (!hasFer ? <div className="eq-empty"><strong>Suba a planilha de férias.</strong><span>{ro ? "Peça ao coordenador para carregar a planilha de férias." : 'Use "Atualizar férias" e escolha a planilha FÉRIAS OPL (a aba BASE DE FÉRIAS é lida).'}</span></div> : <div className="eq-ferias">
         <div className="diag-kpi-grid eq-kpis">
