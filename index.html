@@ -630,12 +630,19 @@ html:not(.dark) .sim-grid-row > div strong { color: #17301f; }
 .diag-adj-novo select { min-width: 150px; }
 .diag-adj-form .add-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 14px; min-height: 36px; cursor: pointer; border: 0; font-weight: 800; font-size: 11px; }
 .diag-adj-list { display: grid; gap: 6px; padding-top: 12px; }
-.diag-adj-item { display: grid; grid-template-columns: 78px 92px 96px 58px 84px minmax(140px, 1fr) minmax(170px, .9fr) auto; gap: 8px; align-items: center; border-top: 1px solid var(--border); padding-top: 8px; font-size: 11px; color: var(--foreground); }
+.diag-adj-item { display: grid; grid-template-columns: 78px 92px 96px 58px 84px 124px minmax(130px, 1fr) minmax(160px, .9fr) auto; gap: 8px; align-items: center; border-top: 1px solid var(--border); padding-top: 8px; font-size: 11px; color: var(--foreground); }
 .diag-adj-item small { color: var(--muted-foreground); font-size: 10px; }
 .diag-desde { display: flex; flex-direction: column; gap: 1px; line-height: 1.25; white-space: nowrap; }
 .diag-desde.red b, .diag-desde.red .diag-date { color: var(--red); }
 .diag-desde.amb b, .diag-desde.amb .diag-date { color: #d19a00; }
 .diag-desde b { font-size: 12px; }
+.diag-prev { display: flex; flex-direction: column; gap: 1px; line-height: 1.25; white-space: nowrap; color: var(--foreground); }
+.diag-prev b { font-size: 12px; color: var(--muted-foreground, #8a8f98); font-weight: 600; }
+.diag-prev input { width: 124px; font-size: 11px; padding: 1px 4px; background: transparent; color: var(--foreground); border: 1px solid var(--border, #8884); border-radius: 6px; }
+.diag-prev.late b { color: var(--red); }
+.diag-prev.late input { border-color: var(--red); }
+.diag-prev.today b { color: #d19a00; }
+.diag-prev.ok b { color: var(--foreground); }
 .diag-date { position: relative; display: inline-block; font-size: 10px; cursor: pointer; border-bottom: 1px dotted currentColor; align-self: flex-start; }
 .diag-date input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: none; padding: 0; }
 .diag-adj-item .status-pill { justify-self: start; }
@@ -978,6 +985,17 @@ span.eq-code, b.eq-code { cursor: default; height: 18px; min-width: 24px; }
 .eq-fq-modes { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 6px; } .eq-fq-modes button:not(.eq-link) { border: 1px solid var(--border); background: var(--card); color: var(--foreground); font: 600 11px 'IBM Plex Mono', monospace; text-transform: uppercase; padding: 6px 12px; cursor: pointer; } .eq-fq-modes button.active { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); } .eq-fq-modes .eq-link { margin-left: auto; }
 .eq-fq-sum { font: 500 11px 'IBM Plex Mono', monospace; color: var(--muted-foreground); } .eq-fq-nav { display: inline-flex; gap: 8px; align-items: center; font-size: 12px; text-transform: none; letter-spacing: 0; }
 .eq-fq-sech { display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin: 0 !important; } .eq-fq-sec { padding: 6px 10px; margin-bottom: 6px; }
+.eq-att-bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
+.eq-att-h { display: flex; justify-content: space-between; align-items: center; gap: 8px; cursor: pointer; } .eq-att-t { display: flex; gap: 6px; align-items: baseline; } .eq-att-t i { font-style: normal; width: 10px; color: var(--muted-foreground); }
+.eq-att li.open { background: rgba(127,127,127,.05); } .eq-att-body { overflow-x: auto; margin-top: 6px; } .eq-att-body td, .eq-att-body th { font-size: 11px; color: var(--foreground); vertical-align: top; } .eq-att-act { white-space: nowrap; display: flex; gap: 8px; }
+.eq-sv-area { border-top: 1px solid var(--border); padding: 6px 0; color: var(--foreground); } .eq-sv-area summary { cursor: pointer; font-size: 12px; } .eq-sv-area summary span { color: var(--muted-foreground); font-size: 11px; margin-left: 6px; }
+.eq-sv-sel { margin-top: 2px; font-size: 10px; max-width: 150px; background: transparent; color: var(--foreground); border: 1px solid var(--border); }
+.eq-fq-vgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 8px; margin-top: 6px; align-items: start; }
+.eq-fq-v { border: 1px solid var(--border); padding: 4px 8px 6px; color: var(--foreground); } .eq-fq-vh { display: flex; align-items: baseline; gap: 8px; border-bottom: 1px solid var(--border); padding-bottom: 3px; margin-bottom: 2px; font-size: 12px; } .eq-fq-vh small { color: var(--muted-foreground); font-size: 10px; flex: 1; }
+.eq-fq-line { display: grid; grid-template-columns: 78px minmax(0, 1fr) 108px; gap: 6px; align-items: center; padding: 2px 0; font-size: 12px; } .eq-fq-line.done { opacity: .8; } .eq-fq-role { color: var(--muted-foreground); font-size: 11px; } .eq-fq-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.eq-fq-sel { font-size: 11px; height: 24px; background: transparent; color: var(--foreground); border: 1px solid var(--border); }
+.eq-fq-sel.c-P { background: #1f8a4c; color: #fff; } .eq-fq-sel.c-F { background: #b3363a; color: #fff; } .eq-fq-sel.c-BH { background: #2a6fb0; color: #fff; } .eq-fq-sel.c-FE { background: #d19a00; color: #1b1500; } .eq-fq-sel.c-AT { background: #8a5db5; color: #fff; }
+.eq-fq-sel option { background: #fff; color: #111; }
 .eq-fq-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 4px 12px; margin-top: 6px; }
 .eq-fq-cell { display: flex; align-items: center; gap: 6px; justify-content: space-between; padding: 2px 0; border-bottom: 1px dashed var(--border); } .eq-fq-cell .eq-slot-t { flex: 1; min-width: 0; } .eq-fq-cell.done { opacity: .75; }
 .eq-fq-cell .eq-code { min-width: 28px; height: 24px; font-size: 10px; } .eq-fq-btns.big { flex-wrap: wrap; gap: 6px; } .eq-fq-btns.big .eq-code { height: 34px; padding: 0 12px; font-size: 12px; }
@@ -3039,6 +3057,7 @@ function DiagnosticoVeiculos() {
   const [motNotice, setMotNotice] = useState(null);
   /* Desde quando cada veículo está parado (1ª vez visto em manutenção/inoperante, p/ os que vêm da planilha); ordena do mais antigo ao mais recente. */
   const [since, setSince] = useState(() => lsLoad("frota_desde")?.items ?? {});
+  const [prev, setPrev] = useState(() => lsLoad("frota_prev")?.items ?? {});
   const [tipoSel, setTipoSel] = useState("all");
   const [sinceReady, setSinceReady] = useState(false);
   useEffect(() => { if (!motNotice) return undefined; const id = setTimeout(() => setMotNotice(null), 9000); return () => clearTimeout(id); }, [motNotice]);
@@ -3090,6 +3109,19 @@ function DiagnosticoVeiculos() {
       cloudSave("frota_desde", { items: merged }, `${Object.keys(merged).length} veículo(s) com data de parada`);
     }).catch(() => {});
   }
+  /* Previsão de liberação informada pela oficina (por placa); vale a última informada. */
+  function setPrevLib(r, dateStr) {
+    const key = frotaPlateKey(r.placa);
+    const next = { ...prev };
+    if (dateStr) next[key] = dateStr; else delete next[key];
+    setPrev(next);
+    lsSave("frota_prev", { items: next, updatedAt: new Date().toISOString() });
+    Promise.resolve(cloudLoad("frota_prev")).then((row) => {
+      const merged = { ...((row && row.data && row.data.items) || {}) };
+      if (dateStr) merged[key] = dateStr; else delete merged[key];
+      cloudSave("frota_prev", { items: merged }, `${Object.keys(merged).length} previsão(ões) de liberação`);
+    }).catch(() => {});
+  }
   /* Corrige a data em que o veículo parou (vale a data informada, mesmo que seja mais recente que a já gravada). */
   function setDesde(r, dateStr) {
     const key = frotaPlateKey(r.placa) + "|parada";
@@ -3138,6 +3170,11 @@ function DiagnosticoVeiculos() {
       if (cancelled || !row || !row.data || !row.data.items) return;
       setSince((p) => { const o = { ...row.data.items }; for (const [k, v] of Object.entries(p)) if (!o[k] || String(v) < String(o[k])) o[k] = v; lsSave("frota_desde", { items: o, updatedAt: row.updated_at }); return o; });
     }).catch(() => {}).then(() => { if (!cancelled) setSinceReady(true); });
+    cloudLoad("frota_prev").then((row) => {
+      if (cancelled || !row || !row.data || !row.data.items) return;
+      setPrev(row.data.items);
+      lsSave("frota_prev", { items: row.data.items, updatedAt: row.updated_at });
+    }).catch(() => {});
     cloudLoad("frota_motoristas").then((row) => {
       if (cancelled || !row || !row.data || !row.data.items) return;
       const localAt = lsLoad("frota_motoristas")?.updatedAt;
@@ -3155,6 +3192,9 @@ function DiagnosticoVeiculos() {
         if (row.id === "frota_ajustes" && row.data.items) {
           setAdj(row.data.items);
           lsSave("frota_ajustes", { items: row.data.items, updatedAt: row.updated_at });
+        } else if (row.id === "frota_prev" && row.data.items) {
+          setPrev(row.data.items);
+          lsSave("frota_prev", { items: row.data.items, updatedAt: row.updated_at });
         } else if (row.id === "frota_desde" && row.data.items) {
           setSince((p) => { const o = { ...row.data.items }; for (const [k, v] of Object.entries(p)) if (!o[k] || String(v) < String(o[k])) o[k] = v; return o; });
         } else if (row.id === "frota_motoristas" && row.data.items) {
@@ -3235,6 +3275,9 @@ function DiagnosticoVeiculos() {
   const registroOf = (r) => (r.ajuste && r.ajuste.at) || since[frotaPlateKey(r.placa)] || "";
   const paradaOf = (r) => since[frotaPlateKey(r.placa) + "|parada"] || "";
   const desdeOf = (r) => paradaOf(r) || registroOf(r);
+  const prevOf = (r) => prev[frotaPlateKey(r.placa)] || "";
+  /* >0 = dias de atraso após a previsão; 0 = vence hoje; <0 = faltam dias */
+  const atrasoOf = (r) => { const p = prevOf(r); if (!p) return null; const t = new Date(); const hoje = Date.UTC(t.getFullYear(), t.getMonth(), t.getDate()); const [y, m, d] = p.split("-").map(Number); return Math.round((hoje - Date.UTC(y, m - 1, d)) / 86400000); };
   const manutAll = useMemo(() => scoped.filter((r) => r.classe === "Manutenção" || r.classe === "Inoperante"), [scoped]);
   const manutTipos = useMemo(() => FROTA_TIPOS.map((t) => [t, manutAll.filter((r) => r.tipo === t).length]).filter(([, n]) => n > 0), [manutAll]);
   const manutList = useMemo(() => manutAll.filter((r) => tipoSel === "all" || r.tipo === tipoSel)
@@ -3303,13 +3346,13 @@ function DiagnosticoVeiculos() {
     const sumRow = (nome, x) => [nome, x.total, x.operando, x.backup, x.manutencao, x.jdi, x.inoperante, x.semMotorista, x.total ? Number(x.disponivel.toFixed(4)) : ""];
     const resumo = [["Categoria / Tipo", "Total", "Operando", "Backup", "Manutenção", "JDI", "Inoperante", "Sem motorista", "% Disponível"], ...tiposVisiveis.map((x) => sumRow(x.tipo, x)), sumRow("TOTAL", t)];
     const parados = manutAll.slice().sort((a, b) => (desdeOf(a) || "9999").localeCompare(desdeOf(b) || "9999") || FROTA_TIPOS.indexOf(a.tipo) - FROTA_TIPOS.indexOf(b.tipo) || a.placa.localeCompare(b.placa))
-      .map((r) => [r.placa, r.tipoOriginal || r.tipo, r.classe, catTxt(r), dias(r), fmtD(paradaOf(r)), fmtD(registroOf(r)), paradaOf(r) ? "Data da parada" : "Data do registro", r.ajuste?.motivo ?? "", motTxt(r)]);
+      .map((r) => [r.placa, r.tipoOriginal || r.tipo, r.classe, catTxt(r), dias(r), fmtD(paradaOf(r)), fmtD(registroOf(r)), paradaOf(r) ? "Data da parada" : "Data do registro", r.ajuste?.motivo ?? "", motTxt(r), prevOf(r) ? prevOf(r).split("-").reverse().join("/") : "", atrasoOf(r) > 0 ? atrasoOf(r) : ""]);
     const lista = listRows.map((r) => [r.placa, r.tipoOriginal || r.tipo, catTxt(r), r.classe, r.ajuste ? (r.ajuste.classe === "Operando" ? `Liberado em ${fmtLiberado(r.ajuste.liberadoAt)}` : `Ajuste manual${r.ajuste.motivo ? ` · ${r.ajuste.motivo}` : ""}`) : `${r.status} · ${r.situacao}`, motTxt(r)]);
     const liberados = liberadosList.map((r) => [r.placa, r.tipoOriginal || r.tipo, catTxt(r), fmtLiberado(r.ajuste.liberadoAt), r.ajuste.classeAnterior ?? "", r.ajuste.motivo ?? "", motTxt(r)]);
     const wb = XLSX.utils.book_new();
     const add = (nome, head, body, widths) => { const ws = XLSX.utils.aoa_to_sheet([head, ...body]); ws["!cols"] = widths.map((w) => ({ wch: w })); XLSX.utils.book_append_sheet(wb, ws, nome); };
     XLSX.utils.book_append_sheet(wb, (() => { const ws = XLSX.utils.aoa_to_sheet(resumo); ws["!cols"] = [20, 8, 10, 8, 12, 6, 11, 14, 12].map((w) => ({ wch: w })); for (let i = 1; i < resumo.length; i++) { const c = ws[XLSX.utils.encode_cell({ r: i, c: 8 })]; if (c && typeof c.v === "number") c.z = "0.0%"; } return ws; })(), "Resumo por categoria");
-    add("Veículos parados", ["Placa", "Categoria (tipo)", "Situação", "Frota / Agregado", "Dias parado", "Data da parada", "Data do registro", "Contagem pela", "Motivo do bloqueio", "Motorista"], parados, [14, 16, 12, 16, 11, 14, 15, 16, 36, 30]);
+    add("Veículos parados", ["Placa", "Categoria (tipo)", "Situação", "Frota / Agregado", "Dias parado", "Data da parada", "Data do registro", "Contagem pela", "Motivo do bloqueio", "Motorista", "Prev. liberação", "Dias em atraso"], parados, [14, 16, 12, 16, 11, 14, 15, 16, 36, 30, 15, 14]);
     add("Lista de veículos", ["Placa", "Tipo", "Categoria", "Classificação", "Status / Situação", "Motorista"], lista, [14, 16, 12, 14, 40, 30]);
     if (liberados.length) add("Liberados", ["Placa", "Tipo", "Categoria", "Liberado em", "Estava em", "Motivo", "Motorista"], liberados, [14, 16, 12, 20, 14, 36, 30]);
     const d = new Date();
@@ -3385,6 +3428,10 @@ function DiagnosticoVeiculos() {
               <input type="date" aria-label={`Data da parada — ${r.placa}`} max={new Date().toISOString().slice(0, 10)} value={paradaOf(r) ? new Date(new Date(paradaOf(r)).getTime() - 3 * 3600000).toISOString().slice(0, 10) : ""} onClick={(e) => { try { e.currentTarget.showPicker(); } catch (x) {} }} onChange={(e) => setDesde(r, e.target.value)} />
             </label>
           </small>
+          {(() => { const at = atrasoOf(r); const tone = at === null ? "" : at > 0 ? "late" : at === 0 ? "today" : "ok"; return <small className={`diag-prev ${tone}`}>
+            <b>{at === null ? "Prev. liberação" : at > 0 ? `${at} dia(s) em atraso` : at === 0 ? "Vence hoje" : `faltam ${-at} dia(s)`}</b>
+            <input type="date" aria-label={`Previsão de liberação — ${r.placa}`} value={prevOf(r)} onChange={(e) => setPrevLib(r, e.target.value)} />
+          </small>; })()}
           <FrotaMotivoInput value={a?.motivo ?? ""} onSave={(v) => setMotivo(r, v)} />
           <FrotaDriverSelect row={r} options={driverOptions} onChange={assignDriver} />
           <button type="button" className="secondary-action" onClick={() => liberar(r)}>Liberado</button>
@@ -4623,6 +4670,7 @@ function GestaoEquipes({ perm }) {
   const [vf, setVf] = useState(null); // formulário de vaga: { mode, key, f }
   const [fday, setFday] = useState(() => eqTodayISO());
   const [fShowAll, setFShowAll] = useState(false);
+  const [attOpen, setAttOpen] = useState({});
   const [fmode, setFmode] = useState("dia"); // dia | mapa | log
   const [fLog, setFLog] = useState([]);
   const [fOpen, setFOpen] = useState({});
@@ -4964,30 +5012,45 @@ function GestaoEquipes({ perm }) {
   const repTot = useMemo(() => repResumo.reduce((s, r) => ({ total: s.total + r.total, feitas: s.feitas + r.feitas, pend: s.pend + r.pend }), { total: 0, feitas: 0, pend: 0 }), [repResumo]);
   const attention = useMemo(() => {
     const out = [];
+    const pr = (p) => ({ p, cells: [p.nome, p.semMat ? "—" : p.mat, p.func, p.eq, p.gestor || "—"] });
+    const PH = ["Colaborador", "Matrícula", "Função", "Área", "Gestor"];
     eqNames.forEach((e) => {
       const l = people.filter((p) => p.eq === e && p.ft !== "adm" && !p.afastado);
       const com = l.filter((p) => p.vkey).length;
       if (l.length && com / l.length >= 0.5) {
         const sem = l.filter((p) => !p.vkey);
-        if (sem.length) out.push({ tone: "bad", t: `${sem.length} ${sem.length === 1 ? "colaborador operacional" : "colaboradores operacionais"} de "${e}" sem veículo`, d: sem.map((p) => `${p.nome} (${EQ_FT_LABEL[p.ft]})`).join(" · ") });
+        if (sem.length) out.push({ id: `semv-${e}`, short: `Sem veículo - ${eqShort(e)}`, tone: "bad", t: `${sem.length} ${sem.length === 1 ? "colaborador operacional" : "colaboradores operacionais"} de "${e}" sem veículo`, d: sem.slice(0, 4).map((p) => p.nome).join(" · ") + (sem.length > 4 ? " …" : ""), head: PH, rows: sem.map((p) => ({ ...pr(p), act: "atribuir" })) });
       }
     });
-    if (T.alertas) out.push({ tone: "bad", t: `${T.alertas} veículo(s) fora da regra de lotação`, d: vlist.filter((v) => v.issues.length).map((v) => `${v.label}: ${v.issues.join("; ")}`).slice(0, 6).join(" · ") });
+    if (T.alertas) { const l = vlist.filter((v) => v.issues.length); out.push({ id: "lot", short: "Fora da lotação", tone: "bad", t: `${T.alertas} veículo(s) fora da regra de lotação`, d: l.slice(0, 4).map((v) => `${v.label}: ${v.issues.join("; ")}`).join(" · ") + (l.length > 4 ? " …" : ""), head: ["Veículo", "Tipo", "Colaboradores", "Problema", "Equipe"], rows: l.map((v) => ({ v, cells: [v.label, v.r ? v.r.tipo : "fora do Diagnóstico", `${v.members.length}/${cap}`, v.issues.join("; "), v.members.map((m) => `${EQ_FT_LABEL[m.ft]}: ${m.nome}`).join(" | ")], act: "veiculo" })) }); }
     const semMat = people.filter((p) => p.semMat);
-    if (semMat.length) out.push({ tone: "am", t: `${semMat.length} cadastro(s) sem matrícula`, d: semMat.map((p) => p.nome).join(" · ") });
+    if (semMat.length) out.push({ id: "mat", short: "Sem matrícula", tone: "am", t: `${semMat.length} cadastro(s) sem matrícula`, d: semMat.map((p) => p.nome).join(" · "), head: PH, rows: semMat.map((p) => pr(p)) });
     const mode = (k) => { const c = {}; people.forEach((p) => { if (p[k]) c[p[k]] = (c[p[k]] || 0) + 1; }); return Object.entries(c).sort((a, b) => b[1] - a[1])[0]?.[0]; };
     const gm = mode("gestor"), fm = mode("filial");
     const odd = people.filter((p) => (gm && p.gestor && p.gestor !== gm) || (fm && p.filial && p.filial !== fm));
-    if (odd.length) out.push({ tone: "am", t: `${odd.length} colaborador(es) com gestor ou filial diferente do padrão`, d: odd.map((p) => `${p.nome} (${[p.gestor !== gm ? p.gestor : "", p.filial !== fm ? `filial ${p.filial}` : ""].filter(Boolean).join(", ")})`).join(" · ") });
+    if (odd.length) out.push({ id: "odd", short: "Gestor-filial diferente", tone: "am", t: `${odd.length} colaborador(es) com gestor ou filial diferente do padrão`, d: odd.slice(0, 3).map((p) => p.nome).join(" · ") + (odd.length > 3 ? " …" : ""), head: ["Colaborador", "Matrícula", "Função", "Área", "Gestor", "Filial", "Padrão"], rows: odd.map((p) => ({ p, cells: [p.nome, p.semMat ? "—" : p.mat, p.func, p.eq, p.gestor || "—", p.filial || "—", [p.gestor !== gm ? `gestor ${gm}` : "", p.filial !== fm ? `filial ${fm}` : ""].filter(Boolean).join(", ")] })) });
     const livres = vlist.filter((v) => v.r && !v.members.length);
     const livresOp = livres.filter((v) => !eqStopped(v.r) && v.r.classe !== "JDI");
-    if (livres.length) out.push({ tone: "am", t: `${livres.length} placa(s) do Diagnóstico sem equipe (${livres.length - livresOp.length} em manutenção/inoperante/JDI)`, d: livresOp.slice(0, 10).map((v) => v.label).join(" · ") + (livresOp.length > 10 ? " …" : "") });
+    if (livres.length) out.push({ id: "livres", short: "Placas sem equipe", tone: "am", t: `${livres.length} placa(s) do Diagnóstico sem equipe (${livres.length - livresOp.length} em manutenção/inoperante/JDI)`, d: livresOp.slice(0, 8).map((v) => v.label).join(" · ") + (livresOp.length > 8 ? " …" : ""), head: ["Placa", "Tipo", "Situação", "Motorista no Diagnóstico"], rows: livres.map((v) => ({ v, cells: [v.label, v.r.tipo, v.r.classe, v.r.semMotorista ? "SEM MOTORISTA" : (v.r.motorista || "—")], act: "veiculo" })) });
     const fora = vlist.filter((v) => !v.r && v.members.length);
-    if (fora.length) out.push({ tone: "am", t: `${fora.length} veículo(s) da planilha CDC não constam no Diagnóstico`, d: fora.map((v) => v.key).join(" · ") });
+    if (fora.length) out.push({ id: "fora", short: "Fora do Diagnóstico", tone: "am", t: `${fora.length} veículo(s) da planilha CDC não constam no Diagnóstico`, d: fora.map((v) => v.key).join(" · "), head: ["Veículo (CDC)", "Colaboradores"], rows: fora.map((v) => ({ v, cells: [v.key, v.members.map((m) => `${EQ_FT_LABEL[m.ft]}: ${m.nome}`).join(" | ")], act: "veiculo" })) });
     const parados = vlist.filter((v) => v.members.length && eqStopped(v.r));
-    if (parados.length) out.push({ tone: "bad", t: `${parados.length} equipe(s) com veículo parado (${parados.reduce((s, v) => s + v.members.length, 0)} colaboradores)`, d: parados.map((v) => `${v.label} · ${v.r.classe}`).join(" · ") });
+    if (parados.length) out.push({ id: "par", short: "Equipe com veículo parado", tone: "bad", t: `${parados.length} equipe(s) com veículo parado (${parados.reduce((s, v) => s + v.members.length, 0)} colaboradores)`, d: parados.map((v) => `${v.label} · ${v.r.classe}`).join(" · "), head: ["Veículo", "Situação", "Prev. liberação", "Colaboradores"], rows: parados.map((v) => ({ v, cells: [v.label, v.r.classe, (lsLoad("frota_prev")?.items || {})[frotaPlateKey(v.label)] ? (lsLoad("frota_prev").items[frotaPlateKey(v.label)]).split("-").reverse().join("/") : "—", v.members.map((m) => `${EQ_FT_LABEL[m.ft]}: ${m.nome}`).join(" | ")], act: "realocar" })) });
     return out;
-  }, [eqNames, people, vlist, T]);
+  }, [eqNames, people, vlist, T, cap]);
+  function exportAtt(list) {
+    const wb = XLSX.utils.book_new(); const used = new Set();
+    list.forEach((a) => {
+      let nm = a.short.replace(/[\\/?*\[\]:]/g, "").slice(0, 28); let k = 1; while (used.has(nm)) nm = `${nm.slice(0, 25)} ${++k}`; used.add(nm);
+      const ws = XLSX.utils.aoa_to_sheet([a.head, ...a.rows.map((r) => r.cells)]); ws["!cols"] = a.head.map((_, c) => ({ wch: Math.min(60, Math.max(12, ...a.rows.map((r) => String(r.cells[c] ?? "").length), a.head[c].length)) })); XLSX.utils.book_append_sheet(wb, ws, nm);
+    });
+    XLSX.writeFile(wb, list.length === 1 ? `Atencao_${list[0].short.replace(/\s+/g, "_")}.xlsx` : "Pontos_de_atencao.xlsx");
+  }
+  function changeArea(p, eq) {
+    const next = { added: { ...(aj.added || {}) }, edits: { ...(aj.edits || {}) }, removed: { ...(aj.removed || {}) } };
+    if (next.added[p.mat]) next.added[p.mat] = { ...next.added[p.mat], eq }; else next.edits[p.mat] = { ...(next.edits[p.mat] || {}), eq };
+    persistAj(next); setNotice(`${p.nome} agora está em "${eq}".`);
+  }
 
   const vRows = useMemo(() => {
     const q = frotaNorm(search);
@@ -5000,6 +5063,7 @@ function GestaoEquipes({ perm }) {
       return true;
     }).sort((a, b) => (eqStopped(b.r) ? 1 : 0) - (eqStopped(a.r) ? 1 : 0) || (b.issues.length ? 1 : 0) - (a.issues.length ? 1 : 0) || a.label.localeCompare(b.label, "pt-BR", { numeric: true }));
   }, [vlist, vFilter, search]);
+  const semVeicAll = useMemo(() => people.filter((p) => !p.vkey && !p.afastado).sort((a, b) => a.eq.localeCompare(b.eq, "pt-BR") || EQ_FT_ORDER[a.ft] - EQ_FT_ORDER[b.ft] || a.nome.localeCompare(b.nome, "pt-BR")), [people]);
   const semVeic = useMemo(() => people.filter((p) => !p.vkey && !p.afastado && p.ft !== "adm").sort((a, b) => EQ_FT_ORDER[a.ft] - EQ_FT_ORDER[b.ft] || a.eq.localeCompare(b.eq) || a.nome.localeCompare(b.nome, "pt-BR")), [people]);
 
   function exportEquipes() {
@@ -5130,7 +5194,22 @@ function GestaoEquipes({ perm }) {
         </section>
         <section className="eq-card">
           <h3>Pontos de atenção (calculados da planilha e do Diagnóstico)</h3>
-          {attention.length ? <ul className="eq-att">{attention.map((a, i) => <li key={i} className={a.tone === "bad" ? "bad" : "am"}><b>{a.t}</b>{a.d && <small>{a.d}</small>}</li>)}</ul> : <p className="eq-note">Nada a apontar.</p>}
+          {attention.length ? <>
+            <div className="eq-att-bar"><span className="eq-note" style={{ margin: 0 }}>Clique num ponto para abrir os detalhes, editar e extrair.</span><button type="button" className="eq-link" onClick={() => exportAtt(attention)}>Extrair todos (Excel)</button></div>
+            <ul className="eq-att">{attention.map((a) => { const open = !!attOpen[a.id]; return <li key={a.id} className={`${a.tone === "bad" ? "bad" : "am"} ${open ? "open" : ""}`}>
+              <div className="eq-att-h" role="button" tabIndex={0} aria-expanded={open} onClick={() => setAttOpen({ ...attOpen, [a.id]: !open })} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setAttOpen({ ...attOpen, [a.id]: !open }); } }}>
+                <span className="eq-att-t"><i>{open ? "▾" : "▸"}</i><b>{a.t}</b></span>
+                <button type="button" className="eq-link" onClick={(e) => { e.stopPropagation(); exportAtt([a]); }}>Extrair</button>
+              </div>
+              {!open && a.d && <small>{a.d}</small>}
+              {open && <div className="eq-att-body"><table className="eq-table eq-table-sug"><thead><tr>{a.head.map((h) => <th key={h}>{h}</th>)}<th /></tr></thead><tbody>
+                {a.rows.map((r, k) => <tr key={k}>{r.cells.map((c, x) => <td key={x}>{c}</td>)}<td className="eq-att-act">
+                  {r.p && !ro && <><button type="button" className="eq-link" onClick={() => openForm("edit", r.p)}>Editar</button>{r.act === "atribuir" && <button type="button" className="eq-link" onClick={() => setDlg({ mode: "person", ids: [r.p.mat], stage: "pick", q: "" })}>Atribuir veículo</button>}</>}
+                  {r.v && r.act === "veiculo" && <button type="button" className="eq-link" onClick={() => { setSearch(String(r.v.label).split(" - ")[0].replace(" (fora do Diagnóstico)", "")); setVFilter("todos"); setTab("veic"); }}>Ver veículo</button>}
+                  {r.v && r.act === "realocar" && !ro && <button type="button" className="eq-link strong" onClick={() => setDlg({ mode: "team", ids: r.v.members.map((m) => m.mat), stage: "pick", q: "" })}>Realocar equipe</button>}
+                </td></tr>)}
+              </tbody></table></div>}
+            </li>; })}</ul></> : <p className="eq-note">Nada a apontar.</p>}
         </section>
       </div>; })()}
 
@@ -5159,13 +5238,19 @@ function GestaoEquipes({ perm }) {
           </div>
         </section>)}
         {!vGroups.length && <div className="eq-none">Nenhum veículo neste filtro.</div>}
-        {semVeic.length > 0 && <section className="eq-card">
-          <h3>Colaboradores operacionais sem veículo ({semVeic.length})</h3>
-          <div className="eq-cards eq-cards-sm">{semVeic.map((m) => <div key={m.mat} className="eq-slot">
-            <span className={`eq-ft eq-ft-${m.ft}`}>{EQ_FT_SHORT[m.ft]}</span>
-            <div className="eq-slot-t"><span className="eq-slot-name">{m.nome}</span><small>{m.func} · {m.eq}</small></div>{ferChip(m)}
-            {!ro && <span className="eq-acts"><button type="button" className="eq-link" onClick={() => setDlg({ mode: "person", ids: [m.mat], stage: "pick", q: "" })}>Atribuir</button><button type="button" className="eq-ic" title="Editar" onClick={() => openForm("edit", m)}>✎</button><button type="button" className="eq-ic eq-del" title="Excluir" onClick={() => setForm({ mode: "del", mat: m.mat, nome: m.nome })}>✕</button></span>}
-          </div>)}</div>
+        {semVeicAll.length > 0 && <section className="eq-card">
+          <h3>Colaboradores sem veículo ({semVeicAll.length}) · por área</h3>
+          <p className="eq-note">Só a <b>Equipe Externa</b> (equipes dos caminhões) precisa de veículo; Agendamento e Administrativo ficam sem. Se alguém estiver na área errada, troque no seletor.</p>
+          {[...new Set(semVeicAll.map((m) => m.eq))].sort((a, b) => (/EXTERN/i.test(b) ? 1 : 0) - (/EXTERN/i.test(a) ? 1 : 0) || a.localeCompare(b, "pt-BR")).map((area) => { const l = semVeicAll.filter((m) => m.eq === area); const ext = /EXTERN/i.test(area);
+            return <details key={area} className="eq-sv-area" open={ext}>
+              <summary><b>{area}</b> <span>{l.length} sem veículo{ext ? " · precisam de veículo" : " · normal não ter veículo"}</span></summary>
+              <div className="eq-cards eq-cards-sm">{l.map((m) => <div key={m.mat} className="eq-slot">
+                <span className={`eq-ft eq-ft-${m.ft}`}>{EQ_FT_SHORT[m.ft]}</span>
+                <div className="eq-slot-t"><span className="eq-slot-name">{m.nome}</span><small>{m.func}</small>
+                  <select className="eq-sv-sel" aria-label={`Área de ${m.nome}`} value={m.eq} disabled={ro} onChange={(e) => changeArea(m, e.target.value)}>{eqNames.map((n) => <option key={n} value={n}>{n}</option>)}</select></div>{ferChip(m)}
+                {!ro && <span className="eq-acts">{m.ft !== "adm" && <button type="button" className="eq-link" onClick={() => setDlg({ mode: "person", ids: [m.mat], stage: "pick", q: "" })}>Atribuir</button>}<button type="button" className="eq-ic" title="Editar" onClick={() => openForm("edit", m)}>✎</button><button type="button" className="eq-ic eq-del" title="Excluir" onClick={() => setForm({ mode: "del", mat: m.mat, nome: m.nome })}>✕</button></span>}
+              </div>)}</div>
+            </details>; })}
         </section>}
       </div>}
 
@@ -5251,10 +5336,20 @@ function GestaoEquipes({ perm }) {
               const l = fShowAll ? all : pend; const open = fOpen[e] ?? pend.length > 0;
               return <section key={e} className="eq-card eq-fq-sec">
                 <h3 className="eq-fq-sech" onClick={() => setFOpen({ ...fOpen, [e]: !open })}><span>{open ? "▾" : "▸"} {e}</span><span className="eq-pct">{pend.length ? `${pend.length} pendente(s) de ${all.length}` : `tudo marcado (${all.length})`}{!ro && pend.length > 0 && <button type="button" className="eq-link" onClick={(ev) => { ev.stopPropagation(); applyFreq(fday, pend.map((p) => p.mat), "P", e); }}>Todos pendentes = P</button>}</span></h3>
-                {open && (l.length ? <div className="eq-fq-grid">{l.map((p) => { const c = codeOf(p, fday); return <div key={p.mat} className={`eq-fq-cell ${c ? "done" : ""}`}>
-                  <div className="eq-slot-t"><span className="eq-slot-name" title={p.nome}>{p.nome}</span><small>{p.func}</small></div>
-                  <div className="eq-fq-btns">{codeBtns(p, fday, c)}</div>
-                </div>; })}</div> : <p className="eq-note">Todos marcados neste dia. Use "mostrar já marcados" para corrigir.</p>)}
+                {open && (l.length ? <div className="eq-fq-vgrid">{(() => {
+                  const gr = new Map();
+                  const lab = (p) => (p.ft === "mot" && /CARRETA/.test(frotaNorm(p.func)) ? "Mot. carreta" : p.ft === "adm" ? (p.func || "Apoio").toLowerCase().replace(/^\w/, (x) => x.toUpperCase()) : EQ_FT_LABEL[p.ft]);
+                  l.forEach((p) => { const k = p.vkey && !p.afastado ? `v:${p.vkey}` : p.ft === "adm" || !opEq.includes(e) ? `f:${p.func}` : "s:"; if (!gr.has(k)) gr.set(k, { k, title: k.startsWith("v:") ? (veh.get(p.vkey)?.label || p.vkey) : k.startsWith("f:") ? p.func : "Sem veículo", tipo: k.startsWith("v:") ? (veh.get(p.vkey)?.r?.tipo || "") : "", rank: k.startsWith("v:") ? EQ_TIPO_ORDER.indexOf(veh.get(p.vkey)?.r?.tipo) : 99, rows: [] }); gr.get(k).rows.push(p); });
+                  return [...gr.values()].sort((x, y) => ((x.rank < 0 ? 50 : x.rank) - (y.rank < 0 ? 50 : y.rank)) || String(x.title).localeCompare(String(y.title), "pt-BR", { numeric: true })).map((g) => { const pg = g.rows.filter((p) => !codeOf(p, fday)); return <div key={g.k} className="eq-fq-v">
+                    <div className="eq-fq-vh"><b>{g.title}</b>{g.tipo && <small>{g.tipo}</small>}{!ro && pg.length > 1 && <button type="button" className="eq-link" onClick={() => applyFreq(fday, pg.map((p) => p.mat), "P", `${e} · ${g.title}`)}>todos P</button>}</div>
+                    {g.rows.slice().sort((x, y) => EQ_FT_ORDER[x.ft] - EQ_FT_ORDER[y.ft] || x.nome.localeCompare(y.nome, "pt-BR")).map((p) => { const c = codeOf(p, fday); const cc = (c || "").replace("*", ""); return <div key={p.mat} className={`eq-fq-line ${c ? "done" : ""}`}>
+                      <span className="eq-fq-role">{lab(p)}:</span><span className="eq-fq-name" title={p.nome}>{p.nome}</span>
+                      <select className={`eq-fq-sel ${cc ? `c-${cc}` : ""}`} aria-label={`Frequência de ${p.nome}`} disabled={ro} value={c === "FE*" ? "FE*" : c} onChange={(ev) => applyFreq(fday, [p.mat], ev.target.value === "FE*" ? "" : ev.target.value)}>
+                        <option value="">—</option>{FQ_CODES.map(([k, l2]) => <option key={k} value={k} disabled={c === "FE*" && k === "FE"}>{k} · {l2}</option>)}{c === "FE*" && <option value="FE*">FE · Férias (planilha)</option>}
+                      </select>
+                    </div>; })}
+                  </div>; });
+                })()}</div> : <p className="eq-note">Todos marcados neste dia. Use "mostrar já marcados" para corrigir.</p>)}
               </section>;
             })}
             <p className="eq-note">Marcou errado? Ative "mostrar já marcados" e clique no código certo, ou use a aba <b>Alterações</b> (mostra quem marcou, quando, e tem o botão Desfazer). Para ver tudo de uma vez, use o <b>Mapa do mês</b>.</p>
