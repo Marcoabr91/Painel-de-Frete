@@ -965,6 +965,37 @@ span.eq-code, b.eq-code { cursor: default; height: 18px; min-width: 24px; }
 .eq-code.on.c-P { background: #1f8a4c; color: #fff; border-color: #1f8a4c; } .eq-code.on.c-F { background: #b3363a; color: #fff; border-color: #b3363a; } .eq-code.on.c-BH { background: #2a6fb0; color: #fff; border-color: #2a6fb0; }
 .eq-code.on.c-FE { background: #d19a00; color: #1b1500; border-color: #d19a00; } .eq-code.on.c-AT { background: #8a5db5; color: #fff; border-color: #8a5db5; }
 
+.eq-cards-rep { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+.eq-rep-m { font-size: 12px; line-height: 1.4; } .eq-rep-regs { display: flex; gap: 4px; flex-wrap: wrap; } .eq-rep-reg { font: 600 10px 'IBM Plex Mono', monospace; border: 1px solid #1f8a4c; color: #1f8a4c; padding: 1px 5px; display: inline-flex; gap: 4px; align-items: center; } .eq-rep-reg button { border: none; background: transparent; color: inherit; cursor: pointer; padding: 0; font-size: 10px; }
+.eq-rep-act { display: flex; gap: 4px; align-items: center; margin-top: auto; } .eq-rep-act .eq-search { min-width: 0; flex: 1; }
+
+/* Resumo com botões, frequência compacta, alocação */
+.eq-btnrow { display: flex; gap: 10px; align-items: center; margin-bottom: 6px; flex-wrap: wrap; } .eq-btnrow > span { font: 600 10px 'IBM Plex Mono', monospace; text-transform: uppercase; color: var(--muted-foreground); min-width: 52px; }
+.eq-row-on td { background: rgba(0,200,100,.12); } .eq-table td.eq-left, .eq-table th.eq-left { text-align: left; }
+.eq-plist { display: flex; flex-direction: column; max-height: 520px; overflow: auto; }
+.eq-prow { display: grid; grid-template-columns: minmax(180px,1.5fr) minmax(130px,1fr) 70px minmax(110px,.9fr) 70px minmax(90px,.8fr) auto auto; gap: 8px; align-items: center; font-size: 12px; padding: 3px 0; border-top: 1px dashed var(--border); color: var(--foreground); } .eq-prow-a { grid-template-columns: minmax(180px,1.5fr) minmax(130px,1fr) 70px minmax(160px,1.2fr) 80px; }
+.eq-prow-c { font: 600 10px 'IBM Plex Mono', monospace; text-transform: uppercase; }
+.eq-fq-modes { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 6px; } .eq-fq-modes button:not(.eq-link) { border: 1px solid var(--border); background: var(--card); color: var(--foreground); font: 600 11px 'IBM Plex Mono', monospace; text-transform: uppercase; padding: 6px 12px; cursor: pointer; } .eq-fq-modes button.active { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); } .eq-fq-modes .eq-link { margin-left: auto; }
+.eq-fq-sum { font: 500 11px 'IBM Plex Mono', monospace; color: var(--muted-foreground); } .eq-fq-nav { display: inline-flex; gap: 8px; align-items: center; font-size: 12px; text-transform: none; letter-spacing: 0; }
+.eq-fq-sech { display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin: 0 !important; } .eq-fq-sec { padding: 6px 10px; margin-bottom: 6px; }
+.eq-fq-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 4px 12px; margin-top: 6px; }
+.eq-fq-cell { display: flex; align-items: center; gap: 6px; justify-content: space-between; padding: 2px 0; border-bottom: 1px dashed var(--border); } .eq-fq-cell .eq-slot-t { flex: 1; min-width: 0; } .eq-fq-cell.done { opacity: .75; }
+.eq-fq-cell .eq-code { min-width: 28px; height: 24px; font-size: 10px; } .eq-fq-btns.big { flex-wrap: wrap; gap: 6px; } .eq-fq-btns.big .eq-code { height: 34px; padding: 0 12px; font-size: 12px; }
+.eq-map-wrap { overflow: auto; max-height: 70vh; border: 1px solid var(--border); background: var(--card); } .eq-map { border-collapse: collapse; font-size: 10px; color: var(--foreground); }
+.eq-map th { position: sticky; top: 0; background: var(--card); z-index: 2; font: 600 9px 'IBM Plex Mono', monospace; padding: 3px; border-bottom: 2px solid var(--foreground); min-width: 22px; } .eq-map th.we { color: var(--muted-foreground); } .eq-map th.today { background: #d19a00; color: #1b1500; } .eq-map th.sel { outline: 2px solid var(--green); }
+.eq-map td { padding: 0; text-align: center; border: 1px solid var(--border); height: 22px; min-width: 22px; font: 700 9px 'IBM Plex Mono', monospace; }
+.eq-map .eq-map-n { position: sticky; left: 0; background: var(--card); z-index: 1; text-align: left; padding: 2px 8px; min-width: 210px; max-width: 210px; font: 600 11px inherit; font-family: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .eq-map .eq-map-n small { display: block; font: 400 8px 'IBM Plex Mono', monospace; color: var(--muted-foreground); }
+.eq-map-eq td { text-align: left; padding: 3px 8px; background: rgba(127,127,127,.15); font: 700 10px 'IBM Plex Mono', monospace; text-transform: uppercase; }
+.eq-map-c { cursor: pointer; } .eq-map-c.we { background: rgba(127,127,127,.12); } .eq-map-c.blank { background: radial-gradient(circle, #b3363a 2px, transparent 3px); } .eq-map-c.auto { opacity: .7; }
+.eq-map-c.c-P { background: #1f8a4c; color: #fff; } .eq-map-c.c-F { background: #b3363a; color: #fff; } .eq-map-c.c-BH { background: #2a6fb0; color: #fff; } .eq-map-c.c-FE { background: #d19a00; color: #1b1500; } .eq-map-c.c-AT { background: #8a5db5; color: #fff; }
+.eq-log { display: grid; grid-template-columns: 90px 120px minmax(0,1fr) auto; gap: 8px; align-items: center; font-size: 12px; padding: 3px 0; border-top: 1px dashed var(--border); color: var(--foreground); }
+
+.eq-glist { display: flex; flex-direction: column; max-height: 70vh; overflow: auto; }
+.eq-grow { display: grid; grid-template-columns: minmax(200px,1.5fr) minmax(130px,.9fr) minmax(230px,1.4fr) minmax(200px,1.3fr) 70px 80px; gap: 8px; align-items: center; font-size: 12px; padding: 3px 0; border-top: 1px dashed var(--border); color: var(--foreground); }
+.eq-grow-h { position: sticky; top: 0; background: var(--card); z-index: 1; font: 600 10px 'IBM Plex Mono', monospace; text-transform: uppercase; color: var(--muted-foreground); border-top: none; border-bottom: 2px solid var(--foreground); }
+.eq-grow.alt { background: rgba(209,154,0,.09); } .eq-grow-n { display: flex; flex-direction: column; min-width: 0; } .eq-grow-n small { font: 400 9px 'IBM Plex Mono', monospace; color: var(--muted-foreground); }
+.eq-grow select, .eq-grow input { border: 1px solid var(--border); background: var(--card); color: var(--foreground); padding: 4px 6px; font: 400 12px inherit; font-family: inherit; min-width: 0; width: 100%; }
+
 `;
 
 
@@ -4529,6 +4560,41 @@ function eqIssues(cap, members) {
 }
 const eqCapText = (cap, members) => `${members.length}/${cap} colaboradores`;
 
+function parseReposicao(workbook) {
+  const name = workbook.SheetNames.find((n) => frotaNorm(n).startsWith("REPOSICAO"));
+  if (!name) return null;
+  const raw = XLSX.utils.sheet_to_json(workbook.Sheets[name], { header: 1, defval: "", cellDates: true });
+  const hi = raw.findIndex((r) => r.some((c) => frotaNorm(c) === "FUNCAO") && r.some((c) => frotaNorm(c).startsWith("TIPO DE VAGA")));
+  if (hi < 0) return null;
+  const head = raw[hi].map(frotaNorm); const ix = (pred) => head.findIndex(pred);
+  const c = { func: ix((h2) => h2 === "FUNCAO"), tipo: ix((h2) => h2.startsWith("TIPO DE VAGA")), qtd: ix((h2) => h2 === "QTD"), st: ix((h2) => h2 === "STATUS"), motivo: ix((h2) => h2.startsWith("MOTIVO")), entrou: ix((h2) => h2.startsWith("QUEM ENTROU")), resp: ix((h2) => h2.startsWith("RESPONSAVEL")), prazo: ix((h2) => h2.startsWith("PRAZO")), obs: ix((h2) => h2.startsWith("OBSERV")) };
+  const g = (r, i) => (i < 0 ? "" : r[i]); const sv = (v) => String(v ?? "").replace(/\s+/g, " ").trim();
+  const rows = []; const seen = {};
+  for (const r of raw.slice(hi + 1)) {
+    const func = sv(g(r, c.func));
+    if (!func || frotaNorm(func) === "TOTAL") break;
+    const tipo = sv(g(r, c.tipo)), motivo = sv(g(r, c.motivo)); const qtd = Math.max(1, Number(g(r, c.qtd)) || 1);
+    const base = frotaNorm(`${func}|${tipo}|${motivo}`); seen[base] = (seen[base] || 0) + 1;
+    const pz = g(r, c.prazo);
+    rows.push({ key: seen[base] > 1 ? `${base}#${seen[base]}` : base, func, tipo, qtd, motivo, resp: sv(g(r, c.resp)), prazo: pz instanceof Date ? eqDate(pz) : sv(pz), obs: sv(g(r, c.obs)), feita: frotaNorm(g(r, c.st)).includes("FEITA"), entrou: sv(g(r, c.entrou)) });
+  }
+  return rows;
+}
+function parseCdcGeral(workbook) {
+  const name = workbook.SheetNames.find((n) => frotaNorm(n) === "CDC GERAL");
+  if (!name) return null;
+  const raw = XLSX.utils.sheet_to_json(workbook.Sheets[name], { header: 1, defval: "", cellDates: true });
+  const hi = raw.findIndex((r) => r.some((c) => frotaNorm(c) === "MATRICULA") && r.some((c) => frotaNorm(c).startsWith("CENTRO")));
+  if (hi < 0) return null;
+  const head = raw[hi].map(frotaNorm); const ix = (pred) => head.findIndex(pred);
+  const c = { mat: ix((x) => x === "MATRICULA"), cc: ix((x) => x.startsWith("CENTRO")), desc: ix((x) => x.startsWith("DESCRICAO")), nome: ix((x) => x === "NOME"), func: ix((x) => x.includes("FUNCAO")), gestor: ix((x) => x === "GESTOR"), turno: ix((x) => x === "TURNO") };
+  const sv = (v) => String(v ?? "").replace(/\s+/g, " ").trim(); const g = (r, i) => (i < 0 ? "" : r[i]);
+  return raw.slice(hi + 1).filter((r) => sv(g(r, c.nome))).map((r) => ({ mat: sv(g(r, c.mat)), cc: sv(g(r, c.cc)), desc: sv(g(r, c.desc)), nome: sv(g(r, c.nome)), func: sv(g(r, c.func)), gestor: sv(g(r, c.gestor)), turno: sv(g(r, c.turno)) }));
+}
+const eqShort = (e) => e.replace(/^Coleta - /i, "").replace(/^Setor /i, "");
+const eqCargoKey = (p) => (p.ft === "mot" ? (frotaNorm(p.func).includes("CARRETA") ? "motc" : "mot") : p.ft);
+const EQ_CARGOS = [["mot", "Motorista"], ["motc", "Mot. carreta"], ["conf", "Conferente"], ["ajud", "Ajudante"], ["adm", "Adm./apoio"]];
+const eqGeralClass = (func) => { const n = frotaNorm(func); if (n.startsWith("MOTORISTA")) return n.includes("CARRETA") ? "Mot. carreta" : "Motorista"; if (n.startsWith("CONFERENTE")) return "Conferente"; if (n.startsWith("AJUD")) return "Ajudante"; return "Outros"; };
 const FQ_CODES = [["P", "Presente"], ["F", "Falta"], ["BH", "Banco de horas"], ["FE", "Férias"], ["AT", "Atestado"]];
 const eqDow = (iso) => new Date(`${iso}T12:00:00`).getDay();
 const eqDaysOfMonth = (m) => { const [y, mo] = m.split("-").map(Number); const n = new Date(y, mo, 0).getDate(); return Array.from({ length: n }, (_, i) => `${m}-${eqPad(i + 1)}`); };
@@ -4550,17 +4616,40 @@ function GestaoEquipes({ perm }) {
   const [pct, setPct] = useState(() => lsLoad("equipes_cfg")?.pct ?? 10);
   const [ferias, setFerias] = useState(() => { const f = lsLoad("equipes_ferias"); return f && Array.isArray(f.rows) ? f : { rows: [], label: "", updatedAt: null }; });
   const ferRef = useRef(null);
+  const [repBase, setRepBase] = useState(() => { const s = lsLoad("equipes_repos"); return s && Array.isArray(s.rows) ? s : { rows: [], label: "", updatedAt: null }; });
+  const [repAj, setRepAj] = useState(() => lsLoad("equipes_repos_aj")?.items ?? { added: {}, removed: {}, edits: {}, regs: {} });
+  const [repFilter, setRepFilter] = useState("pend");
+  const [repNome, setRepNome] = useState({});
+  const [vf, setVf] = useState(null); // formulário de vaga: { mode, key, f }
   const [fday, setFday] = useState(() => eqTodayISO());
   const [fShowAll, setFShowAll] = useState(false);
+  const [fmode, setFmode] = useState("dia"); // dia | mapa | log
+  const [fLog, setFLog] = useState([]);
+  const [fOpen, setFOpen] = useState({});
+  const [fCell, setFCell] = useState(null);
+  const [fEq, setFEq] = useState("todos");
+  const [fSearch, setFSearch] = useState("");
+  const [rEq, setREq] = useState("todos");
+  const [rCargo, setRCargo] = useState("todos");
+  const [geralBase, setGeralBase] = useState(() => { const s = lsLoad("equipes_geral"); return s && Array.isArray(s.rows) ? s : { rows: [], label: "", updatedAt: null }; });
+  const [aGestor, setAGestor] = useState("__all");
+  const [gAj, setGAj] = useState(() => lsLoad("equipes_geral_aj")?.items ?? { items: {}, ccs: [] });
+  const [aCc, setACc] = useState("todos");
+  const [aCargo, setACargo] = useState("todos");
+  const [aQ, setAQ] = useState("");
+  const [aOnlyAlt, setAOnlyAlt] = useState(false);
+  const [aLimit, setALimit] = useState(120);
+  const [ccNew, setCcNew] = useState(null);
+  const [aOpen, setAOpen] = useState(null);
   const [freq, setFreq] = useState({}); // { "AAAA-MM-DD": { matrícula: código } } do mês aberto
   const fmonth = fday.slice(0, 7);
   useEffect(() => {
     let off = false; const id = `equipes_freq_${fmonth}`;
-    setFreq(lsLoad(id)?.items ?? {});
+    setFreq(lsLoad(id)?.items ?? {}); setFLog(lsLoad(id)?.log ?? []);
     cloudLoad(id).then((row) => {
       if (off || !row || !row.data || !row.data.items) return;
       const la = lsLoad(id)?.updatedAt;
-      if (!la || new Date(row.updated_at) > new Date(la)) { setFreq(row.data.items); lsSave(id, { items: row.data.items, updatedAt: row.updated_at }); }
+      if (!la || new Date(row.updated_at) > new Date(la)) { setFreq(row.data.items); setFLog(row.data.log ?? []); lsSave(id, { items: row.data.items, log: row.data.log ?? [], updatedAt: row.updated_at }); }
     });
     return () => { off = true; };
   }, [fmonth]);
@@ -4583,6 +4672,10 @@ function GestaoEquipes({ perm }) {
     pull("equipes_base", (row) => { if (Array.isArray(row.data.rows)) { const n = { rows: row.data.rows, label: row.label ?? "", updatedAt: row.updated_at }; setBase(n); lsSave("equipes_base", n); } });
     pull("equipes_ajustes", (row) => { if (row.data.items) { setAj(row.data.items); lsSave("equipes_ajustes", { items: row.data.items, updatedAt: row.updated_at }); } });
     pull("equipes_cfg", (row) => { if (row.data.cap) { setCap(row.data.cap); if (row.data.pct) setPct(row.data.pct); lsSave("equipes_cfg", { cap: row.data.cap, pct: row.data.pct ?? 10, updatedAt: row.updated_at }); } });
+    pull("equipes_repos", (row) => { if (Array.isArray(row.data.rows)) { const n = { rows: row.data.rows, label: row.label ?? "", updatedAt: row.updated_at }; setRepBase(n); lsSave("equipes_repos", n); } });
+    pull("equipes_repos_aj", (row) => { if (row.data.items) { setRepAj(row.data.items); lsSave("equipes_repos_aj", { items: row.data.items, updatedAt: row.updated_at }); } });
+    pull("equipes_geral", (row) => { if (Array.isArray(row.data.rows)) { const n = { rows: row.data.rows, label: row.label ?? "", updatedAt: row.updated_at }; setGeralBase(n); lsSave("equipes_geral", n); } });
+    pull("equipes_geral_aj", (row) => { if (row.data.items) { setGAj(row.data.items); lsSave("equipes_geral_aj", { items: row.data.items, updatedAt: row.updated_at }); } });
     pull("equipes_ferias", (row) => { if (Array.isArray(row.data.rows)) { const n = { rows: row.data.rows, label: row.label ?? "", updatedAt: row.updated_at }; setFerias(n); lsSave("equipes_ferias", n); } });
     pull("equipes_veic", (row) => { if (row.data.items) { setOv(row.data.items); lsSave("equipes_veic", { items: row.data.items, updatedAt: row.updated_at }); } });
     pull("frota", (row) => { if (Array.isArray(row.data.rows) && row.data.rows.length) { setFleet(row.data.rows); lsSave("frota", { rows: row.data.rows, label: row.label, updatedAt: row.updated_at }); } });
@@ -4602,7 +4695,11 @@ function GestaoEquipes({ perm }) {
       const label = `${file.name} · ${numberInt.format(rows.length)} colaborador(es)`;
       const next = { rows, label, updatedAt: new Date().toISOString() };
       setBase(next); lsSave("equipes_base", next); cloudSave("equipes_base", { rows }, label);
-      setNotice(`Planilha lida: ${rows.length} colaboradores. Movimentações feitas no painel foram mantidas (presas à matrícula).`);
+      const ger = parseCdcGeral(wb);
+      if (ger) { const gn = { rows: ger, label, updatedAt: next.updatedAt }; setGeralBase(gn); lsSave("equipes_geral", gn); cloudSave("equipes_geral", { rows: ger }, label); }
+      const rep = parseReposicao(wb);
+      if (rep) { const rn = { rows: rep, label, updatedAt: next.updatedAt }; setRepBase(rn); lsSave("equipes_repos", rn); cloudSave("equipes_repos", { rows: rep }, label); }
+      setNotice(`Planilha lida: ${rows.length} colaboradores${rep ? ` e ${rep.length} linha(s) de reposição` : ""}. O que foi feito no painel foi mantido.`);
     } catch (e) { setErr(e instanceof Error ? e.message : "Não foi possível ler a planilha CDC."); }
     finally { event.target.value = ""; }
   }
@@ -4662,12 +4759,39 @@ function GestaoEquipes({ perm }) {
   function changeCap(v) { const n = Math.max(1, Math.min(12, Number(v) || 3)); setCap(n); saveCfg(n, pct); }
   function changePct(v) { const n = Math.max(1, Math.min(50, Number(v) || 10)); setPct(n); saveCfg(cap, n); }
   /* Frequência: grava no aparelho e mescla com a nuvem (várias pessoas podem marcar equipes diferentes no mesmo mês). */
-  function applyFreq(date, mats, code) {
+  function applyFreq(date, mats, code, via) {
     const id = `equipes_freq_${date.slice(0, 7)}`;
-    const apply = (items) => { const out = { ...(items || {}) }; const day = { ...(out[date] || {}) }; mats.forEach((m) => { if (code) day[m] = code; else delete day[m]; }); out[date] = day; return out; };
-    const next = apply(freq); setFreq(next); lsSave(id, { items: next, updatedAt: new Date().toISOString() });
-    Promise.resolve(cloudLoad(id)).then((row) => { const merged = apply(row && row.data && row.data.items); cloudSave(id, { items: merged }, `frequência ${date.slice(0, 7)}`); }).catch(() => {});
+    const itens = mats.map((m) => ({ mat: m, nome: people.find((p) => p.mat === m)?.nome ?? "", de: freq[date]?.[m] || "" })).filter((x) => x.de !== (code || ""));
+    if (!itens.length) return;
+    const entry = { at: new Date().toISOString(), by: perm?.user?.nome || perm?.user?.id || "", date, para: code || "", itens, via: via || "" };
+    const apply = (items) => { const out = { ...(items || {}) }; const day = { ...(out[date] || {}) }; itens.forEach((x) => { if (code) day[x.mat] = code; else delete day[x.mat]; }); out[date] = day; return out; };
+    const next = apply(freq); const nlog = [entry, ...fLog].slice(0, 300);
+    setFreq(next); setFLog(nlog); lsSave(id, { items: next, log: nlog, updatedAt: new Date().toISOString() });
+    Promise.resolve(cloudLoad(id)).then((row) => { const merged = apply(row && row.data && row.data.items); const lg = [entry, ...((row && row.data && row.data.log) || [])].slice(0, 300); cloudSave(id, { items: merged, log: lg }, `frequência ${date.slice(0, 7)}`); }).catch(() => {});
   }
+  /* desfaz uma entrada do histórico: devolve cada pessoa ao código anterior */
+  function undoFreq(entry) {
+    const id = `equipes_freq_${entry.date.slice(0, 7)}`; const date = entry.date;
+    const reverse = { at: new Date().toISOString(), by: perm?.user?.nome || perm?.user?.id || "", date, para: "(desfeito)", itens: entry.itens.map((x) => ({ mat: x.mat, nome: x.nome, de: freq[date]?.[x.mat] || "" })), via: "desfazer" };
+    const apply = (items) => { const out = { ...(items || {}) }; const day = { ...(out[date] || {}) }; entry.itens.forEach((x) => { if (x.de) day[x.mat] = x.de; else delete day[x.mat]; }); out[date] = day; return out; };
+    const next = apply(freq); const nlog = [reverse, ...fLog].slice(0, 300);
+    setFreq(next); setFLog(nlog); lsSave(id, { items: next, log: nlog, updatedAt: new Date().toISOString() });
+    Promise.resolve(cloudLoad(id)).then((row) => { const merged = apply(row && row.data && row.data.items); const lg = [reverse, ...((row && row.data && row.data.log) || [])].slice(0, 300); cloudSave(id, { items: merged, log: lg }, `frequência ${date.slice(0, 7)}`); }).catch(() => {});
+  }
+  function persistG(next) { setGAj(next); lsSave("equipes_geral_aj", { items: next, updatedAt: new Date().toISOString() }); cloudSave("equipes_geral_aj", { items: next }, `${Object.keys(next.items || {}).length} ajuste(s) de centro de custo / gestor`); }
+  function persistRep(next) { setRepAj(next); lsSave("equipes_repos_aj", { items: next, updatedAt: new Date().toISOString() }); cloudSave("equipes_repos_aj", { items: next }, "ajustes da reposição (RDCAD - Pendente)"); }
+  const repClone = () => ({ added: { ...(repAj.added || {}) }, removed: { ...(repAj.removed || {}) }, edits: { ...(repAj.edits || {}) }, regs: { ...(repAj.regs || {}) } });
+  function regularizar(v) { const nome = (repNome[v.key] || "").trim().replace(/\s+/g, " ").toUpperCase(); const n = repClone(); n.regs[v.key] = [...v.regs, nome]; persistRep(n); setRepNome({ ...repNome, [v.key]: "" }); }
+  function desfazerReg(v, i) { const n = repClone(); n.regs[v.key] = v.regs.filter((_, k) => k !== i); persistRep(n); }
+  function saveVaga() {
+    const f = vf.f; const func = f.func.trim(), tipo = f.tipo.trim(); const qtd = Math.max(1, Math.min(99, Number(f.qtd) || 1));
+    if (!func) { setVf({ ...vf, error: "Informe a função." }); return; }
+    const n = repClone(); const patch = { func, tipo, qtd, motivo: f.motivo.trim(), obs: f.obs.trim() };
+    if (vf.mode === "add") { const key = `m-${Date.now()}`; n.added[key] = { key, ...patch, resp: "", prazo: "", feita: false, entrou: "", manual: true }; }
+    else if (n.added[vf.key]) n.added[vf.key] = { ...n.added[vf.key], ...patch }; else n.edits[vf.key] = patch;
+    persistRep(n); setVf(null);
+  }
+  function excluirVaga(v) { const n = repClone(); if (n.added[v.key]) delete n.added[v.key]; else n.removed[v.key] = true; delete n.regs[v.key]; persistRep(n); setVf(null); }
   async function handleFerias(event) {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -4831,6 +4955,13 @@ function GestaoEquipes({ perm }) {
     return { hoje, prog, pend, venc, ideal, prox30, prox60, semBase, foraCdc, imp, motFora, conc, sug, meses, pico, capEq };
   }, [people, vlist, ferias, pct, today]);
 
+  const vagas = useMemo(() => {
+    const rows = [...repBase.rows.filter((r) => !(repAj.removed || {})[r.key]).map((r) => ((repAj.edits || {})[r.key] ? { ...r, ...repAj.edits[r.key] } : r)), ...Object.values(repAj.added || {})];
+    return rows.map((r) => { const regs = (repAj.regs || {})[r.key] ?? (r.feita ? Array(r.qtd).fill(r.entrou || "") : []); const feitas = Math.min(r.qtd, regs.length); return { ...r, regs, feitas, pend: r.qtd - feitas }; })
+      .sort((a, b) => (b.pend > 0) - (a.pend > 0) || a.func.localeCompare(b.func, "pt-BR") || a.tipo.localeCompare(b.tipo, "pt-BR"));
+  }, [repBase, repAj]);
+  const repResumo = useMemo(() => { const o = {}; vagas.forEach((v) => { const r = (o[v.func] = o[v.func] || { func: v.func, total: 0, feitas: 0, pend: 0 }); r.total += v.qtd; r.feitas += v.feitas; r.pend += v.pend; }); return Object.values(o).sort((a, b) => b.pend - a.pend || a.func.localeCompare(b.func, "pt-BR")); }, [vagas]);
+  const repTot = useMemo(() => repResumo.reduce((s, r) => ({ total: s.total + r.total, feitas: s.feitas + r.feitas, pend: s.pend + r.pend }), { total: 0, feitas: 0, pend: 0 }), [repResumo]);
   const attention = useMemo(() => {
     const out = [];
     eqNames.forEach((e) => {
@@ -4938,7 +5069,7 @@ function GestaoEquipes({ perm }) {
 
     {empty ? <div className="eq-empty"><strong>{ro ? "Ainda não há planilha carregada." : "Suba a planilha CDC para começar."}</strong><span>{ro ? "Peça ao coordenador para carregar a planilha." : 'Use "Atualizar planilha CDC" e escolha o arquivo CDC - OPL GERAL (a aba CDC DISTRIBUIÇÃO é lida). Depois "Atualizar férias" com a planilha de férias. Nomes e matrículas ficam guardados na base compartilhada do painel.'}</span></div> : <>
       <div className="view-tabs" role="tablist">
-        {[["resumo", "Resumo das equipes"], ["veic", "Veículos e equipes"], ["ferias", "Férias"], ["freq", "Frequência"]].map(([k, l]) => <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? "active" : ""} onClick={() => setTab(k)}>{l}</button>)}
+        {[["resumo", "Resumo das equipes"], ["veic", "Veículos e equipes"], ["ferias", "Férias"], ["freq", "Frequência"], ["aloc", "Alocação (CDC GERAL)"], ["repos", `RDCAD - Pendente${repTot.pend ? ` (${repTot.pend})` : ""}`]].map(([k, l]) => <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? "active" : ""} onClick={() => setTab(k)}>{l}</button>)}
       </div>
 
       <div className="diag-kpi-grid eq-kpis">
@@ -4951,21 +5082,25 @@ function GestaoEquipes({ perm }) {
         {hasFer ? <button type="button" className="diag-kpi" onClick={() => setTab("ferias")}><span>Em férias hoje</span><strong>{F.hoje.length}</strong><small>{F.prox30.length} saem em 30 dias</small></button> : <div className="diag-kpi static eq-na"><span>Férias</span><strong>suba a planilha</strong><small>Atualizar férias</small></div>}
       </div>
 
-      {tab === "resumo" && <div className="eq-resumo">
+      {tab === "resumo" && (() => {
+        const list = people.filter((p) => (rEq === "todos" || p.eq === rEq) && (rCargo === "todos" || eqCargoKey(p) === rCargo)).sort((a, b) => a.eq.localeCompare(b.eq, "pt-BR") || EQ_FT_ORDER[a.ft] - EQ_FT_ORDER[b.ft] || a.nome.localeCompare(b.nome, "pt-BR"));
+        const inEq = people.filter((p) => rEq === "todos" || p.eq === rEq);
+        const cargos = {}; list.forEach((p) => { cargos[p.func] = (cargos[p.func] || 0) + 1; });
+        const opCols = ["ajud", "conf", "mot", "motC"];
+        return <div className="eq-resumo">
         <div className="eq-grid2">
           <section className="eq-card">
-            <h3>Equipes operacionais · equipe × função</h3>
+            <h3>Equipe × função</h3>
             <table className="eq-table">
-              <thead><tr><th>Equipe</th><th>Ajudante</th><th>Conferente</th><th>Motorista</th><th>Mot. carreta</th>{resumoRows.some((r) => r.adm) && <th>Outras</th>}<th>Total</th><th className="eq-fe">Férias hoje</th><th className="eq-fe">Saem 30d</th></tr></thead>
+              <thead><tr><th>Equipe</th><th>Ajudante</th><th>Conferente</th><th>Motorista</th><th>Mot. carreta</th><th>Adm./apoio</th><th>Total</th><th className="eq-fe">Férias hoje</th><th className="eq-fe">Saem 30d</th></tr></thead>
               <tbody>
-                {resumoRows.map((r) => <React.Fragment key={r.eq}>
-                  <tr className="eq-click" onClick={() => setOpenEq(openEq === r.eq ? null : r.eq)}><td>{openEq === r.eq ? "▾" : "▸"} {r.eq}</td>{["ajud", "conf", "mot", "motCar"].map((k) => <td key={k} className={r[k] ? "" : "eq-z"}>{r[k]}</td>)}{resumoRows.some((x) => x.adm) && <td className={r.adm ? "" : "eq-z"}>{r.adm}</td>}<td><b>{r.total}</b></td><td className="eq-fe">{hasFer ? r.hoje : "—"}</td><td className="eq-fe">{hasFer ? r.p30 : "—"}</td></tr>
-                  {openEq === r.eq && <tr><td colSpan={9} className="eq-open"><div className="eq-names">{people.filter((p) => p.eq === r.eq).sort((a, b) => EQ_FT_ORDER[a.ft] - EQ_FT_ORDER[b.ft] || a.nome.localeCompare(b.nome, "pt-BR")).map((p) => <div key={p.mat} className="eq-name-row"><span className={`eq-ft eq-ft-${p.ft}`}>{p.func}</span><span>{p.nome}</span><span className="eq-mem-mat">{p.semMat ? "s/ matrícula" : p.mat}</span><span className="eq-mem-mat">{p.turno}</span><span className="eq-mem-mat">{p.afastado ? "AFASTADO" : (veh.get(p.vkey)?.label ?? "sem veículo")}</span>{ferChip(p) || <span />}{actsFor(p, false)}</div>)}</div></td></tr>}
-                </React.Fragment>)}
-                <tr className="eq-tot"><td>Total operacional</td>{["ajud", "conf", "mot", "motCar"].map((k) => <td key={k}>{resumoRows.reduce((s, r) => s + r[k], 0)}</td>)}{resumoRows.some((x) => x.adm) && <td>{resumoRows.reduce((s, r) => s + r.adm, 0)}</td>}<td>{resumoRows.reduce((s, r) => s + r.total, 0)}</td><td className="eq-fe">{hasFer ? resumoRows.reduce((s, r) => s + r.hoje, 0) : "—"}</td><td className="eq-fe">{hasFer ? resumoRows.reduce((s, r) => s + r.p30, 0) : "—"}</td></tr>
+                {opEq.concat(admEq).map((e) => { const l = people.filter((p) => p.eq === e); const n = (k) => l.filter((p) => eqCargoKey(p) === k).length; const only = admEq.includes(e); const fc = ferCount(l);
+                  return <tr key={e} className={`eq-click ${rEq === e ? "eq-row-on" : ""}`} onClick={() => { setREq(rEq === e ? "todos" : e); setRCargo("todos"); }}><td>{e}</td>
+                    {["ajud", "conf", "mot", "motc"].map((k) => <td key={k} className={only || !n(k) ? "eq-z" : ""}>{only ? "–" : n(k)}</td>)}<td className={n("adm") ? "" : "eq-z"}>{n("adm")}</td><td><b>{l.length}</b></td><td className="eq-fe">{hasFer ? fc.hoje : "—"}</td><td className="eq-fe">{hasFer ? fc.p30 : "—"}</td></tr>; })}
+                <tr className="eq-tot"><td>Total geral</td>{["ajud", "conf", "mot", "motc", "adm"].map((k) => <td key={k}>{people.filter((p) => eqCargoKey(p) === k).length}</td>)}<td>{people.length}</td><td className="eq-fe">{hasFer ? ferCount(people).hoje : "—"}</td><td className="eq-fe">{hasFer ? ferCount(people).p30 : "—"}</td></tr>
               </tbody>
             </table>
-            <p className="eq-note">Motorista, conferente e ajudante são os cargos que vão em veículo. Clique numa equipe para ver a lista nominal.</p>
+            <p className="eq-note">Cargos administrativos aparecem só na coluna Adm./apoio (ficam fora da análise de veículos). Clique numa equipe ou use os botões abaixo para ver os nomes.</p>
           </section>
           <section className="eq-card">
             <h3>Quem tem veículo, por função</h3>
@@ -4973,25 +5108,31 @@ function GestaoEquipes({ perm }) {
             <p className="eq-note">Verde = em algum veículo. O restante sem veículo é esperado no Agendamento.</p>
           </section>
         </div>
-        {admBlocks.length > 0 && <section className="eq-card">
-          <h3>Equipes administrativas · por cargo</h3>
-          <table className="eq-table eq-table-adm">
-            <thead><tr><th>Equipe / cargo</th><th>Colaboradores</th><th className="eq-fe">Férias hoje</th><th className="eq-fe">Saem 30d</th></tr></thead>
-            <tbody>
-              {admBlocks.map((b) => <React.Fragment key={b.eq}>
-                <tr className="eq-click eq-head" onClick={() => setOpenEq(openEq === b.eq ? null : b.eq)}><td>{openEq === b.eq ? "▾" : "▸"} {b.eq}</td><td><b>{b.total}</b></td><td className="eq-fe">{hasFer ? b.hoje : "—"}</td><td className="eq-fe">{hasFer ? b.p30 : "—"}</td></tr>
-                {b.cargos.map((c) => <tr key={c.func} className="eq-sub"><td>{c.func}</td><td>{c.n}</td><td className="eq-fe">{hasFer ? c.hoje : "—"}</td><td className="eq-fe">{hasFer ? c.p30 : "—"}</td></tr>)}
-                {openEq === b.eq && <tr><td colSpan={4} className="eq-open"><div className="eq-names">{people.filter((p) => p.eq === b.eq).sort((a, b2) => a.func.localeCompare(b2.func) || a.nome.localeCompare(b2.nome, "pt-BR")).map((p) => <div key={p.mat} className="eq-name-row"><span className="eq-ft">{p.func}</span><span>{p.nome}</span><span className="eq-mem-mat">{p.semMat ? "s/ matrícula" : p.mat}</span><span className="eq-mem-mat">{p.turno}</span><span className="eq-mem-mat" /> {ferChip(p) || <span />}{actsFor(p, false)}</div>)}</div></td></tr>}
-              </React.Fragment>)}
-            </tbody>
-          </table>
-          <p className="eq-note">Cargos administrativos ficam fora da análise de veículos.</p>
-        </section>}
+        <section className="eq-card">
+          <h3>Colaboradores · escolha pelos botões</h3>
+          <div className="eq-btnrow"><span>Equipe</span><div className="eq-chips">
+            <button type="button" className={rEq === "todos" ? "active" : ""} onClick={() => setREq("todos")}>Todos ({people.length})</button>
+            {eqNames.map((e) => <button key={e} type="button" className={rEq === e ? "active" : ""} onClick={() => setREq(e)}>{eqShort(e)} ({people.filter((p) => p.eq === e).length})</button>)}
+          </div></div>
+          <div className="eq-btnrow"><span>Cargo</span><div className="eq-chips">
+            <button type="button" className={rCargo === "todos" ? "active" : ""} onClick={() => setRCargo("todos")}>Todos ({inEq.length})</button>
+            {EQ_CARGOS.map(([k, l]) => { const n = inEq.filter((p) => eqCargoKey(p) === k).length; return n ? <button key={k} type="button" className={rCargo === k ? "active" : ""} onClick={() => setRCargo(k)}>{l} ({n})</button> : null; })}
+          </div></div>
+          <p className="eq-note"><b>{list.length}</b> colaborador(es){Object.keys(cargos).length > 1 ? ` · ${Object.entries(cargos).sort((a, b) => b[1] - a[1]).map(([f, n]) => `${f} ${n}`).join(" · ")}` : ""}</p>
+          <div className="eq-plist">
+            {list.map((p) => <div key={p.mat} className="eq-prow">
+              <b className="eq-prow-n">{p.nome}</b><span className={`eq-prow-c eq-ft-${p.ft}`}>{p.func}</span>
+              <span className="eq-mem-mat">{p.semMat ? "s/ matrícula" : p.mat}</span><span className="eq-mem-mat">{p.eq}</span><span className="eq-mem-mat">{p.turno}</span>
+              <span className="eq-mem-mat">{p.afastado ? "AFASTADO" : (veh.get(p.vkey)?.label ?? "sem veículo")}</span>{ferChip(p) || <span />}{actsFor(p, false)}
+            </div>)}
+            {!list.length && <div className="eq-none">Ninguém neste filtro.</div>}
+          </div>
+        </section>
         <section className="eq-card">
           <h3>Pontos de atenção (calculados da planilha e do Diagnóstico)</h3>
           {attention.length ? <ul className="eq-att">{attention.map((a, i) => <li key={i} className={a.tone === "bad" ? "bad" : "am"}><b>{a.t}</b>{a.d && <small>{a.d}</small>}</li>)}</ul> : <p className="eq-note">Nada a apontar.</p>}
         </section>
-      </div>}
+      </div>; })()}
 
       {tab === "veic" && <div className="eq-veic">
         <div className="eq-rule"><b>Regra de lotação:</b> cada colaborador fica em 1 veículo e cada veículo comporta até <input className="eq-cap-in" type="number" min="1" max="12" value={cap} disabled={ro} onChange={(e) => changeCap(e.target.value)} aria-label="Limite de colaboradores por veículo" /> colaboradores, de qualquer função. Ao passar do limite o painel bloqueia e pede quem sai. Mais de 1 motorista na placa aparece como alerta.</div>
@@ -5028,6 +5169,38 @@ function GestaoEquipes({ perm }) {
         </section>}
       </div>}
 
+      {tab === "repos" && <div className="eq-repos">
+        <div className="diag-kpi-grid eq-kpis">
+          <div className="diag-kpi static"><span>Vagas no quadro</span><strong>{repTot.total}</strong><small>{vagas.length} linha(s)</small></div>
+          <div className={`diag-kpi static ${repTot.pend ? "eq-bad" : ""}`}><span>Pendentes</span><strong>{repTot.pend}</strong><small>a regularizar</small></div>
+          <div className="diag-kpi static"><span>Regularizadas</span><strong>{repTot.feitas}</strong><small>com ou sem nome</small></div>
+        </div>
+        {!vagas.length ? <div className="eq-empty"><strong>Nenhuma vaga carregada.</strong><span>{ro ? "Peça ao coordenador para carregar a planilha CDC." : 'A aba "Reposição" da planilha CDC é lida junto com o "Atualizar planilha CDC". Você também pode usar "Incluir vaga".'}</span></div> : <>
+        <section className="eq-card">
+          <h3>Por função</h3>
+          <table className="eq-table"><thead><tr><th>Função</th><th>Total de vagas</th><th>Regularizadas</th><th>Pendentes</th><th>Andamento</th></tr></thead>
+            <tbody>{repResumo.map((r) => <tr key={r.func}><td>{r.func}</td><td>{r.total}</td><td>{r.feitas}</td><td className={r.pend ? "eq-badtxt" : "eq-z"}><b>{r.pend}</b></td><td><div className="eq-bar"><i style={{ width: `${r.total ? (r.feitas / r.total) * 100 : 0}%` }} /></div></td></tr>)}
+              <tr className="eq-tot"><td>Total</td><td>{repTot.total}</td><td>{repTot.feitas}</td><td>{repTot.pend}</td><td /></tr></tbody></table>
+        </section>
+        <div className="client-toolbar eq-filters"><div className="eq-chips">{[["pend", `Pendentes (${vagas.filter((v) => v.pend).length})`], ["feita", "Regularizadas"], ["todas", "Todas"]].map(([k, l]) => <button key={k} type="button" className={repFilter === k ? "active" : ""} onClick={() => setRepFilter(k)}>{l}</button>)}</div>
+          {!ro && <button type="button" className="secondary-action" onClick={() => setVf({ mode: "add", f: { func: "", tipo: "", qtd: 1, motivo: "", obs: "" } })}><Plus size={15} /> Incluir vaga</button>}
+          <button type="button" className="secondary-action" onClick={() => { const wb = XLSX.utils.book_new(); const ws = XLSX.utils.aoa_to_sheet([["Função", "Tipo de vaga", "Qtd", "Regularizadas", "Pendentes", "Quem entrou", "Motivo / detalhe", "Observações"], ...vagas.map((v) => [v.func, v.tipo, v.qtd, v.feitas, v.pend, v.regs.filter(Boolean).join(" / "), v.motivo, v.obs])]); ws["!cols"] = [24, 30, 6, 14, 10, 40, 60, 40].map((w) => ({ wch: w })); XLSX.utils.book_append_sheet(wb, ws, "RDCAD - Pendente"); XLSX.writeFile(wb, `Reposicao_${eqTodayISO()}.xlsx`); }}><FileDown size={15} /> Extrair (Excel)</button></div>
+        <div className="eq-cards eq-cards-rep">
+          {vagas.filter((v) => repFilter === "todas" || (repFilter === "pend" ? v.pend > 0 : v.pend === 0)).map((v) => <article key={v.key} className={`eq-vcard ${v.pend ? "is-bad" : ""}`}>
+            <header><b>{v.func}</b><span className="eq-tipo">{v.tipo}</span><span className={`eq-st ${v.pend ? "eq-st-manutencao" : "eq-st-operando"}`}>{v.pend ? `Pendente ${v.pend}/${v.qtd}` : "Regularizado"}</span></header>
+            {v.motivo && <div className="eq-rep-m">{v.motivo}</div>}
+            {v.obs && <div className="eq-note" style={{ margin: 0 }}>Obs.: {v.obs}</div>}
+            {v.prazo && <div className="eq-note" style={{ margin: 0 }}>Início/prazo: {/^\d{4}-/.test(v.prazo) ? eqFmtFull(v.prazo) : v.prazo}</div>}
+            {v.regs.length > 0 && <div className="eq-rep-regs">{v.regs.map((n, i) => <span key={i} className="eq-rep-reg">{n || "(sem nome)"}{!ro && <button type="button" title="Desfazer" aria-label="Desfazer regularização" onClick={() => desfazerReg(v, i)}>✕</button>}</span>)}</div>}
+            {!ro && <div className="eq-rep-act">
+              {v.pend > 0 && <><input className="eq-search" placeholder="Nome do novo colaborador" value={repNome[v.key] || ""} onChange={(e) => setRepNome({ ...repNome, [v.key]: e.target.value })} /><button type="button" className="eq-link strong2" onClick={() => regularizar(v)}>Regularizar{v.qtd > 1 ? " 1" : ""}</button></>}
+              <button type="button" className="eq-ic" title="Editar" onClick={() => setVf({ mode: "edit", key: v.key, f: { func: v.func, tipo: v.tipo, qtd: v.qtd, motivo: v.motivo, obs: v.obs } })}>✎</button>
+              <button type="button" className="eq-ic eq-del" title="Excluir" onClick={() => setVf({ mode: "del", key: v.key, nome: `${v.func} · ${v.tipo}` })}>✕</button>
+            </div>}
+          </article>)}
+        </div></>}
+      </div>}
+
       {tab === "freq" && (() => {
         const codeOf = (p, d) => freq[d]?.[p.mat] || (p.fer && p.fer.ini && p.fer.ini <= d && d <= p.fer.fim ? "FE*" : "");
         const order = [...opEq, ...admEq];
@@ -5036,52 +5209,220 @@ function GestaoEquipes({ perm }) {
         const lastDay = fmonth === today.slice(0, 7) ? today : (fmonth < today.slice(0, 7) ? days[days.length - 1] : "");
         const worked = days.filter((d) => d <= lastDay && eqDow(d) >= 1 && eqDow(d) <= 5);
         const blanks = worked.map((d) => ({ d, n: people.filter((p) => !codeOf(p, d)).length })).filter((x) => x.n > 0);
-        const dayPeople = people.filter((p) => fShowAll || !codeOf(p, fday));
-        const done = people.length - people.filter((p) => !codeOf(p, fday)).length;
+        const done = people.filter((p) => codeOf(p, fday)).length;
+        const sumDay = { P: 0, F: 0, BH: 0, FE: 0, AT: 0 }; people.forEach((p) => { const k = (codeOf(p, fday) || "").replace("*", ""); if (k) sumDay[k]++; });
         const stat = people.map((p) => { const c = { P: 0, F: 0, BH: 0, FE: 0, AT: 0 }; days.forEach((d) => { const k = (codeOf(p, d) || "").replace("*", ""); if (k) c[k]++; }); return { p, c, sem: worked.filter((d) => !codeOf(p, d)).length }; });
+        const statBy = new Map(stat.map((x) => [x.p.mat, x]));
         const byEq = order.map((e) => { const l = stat.filter((x) => x.p.eq === e); const t = { P: 0, F: 0, BH: 0, FE: 0, AT: 0 }; l.forEach((x) => Object.keys(t).forEach((k) => { t[k] += x.c[k]; })); return { e, n: l.length, t, sem: l.reduce((s, x) => s + x.sem, 0) }; });
         const pctP = (c) => { const tot = c.P + c.F + c.BH + c.AT; return tot ? `${Math.round((c.P / tot) * 100)}%` : "—"; };
+        const fmtAt = (iso) => { const d = new Date(iso); return `${eqPad(d.getDate())}/${eqPad(d.getMonth() + 1)} ${eqPad(d.getHours())}:${eqPad(d.getMinutes())}`; };
+        const lastOf = (mat, d) => fLog.find((x) => x.date === d && x.itens.some((i) => i.mat === mat));
         const exportFreq = () => {
           const wb = XLSX.utils.book_new();
           const add = (nome, head, body, widths) => { const ws = XLSX.utils.aoa_to_sheet([head, ...body]); ws["!cols"] = widths.map((w) => ({ wch: w })); XLSX.utils.book_append_sheet(wb, ws, nome); };
           add("Resumo por pessoa", ["Matrícula", "Nome", "Função", "Equipe", "Presente", "Falta", "Banco de horas", "Férias", "Atestado", "% presença", "Dias úteis sem marcação"], stat.map((x) => [x.p.mat, x.p.nome, x.p.func, x.p.eq, x.c.P, x.c.F, x.c.BH, x.c.FE, x.c.AT, pctP(x.c), x.sem]), [12, 34, 20, 18, 9, 7, 14, 8, 9, 11, 22]);
           add("Resumo por equipe", ["Equipe", "Colaboradores", "Presente", "Falta", "Banco de horas", "Férias", "Atestado", "% presença", "Dias úteis sem marcação"], byEq.map((x) => [x.e, x.n, x.t.P, x.t.F, x.t.BH, x.t.FE, x.t.AT, pctP(x.t), x.sem]), [20, 14, 9, 7, 14, 8, 9, 11, 22]);
           add("Mapa do mês", ["Matrícula", "Nome", "Equipe", ...days.map((d) => d.slice(8))], people.map((p) => [p.mat, p.nome, p.eq, ...days.map((d) => (codeOf(p, d) || "").replace("*", ""))]), [12, 34, 18, ...days.map(() => 4)]);
+          add("Histórico de alterações", ["Data/hora", "Quem", "Dia", "Colaborador", "Era", "Passou para"], fLog.flatMap((e) => e.itens.map((i) => [fmtAt(e.at), e.by, eqFmtFull(e.date), i.nome, i.de || "(em branco)", e.para || "(em branco)"])), [14, 20, 11, 34, 12, 14]);
           XLSX.writeFile(wb, `Frequencia_${fmonth}.xlsx`);
         };
+        const monthNav = <span className="eq-fq-nav"><button type="button" className="eq-link" onClick={() => setFday(`${eqShiftMonth(fmonth, -1)}-01`)}>◀ mês anterior</button><b>{eqMonthLabel(fmonth)}</b><button type="button" className="eq-link" onClick={() => setFday(`${eqShiftMonth(fmonth, 1)}-01`)}>próximo mês ▶</button></span>;
+        const codeBtns = (p, d, c) => FQ_CODES.map(([k, l2]) => <button key={k} type="button" disabled={ro || (c === "FE*" && k === "FE")} title={l2} className={`eq-code c-${k} ${c === k || (c === "FE*" && k === "FE") ? "on" : ""}`} onClick={() => applyFreq(d, [p.mat], c === k ? "" : k)}>{k}</button>);
         return <div className="eq-freq">
-          <div className="eq-fq-bar">
-            <button type="button" className="eq-link" onClick={() => setFday(eqAddDays(fday, -1))}>◀ dia anterior</button>
-            <input type="date" className="eq-search eq-date" value={fday} onChange={(e) => e.target.value && setFday(e.target.value)} aria-label="Dia da frequência" />
-            <button type="button" className="eq-link" onClick={() => setFday(eqAddDays(fday, 1))}>próximo dia ▶</button>
-            <button type="button" className="eq-link strong2" onClick={() => setFday(today)}>Hoje</button>
-            <b className="eq-fq-title">{eqFmtFull(fday)} · {["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"][dow]}{weekend ? " (fim de semana)" : ""}</b>
-            <span className="eq-note" style={{ margin: 0 }}>{done}/{people.length} marcados</span>
-            <label className="eq-fq-chk"><input type="checkbox" checked={fShowAll} onChange={(e) => setFShowAll(e.target.checked)} /> mostrar já marcados</label>
-            <button type="button" className="eq-link" onClick={exportFreq}>Extrair frequência de {eqMonthLabel(fmonth)} (Excel)</button>
+          <div className="eq-fq-modes">
+            {[["dia", "Preencher o dia"], ["mapa", "Mapa do mês (todos os dias)"], ["log", `Alterações (${fLog.length})`]].map(([k, l]) => <button key={k} type="button" className={fmode === k ? "active" : ""} onClick={() => setFmode(k)}>{l}</button>)}
+            <button type="button" className="eq-link" onClick={exportFreq}>Extrair {eqMonthLabel(fmonth)} (Excel)</button>
           </div>
           <div className="eq-fq-legend">{FQ_CODES.map(([k, l]) => <span key={k}><b className={`eq-code c-${k}`}>{k}</b> {l}</span>)}<span className="eq-note" style={{ margin: 0 }}>Quem está de férias na planilha entra como FE automaticamente.</span></div>
-          {blanks.length > 0 && <div className="eq-fq-blanks"><b>Dias úteis com marcação pendente:</b>{blanks.map((x) => <button key={x.d} type="button" className={`eq-fq-pill ${x.d === fday ? "on" : ""}`} onClick={() => setFday(x.d)}>{eqFmt(x.d)} · {x.n}</button>)}</div>}
-          {order.map((e) => {
-            const l = dayPeople.filter((p) => p.eq === e);
-            const pend = people.filter((p) => p.eq === e && !codeOf(p, fday));
-            if (!l.length) return null;
-            return <section key={e} className="eq-card">
-              <h3>{e} <span className="eq-pct">{pend.length ? `${pend.length} pendente(s)` : "tudo marcado"}{!ro && pend.length > 0 && <button type="button" className="eq-link" onClick={() => applyFreq(fday, pend.map((p) => p.mat), "P")}>Marcar todos pendentes como P</button>}</span></h3>
-              {l.map((p) => { const c = codeOf(p, fday); return <div key={p.mat} className="eq-fq-row">
-                <div className="eq-slot-t"><span className="eq-slot-name">{p.nome}</span><small>{p.func}{p.vkey && veh.get(p.vkey) ? ` · ${veh.get(p.vkey).label}` : ""}</small></div>
-                <div className="eq-fq-btns">{FQ_CODES.map(([k, l2]) => <button key={k} type="button" disabled={ro || (c === "FE*" && k === "FE")} title={l2} className={`eq-code c-${k} ${c === k || (c === "FE*" && k === "FE") ? "on" : ""}`} onClick={() => applyFreq(fday, [p.mat], c === k ? "" : k)}>{k}</button>)}</div>
-                {c === "FE*" && <span className="eq-fe-chip">férias (planilha)</span>}
-              </div>; })}
-            </section>;
-          })}
-          {!dayPeople.length && <div className="eq-empty"><strong>Todos marcados em {eqFmtFull(fday)}.</strong><span>Use "mostrar já marcados" para corrigir alguma marcação, ou escolha outro dia.</span></div>}
+
+          {fmode === "dia" && <>
+            <div className="eq-fq-bar">
+              <button type="button" className="eq-link" onClick={() => setFday(eqAddDays(fday, -1))}>◀</button>
+              <input type="date" className="eq-search eq-date" value={fday} onChange={(e) => e.target.value && setFday(e.target.value)} aria-label="Dia da frequência" />
+              <button type="button" className="eq-link" onClick={() => setFday(eqAddDays(fday, 1))}>▶</button>
+              <button type="button" className="eq-link strong2" onClick={() => setFday(today)}>Hoje</button>
+              <b className="eq-fq-title">{eqFmtFull(fday)} · {["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"][dow]}{weekend ? " (fim de semana)" : ""}</b>
+              <span className="eq-fq-sum">{done}/{people.length} marcados · {FQ_CODES.map(([k]) => `${k} ${sumDay[k]}`).join(" · ")}</span>
+              <label className="eq-fq-chk"><input type="checkbox" checked={fShowAll} onChange={(e) => setFShowAll(e.target.checked)} /> mostrar já marcados (para corrigir)</label>
+            </div>
+            {blanks.length > 0 && <div className="eq-fq-blanks"><b>Dias úteis pendentes:</b>{blanks.map((x) => <button key={x.d} type="button" className={`eq-fq-pill ${x.d === fday ? "on" : ""}`} onClick={() => setFday(x.d)}>{eqFmt(x.d)} · {x.n}</button>)}</div>}
+            {order.map((e) => {
+              const all = people.filter((p) => p.eq === e); const pend = all.filter((p) => !codeOf(p, fday));
+              const l = fShowAll ? all : pend; const open = fOpen[e] ?? pend.length > 0;
+              return <section key={e} className="eq-card eq-fq-sec">
+                <h3 className="eq-fq-sech" onClick={() => setFOpen({ ...fOpen, [e]: !open })}><span>{open ? "▾" : "▸"} {e}</span><span className="eq-pct">{pend.length ? `${pend.length} pendente(s) de ${all.length}` : `tudo marcado (${all.length})`}{!ro && pend.length > 0 && <button type="button" className="eq-link" onClick={(ev) => { ev.stopPropagation(); applyFreq(fday, pend.map((p) => p.mat), "P", e); }}>Todos pendentes = P</button>}</span></h3>
+                {open && (l.length ? <div className="eq-fq-grid">{l.map((p) => { const c = codeOf(p, fday); return <div key={p.mat} className={`eq-fq-cell ${c ? "done" : ""}`}>
+                  <div className="eq-slot-t"><span className="eq-slot-name" title={p.nome}>{p.nome}</span><small>{p.func}</small></div>
+                  <div className="eq-fq-btns">{codeBtns(p, fday, c)}</div>
+                </div>; })}</div> : <p className="eq-note">Todos marcados neste dia. Use "mostrar já marcados" para corrigir.</p>)}
+              </section>;
+            })}
+            <p className="eq-note">Marcou errado? Ative "mostrar já marcados" e clique no código certo, ou use a aba <b>Alterações</b> (mostra quem marcou, quando, e tem o botão Desfazer). Para ver tudo de uma vez, use o <b>Mapa do mês</b>.</p>
+          </>}
+
+          {fmode === "mapa" && (() => {
+            const q = frotaNorm(fSearch);
+            const eqs = (fEq === "todos" ? order : [fEq]);
+            return <>
+              <div className="eq-fq-bar">{monthNav}
+                <div className="eq-chips"><button type="button" className={fEq === "todos" ? "active" : ""} onClick={() => setFEq("todos")}>Todas</button>{order.map((e) => <button key={e} type="button" className={fEq === e ? "active" : ""} onClick={() => setFEq(e)}>{eqShort(e)}</button>)}</div>
+                <input className="eq-search" type="search" placeholder="Buscar nome…" value={fSearch} onChange={(e) => setFSearch(e.target.value)} /></div>
+              <div className="eq-map-wrap"><table className="eq-map">
+                <thead><tr><th className="eq-map-n">Colaborador</th>{days.map((d) => <th key={d} className={`${eqDow(d) === 0 || eqDow(d) === 6 ? "we" : ""} ${d === today ? "today" : ""} ${d === fday ? "sel" : ""}`} title={eqFmtFull(d)}>{d.slice(8)}</th>)}<th>P</th><th>F</th><th>BH</th><th>FE</th><th>AT</th></tr></thead>
+                <tbody>{eqs.map((e) => <React.Fragment key={e}>
+                  <tr className="eq-map-eq"><td colSpan={days.length + 6}>{e}</td></tr>
+                  {people.filter((p) => p.eq === e && (!q || frotaNorm(p.nome).includes(q))).map((p) => { const st = statBy.get(p.mat); return <tr key={p.mat}>
+                    <td className="eq-map-n" title={p.func}>{p.nome}<small>{p.func}</small></td>
+                    {days.map((d) => { const c = codeOf(p, d); const wk = eqDow(d) === 0 || eqDow(d) === 6; const blank = !c && d <= lastDay && !wk;
+                      return <td key={d} className={`eq-map-c ${c ? `c-${c.replace("*", "")}` : ""} ${c === "FE*" ? "auto" : ""} ${wk ? "we" : ""} ${blank ? "blank" : ""}`} onClick={() => !ro && setFCell({ mat: p.mat, date: d })}>{c.replace("*", "")}</td>; })}
+                    <td>{st.c.P}</td><td>{st.c.F}</td><td>{st.c.BH}</td><td>{st.c.FE}</td><td>{st.c.AT}</td></tr>; })}
+                </React.Fragment>)}</tbody>
+              </table></div>
+              <p className="eq-note">{ro ? "Somente consulta." : "Clique numa célula para marcar ou corrigir aquele dia."} Células com ponto vermelho = dia útil sem marcação. Fim de semana em cinza.</p>
+              <section className="eq-card"><h3>Totais de {eqMonthLabel(fmonth)}</h3>
+                <table className="eq-table eq-table-sug"><thead><tr><th>Equipe</th><th>Colab.</th><th>P</th><th>F</th><th>BH</th><th>FE</th><th>AT</th><th>% presença</th><th>Dias úteis sem marcação</th></tr></thead>
+                  <tbody>{byEq.map((x) => <tr key={x.e}><td>{x.e}</td><td>{x.n}</td><td>{x.t.P}</td><td>{x.t.F}</td><td>{x.t.BH}</td><td>{x.t.FE}</td><td>{x.t.AT}</td><td>{pctP(x.t)}</td><td className={x.sem ? "eq-badtxt" : ""}>{x.sem}</td></tr>)}</tbody></table>
+                <p className="eq-note">% presença = presentes ÷ (presentes + faltas + banco de horas + atestados); férias ficam de fora.</p></section>
+            </>; })()}
+
+          {fmode === "log" && <section className="eq-card">
+            <h3>Alterações de {eqMonthLabel(fmonth)} {monthNav}</h3>
+            {fLog.length ? fLog.slice(0, 100).map((en, i) => <div key={i} className="eq-log">
+              <span className="eq-mem-mat">{fmtAt(en.at)}</span><span>{en.by || "—"}</span>
+              <span>{en.itens.length === 1 ? <><b>{en.itens[0].nome}</b> · {eqFmt(en.date)}: {en.itens[0].de || "em branco"} → <b>{en.para || "em branco"}</b></> : <><b>{en.itens.length} pessoas</b> · {eqFmt(en.date)}: {en.via && en.via !== "desfazer" ? `${en.via} → ` : ""}<b>{en.para || "em branco"}</b></>}{en.via === "desfazer" ? " (desfeito)" : ""}</span>
+              {!ro && en.via !== "desfazer" && <button type="button" className="eq-link" onClick={() => undoFreq(en)}>Desfazer</button>}
+            </div>) : <p className="eq-note">Nenhuma alteração registrada neste mês ainda. A partir de agora cada marcação fica no histórico, com quem fez e quando.</p>}
+          </section>}
+
+          {fCell && (() => { const p = people.find((x) => x.mat === fCell.mat); if (!p) return null; const c = codeOf(p, fCell.date); const lg = lastOf(p.mat, fCell.date);
+            return <div className="eq-modal-bg" onClick={() => setFCell(null)}><div className="eq-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+              <h3>{p.nome} · {eqFmtFull(fCell.date)}</h3>
+              <p className="eq-note">Hoje está: <b>{c ? c.replace("*", "") + (c === "FE*" ? " (férias da planilha)" : "") : "em branco"}</b>{lg ? ` · última alteração: ${lg.by || "—"} em ${fmtAt(lg.at)}` : ""}</p>
+              <div className="eq-fq-btns big">{FQ_CODES.map(([k, l2]) => <button key={k} type="button" className={`eq-code c-${k} ${c === k ? "on" : ""}`} onClick={() => { applyFreq(fCell.date, [p.mat], k); setFCell(null); }}>{k} · {l2}</button>)}</div>
+              <div className="eq-modal-f"><button type="button" className="secondary-action" onClick={() => { applyFreq(fCell.date, [p.mat], ""); setFCell(null); }}>Limpar marcação</button><button type="button" className="secondary-action" onClick={() => setFCell(null)}>Fechar</button></div>
+            </div></div>; })()}
+        </div>;
+      })()}
+
+      {tab === "aloc" && (() => {
+        const G0 = geralBase.rows;
+        if (!G0.length) return <div className="eq-empty"><strong>Sem dados do CDC GERAL.</strong><span>{ro ? "Peça ao coordenador para carregar a planilha CDC." : 'A aba "CDC GERAL" é lida junto com o "Atualizar planilha CDC". Suba a planilha de novo para carregá-la.'}</span></div>;
+        const ovr = gAj.items || {};
+        const base0 = new Map(G0.map((r) => [r.mat, r]));
+        const G = G0.map((r) => (ovr[r.mat] ? { ...r, ...ovr[r.mat], alt: true } : r));
+        const nAlt = G.filter((r) => r.alt).length;
+        const gN = (r) => frotaNorm(r.gestor);
+        const gName = {}; G.forEach((r) => { if (!gName[gN(r)]) gName[gN(r)] = r.gestor; });
+        const gCount = {}; G.forEach((r) => { gCount[gN(r)] = (gCount[gN(r)] || 0) + 1; });
+        const gRows = Object.entries(gCount).sort((a, b) => b[1] - a[1]);
+        const mode = {}; people.forEach((p) => { const k = frotaNorm(p.gestor); if (k) mode[k] = (mode[k] || 0) + 1; });
+        const own = Object.entries(mode).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "";
+        const sel = aGestor === "__own" ? own : aGestor;
+        const scope = sel === "__all" || !sel ? G : G.filter((r) => gN(r) === sel);
+        const scopeLabel = sel === "__all" || !sel ? "toda a filial" : (gName[sel] || sel);
+        const ccKey = (r) => `${r.cc}|${r.desc}`;
+        const ccAll = {}; G0.forEach((r) => { ccAll[ccKey(r)] = { cc: r.cc, desc: r.desc }; }); (gAj.ccs || []).forEach((c) => { ccAll[ccKey(c)] = c; });
+        const ccOpts = Object.values(ccAll).sort((a, b) => String(a.desc).localeCompare(String(b.desc), "pt-BR"));
+        const CL = ["Ajudante", "Conferente", "Motorista", "Mot. carreta", "Outros"];
+        const ccMap = {}; scope.forEach((r) => { const o = (ccMap[ccKey(r)] = ccMap[ccKey(r)] || { cc: r.cc, desc: r.desc, n: 0, by: {} }); o.n++; const c = eqGeralClass(r.func); o.by[c] = (o.by[c] || 0) + 1; });
+        Object.values(ccAll).forEach((c) => { if (!ccMap[ccKey(c)]) ccMap[ccKey(c)] = { cc: c.cc, desc: c.desc, n: 0, by: {} }; });
+        const ccs = Object.values(ccMap).sort((a, b) => b.n - a.n || String(a.desc).localeCompare(String(b.desc)));
+        const q = frotaNorm(aQ);
+        const list = scope.filter((r) => (aCc === "todos" || ccKey(r) === aCc) && (aCargo === "todos" || eqGeralClass(r.func) === aCargo) && (!aOnlyAlt || r.alt) && (!q || frotaNorm(r.nome).includes(q) || String(r.mat).includes(q))).sort((a, b) => a.desc.localeCompare(b.desc, "pt-BR") || a.func.localeCompare(b.func, "pt-BR") || a.nome.localeCompare(b.nome, "pt-BR"));
+        const gMat = {}; G.forEach((r) => { const k = gN(r); const o = (gMat[k] = gMat[k] || { by: {}, cc: {} }); const c = eqGeralClass(r.func); o.by[c] = (o.by[c] || 0) + 1; o.cc[r.desc] = (o.cc[r.desc] || 0) + 1; });
+        const ccTop = Object.entries(G.reduce((a, r) => { a[r.desc] = (a[r.desc] || 0) + 1; return a; }, {})).sort((a, b) => b[1] - a[1]).slice(0, 5).map((x) => x[0]);
+        const out = [];
+        CL.forEach((c) => { const l = scope.filter((r) => eqGeralClass(r.func) === c); if (l.length < 3) return; const cnt = {}; l.forEach((r) => { cnt[r.desc] = (cnt[r.desc] || 0) + 1; }); const [top, n] = Object.entries(cnt).sort((a, b) => b[1] - a[1])[0]; if (n / l.length < 0.6) return; l.filter((r) => r.desc !== top).forEach((r) => out.push({ r, top, c, n, tot: l.length })); });
+        const gMats = new Set(scope.map((r) => String(r.mat))); const pMats = new Set(people.map((p) => String(p.mat))); const gByMat = new Map(G.map((r) => [String(r.mat), r]));
+        const soDist = sel === own ? people.filter((p) => !gMats.has(String(p.mat))) : []; const soGeral = sel === own ? scope.filter((r) => !pMats.has(String(r.mat))) : [];
+        function edit(r, patch) {
+          const b = base0.get(r.mat); const cur = { cc: r.cc, desc: r.desc, gestor: r.gestor, ...patch };
+          const same = cur.cc === b.cc && cur.desc === b.desc && frotaNorm(cur.gestor) === frotaNorm(b.gestor);
+          const items = { ...(gAj.items || {}) }; if (same) delete items[r.mat]; else items[r.mat] = { cc: cur.cc, desc: cur.desc, gestor: cur.gestor };
+          persistG({ ...gAj, items });
+        }
+        const setGestor = (r, v) => { const t = v.replace(/\s+/g, " ").trim(); if (!t || frotaNorm(t) === frotaNorm(r.gestor)) return; edit(r, { gestor: gName[frotaNorm(t)] || t.toUpperCase() }); };
+        const setCc = (r, key) => { const c = ccAll[key]; if (c && key !== ccKey(r)) edit(r, { cc: c.cc, desc: c.desc }); };
+        const addCc = () => { const cc = ccNew.cc.trim(), desc = ccNew.desc.trim(); if (!cc || !desc) { setCcNew({ ...ccNew, error: "Informe código e descrição." }); return; } persistG({ ...gAj, ccs: [...(gAj.ccs || []).filter((c) => ccKey(c) !== `${cc}|${desc}`), { cc, desc }] }); setCcNew(null); };
+        const exportAloc = () => {
+          const wb = XLSX.utils.book_new(); const add = (n, head, body, w) => { const ws = XLSX.utils.aoa_to_sheet([head, ...body]); ws["!cols"] = w.map((x) => ({ wch: x })); XLSX.utils.book_append_sheet(wb, ws, n); };
+          add("CDC GERAL ajustado", ["Matrícula", "Nome", "Cargo", "Centro de custo", "Descrição", "Gestor", "Turno", "Alterado no painel", "Centro original", "Descrição original", "Gestor original"], G.map((r) => { const b = base0.get(r.mat); return [r.mat, r.nome, r.func, r.cc, r.desc, r.gestor, r.turno, r.alt ? "SIM" : "", r.alt ? b.cc : "", r.alt ? b.desc : "", r.alt ? b.gestor : ""]; }), [10, 34, 22, 14, 30, 32, 10, 12, 14, 30, 32]);
+          add("Somente alterações", ["Matrícula", "Nome", "Cargo", "Centro de custo (novo)", "Descrição (nova)", "Gestor (novo)", "Centro (antes)", "Gestor (antes)"], G.filter((r) => r.alt).map((r) => { const b = base0.get(r.mat); return [r.mat, r.nome, r.func, r.cc, r.desc, r.gestor, `${b.cc} ${b.desc}`, b.gestor]; }), [10, 34, 22, 20, 30, 32, 40, 32]);
+          add("Contador por centro de custo", ["Centro de custo", "Descrição", ...CL, "Total"], ccs.map((c) => [c.cc, c.desc, ...CL.map((x) => c.by[x] || 0), c.n]), [14, 30, 10, 11, 10, 12, 8, 8]);
+          XLSX.writeFile(wb, `Alocacao_CDC_GERAL_${eqTodayISO()}.xlsx`);
+        };
+        const pick = (k) => { setACc(aCc === k ? "todos" : k); setALimit(120); };
+        return <div className="eq-aloc">
+          <div className="eq-fq-bar"><b>Gestor:</b>
+            <select className="eq-search" value={aGestor} onChange={(e) => { setAGestor(e.target.value); setACc("todos"); setALimit(120); }} aria-label="Gestor">
+              <option value="__all">Toda a filial ({G.length})</option>{own && <option value="__own">{`${gName[own] || own} (meu time)`}</option>}
+              {gRows.map(([k, n]) => <option key={k} value={k}>{gName[k]} ({n})</option>)}
+            </select>
+            <button type="button" className="eq-link" onClick={exportAloc}>Extrair (Excel)</button>
+            {!ro && <button type="button" className="eq-link" onClick={() => setCcNew({ cc: "", desc: "" })}>+ Novo centro de custo</button>}
+            {!ro && nAlt > 0 && <button type="button" className="eq-link eq-del" onClick={() => persistG({ ...gAj, items: {} })}>Restaurar tudo ao original</button>}
+            <span className="eq-note" style={{ margin: 0 }}>CDC GERAL · {geralBase.label}</span></div>
+          <div className="diag-kpi-grid eq-kpis">
+            <div className="diag-kpi static"><span>Colaboradores</span><strong>{scope.length}</strong><small>{scopeLabel}</small></div>
+            <div className="diag-kpi static"><span>Centros de custo</span><strong>{ccs.filter((c) => c.n).length}</strong><small>em uso</small></div>
+            <div className="diag-kpi static"><span>Gestores</span><strong>{gRows.length}</strong><small>na filial</small></div>
+            <div className={`diag-kpi static ${nAlt ? "eq-bad" : ""}`}><span>Alterados no painel</span><strong>{nAlt}</strong><small>CDC/gestor ajustados</small></div>
+          </div>
           <section className="eq-card">
-            <h3>Relatório de {eqMonthLabel(fmonth)} <span className="eq-pct"><button type="button" className="eq-link" onClick={() => setFday(`${eqShiftMonth(fmonth, -1)}-01`)}>◀ mês anterior</button> <button type="button" className="eq-link" onClick={() => setFday(`${eqShiftMonth(fmonth, 1)}-01`)}>próximo mês ▶</button></span></h3>
-            <table className="eq-table eq-table-sug"><thead><tr><th>Equipe</th><th>Colab.</th><th>P</th><th>F</th><th>BH</th><th>FE</th><th>AT</th><th>% presença</th><th>Dias úteis sem marcação</th></tr></thead>
-              <tbody>{byEq.map((x) => <tr key={x.e}><td>{x.e}</td><td>{x.n}</td><td>{x.t.P}</td><td>{x.t.F}</td><td>{x.t.BH}</td><td>{x.t.FE}</td><td>{x.t.AT}</td><td>{pctP(x.t)}</td><td className={x.sem ? "eq-badtxt" : ""}>{x.sem}</td></tr>)}</tbody></table>
-            <p className="eq-note">% presença = presentes ÷ (presentes + faltas + banco de horas + atestados); férias ficam de fora. A lista por pessoa e o mapa dia a dia saem no Excel.</p>
+            <h3>Contador por centro de custo · {scopeLabel}</h3>
+            <table className="eq-table"><thead><tr><th>Centro de custo</th><th className="eq-left">Descrição</th>{CL.map((c) => <th key={c}>{c}</th>)}<th>Total</th></tr></thead>
+              <tbody>{ccs.map((c) => { const k = ccKey(c); return <tr key={k} className={`eq-click ${aCc === k ? "eq-row-on" : ""}`} onClick={() => pick(k)}><td>{c.cc}</td><td className="eq-left">{c.desc}</td>{CL.map((x) => <td key={x} className={c.by[x] ? "" : "eq-z"}>{c.by[x] || 0}</td>)}<td><b>{c.n}</b></td></tr>; })}
+                <tr className="eq-tot"><td>Total</td><td /> {CL.map((x) => <td key={x}>{ccs.reduce((s, c) => s + (c.by[x] || 0), 0)}</td>)}<td>{scope.length}</td></tr></tbody></table>
+            <p className="eq-note">Clique num centro de custo para listar os colaboradores dele logo abaixo.</p>
           </section>
+          <section className="eq-card">
+            <h3>Colaboradores · ajuste o centro de custo e o gestor na lista</h3>
+            <div className="eq-fq-bar">
+              <div className="eq-chips"><button type="button" className={aCargo === "todos" ? "active" : ""} onClick={() => setACargo("todos")}>Todos os cargos</button>{CL.map((c) => <button key={c} type="button" className={aCargo === c ? "active" : ""} onClick={() => setACargo(c)}>{c}</button>)}</div>
+              <input className="eq-search" type="search" placeholder="Buscar nome ou matrícula…" value={aQ} onChange={(e) => setAQ(e.target.value)} />
+              <label className="eq-fq-chk"><input type="checkbox" checked={aOnlyAlt} onChange={(e) => setAOnlyAlt(e.target.checked)} /> só alterados</label>
+              {aCc !== "todos" && <button type="button" className="eq-link" onClick={() => setACc("todos")}>limpar centro de custo ✕</button>}
+              <span className="eq-note" style={{ margin: 0 }}>{list.length} colaborador(es)</span></div>
+            <datalist id="eq-dl-gestor">{gRows.map(([k]) => <option key={k} value={gName[k]} />)}</datalist>
+            <div className="eq-glist">
+              <div className="eq-grow eq-grow-h"><span>Colaborador</span><span>Cargo</span><span>Centro de custo</span><span>Gestor</span><span>Turno</span><span /></div>
+              {list.slice(0, aLimit).map((r) => <div key={r.mat} className={`eq-grow ${r.alt ? "alt" : ""}`}>
+                <span className="eq-grow-n" title={r.mat}><b>{r.nome}</b><small>{r.mat}</small></span>
+                <span className="eq-prow-c">{r.func}</span>
+                {ro ? <span>{r.desc} <small>{r.cc}</small></span> : <select value={ccKey(r)} onChange={(e) => setCc(r, e.target.value)} aria-label={`Centro de custo de ${r.nome}`}>{ccOpts.map((c) => <option key={ccKey(c)} value={ccKey(c)}>{c.cc} · {c.desc}</option>)}</select>}
+                {ro ? <span>{r.gestor}</span> : <input key={r.mat + r.gestor} list="eq-dl-gestor" defaultValue={r.gestor} onBlur={(e) => setGestor(r, e.target.value)} onKeyDown={(e) => e.key === "Enter" && e.currentTarget.blur()} aria-label={`Gestor de ${r.nome}`} />}
+                <span className="eq-mem-mat">{r.turno}</span>
+                {r.alt && !ro ? <button type="button" className="eq-link" title="Voltar ao valor da planilha" onClick={() => { const it = { ...(gAj.items || {}) }; delete it[r.mat]; persistG({ ...gAj, items: it }); }}>restaurar</button> : r.alt ? <span className="eq-moved">alterado</span> : <span />}
+              </div>)}
+              {list.length > aLimit && <button type="button" className="eq-link" onClick={() => setALimit(aLimit + 200)}>Mostrar mais ({list.length - aLimit} restantes)</button>}
+              {!list.length && <div className="eq-none">Ninguém neste filtro.</div>}
+            </div>
+            <p className="eq-note">As alterações valem no painel e ficam presas à matrícula (não se perdem ao subir a planilha de novo). Para refletir no RH/sistema, use "Extrair (Excel)": a aba "Somente alterações" traz o antes e o depois.</p>
+          </section>
+          {(() => { const byDesc = {}; G.forEach((r) => { const o = (byDesc[r.desc] = byDesc[r.desc] || {}); o[r.cc] = (o[r.cc] || 0) + 1; }); const mm = Object.entries(byDesc).filter(([, o]) => Object.keys(o).length > 1);
+            return mm.length ? <section className="eq-card"><h3>Código de centro de custo inconsistente com a descrição</h3><ul className="eq-att">{mm.map(([d, o]) => <li key={d} className="am"><b>{d}</b><small>aparece com {Object.keys(o).length} códigos: {Object.entries(o).sort((x, y) => y[1] - x[1]).map(([c, n]) => `${c} (${n})`).join(" · ")}. Conferir qual código está correto.</small></li>)}</ul></section> : null; })()}
+          {out.length > 0 && <section className="eq-card"><h3>Possível alocação errada ({out.length})</h3>
+            <ul className="eq-att">{out.slice(0, 30).map((x, i) => <li key={i} className="am"><b>{x.r.nome} ({x.r.func})</b><small>Está em "{x.r.desc}"; {x.n} de {x.tot} {x.c.toLowerCase()}(s) de {scopeLabel} estão em "{x.top}".</small></li>)}</ul></section>}
+          {sel === own && (soDist.length > 0 || soGeral.length > 0) && <section className="eq-card"><h3>CDC Distribuição × CDC GERAL</h3>
+            <ul className="eq-att">
+              {soDist.length > 0 && <li className="am"><b>{soDist.length} no CDC Distribuição que não estão neste gestor no CDC GERAL</b><small>{soDist.map((p) => { const g = gByMat.get(String(p.mat)); return `${p.nome} (${g ? `no Geral: ${g.gestor}` : "fora do CDC GERAL"})`; }).join(" · ")}</small></li>}
+              {soGeral.length > 0 && <li className="am"><b>{soGeral.length} neste gestor no CDC GERAL que não estão no CDC Distribuição</b><small>{soGeral.map((r) => `${r.nome} (${r.func} · ${r.desc})`).join(" · ")}</small></li>}
+            </ul></section>}
+          <section className="eq-card"><h3>Gestor × cargo</h3>
+            <table className="eq-table"><thead><tr><th>Gestor</th>{CL.map((c) => <th key={c}>{c}</th>)}<th>Total</th></tr></thead>
+              <tbody>{gRows.map(([k, n]) => <tr key={k} className={`eq-click ${k === sel ? "eq-row-on" : ""}`} onClick={() => { setAGestor(k); setACc("todos"); }}><td>{gName[k]}</td>{CL.map((c) => <td key={c} className={gMat[k].by[c] ? "" : "eq-z"}>{gMat[k].by[c] || 0}</td>)}<td><b>{n}</b></td></tr>)}
+                <tr className="eq-tot"><td>Total</td>{CL.map((c) => <td key={c}>{G.filter((r) => eqGeralClass(r.func) === c).length}</td>)}<td>{G.length}</td></tr></tbody></table>
+          </section>
+          <section className="eq-card"><h3>Gestor × centro de custo</h3>
+            <table className="eq-table"><thead><tr><th>Gestor</th>{ccTop.map((c) => <th key={c}>{c}</th>)}<th>Outros</th><th>Total</th></tr></thead>
+              <tbody>{gRows.map(([k, n]) => { const o = gMat[k]; const top = ccTop.reduce((s, c) => s + (o.cc[c] || 0), 0); return <tr key={k} className={`eq-click ${k === sel ? "eq-row-on" : ""}`} onClick={() => { setAGestor(k); setACc("todos"); }}><td>{gName[k]}</td>{ccTop.map((c) => <td key={c} className={o.cc[c] ? "" : "eq-z"}>{o.cc[c] || 0}</td>)}<td className={n - top ? "" : "eq-z"}>{n - top}</td><td><b>{n}</b></td></tr>; })}</tbody></table>
+          </section>
+          {ccNew && <div className="eq-modal-bg" onClick={() => setCcNew(null)}><div className="eq-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+            <h3>Novo centro de custo</h3>
+            <div className="eq-form"><label><span>Código</span><input value={ccNew.cc} onChange={(e) => setCcNew({ ...ccNew, cc: e.target.value })} /></label><label><span>Descrição</span><input value={ccNew.desc} onChange={(e) => setCcNew({ ...ccNew, desc: e.target.value })} /></label></div>
+            {ccNew.error && <div className="eq-issue">{ccNew.error}</div>}
+            <div className="eq-modal-f"><button type="button" className="secondary-action" onClick={() => setCcNew(null)}>Cancelar</button><button type="button" className="secondary-action" onClick={addCc}>Salvar</button></div>
+          </div></div>}
         </div>;
       })()}
 
@@ -5137,6 +5478,14 @@ function GestaoEquipes({ perm }) {
     </>}
 
     {!empty && Object.keys(aj.removed || {}).length > 0 && tab === "veic" && <section className="eq-card"><h3>Excluídos ({Object.keys(aj.removed).length})</h3>{Object.entries(aj.removed).map(([mat, r]) => <div key={mat} className="eq-mem"><span className="eq-ft">excluído</span><span className="eq-mem-name">{r.nome}</span><span className="eq-mem-mat">{mat}</span><span />{!ro && <span className="eq-acts"><button type="button" className="eq-link" onClick={() => restorePerson(mat)}>Restaurar</button></span>}</div>)}</section>}
+
+    {vf && <div className="eq-modal-bg" onClick={() => setVf(null)}><div className="eq-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+      {vf.mode === "del" ? <><h3>Excluir vaga</h3><p className="eq-note">Excluir a linha <b>{vf.nome}</b> da reposição?</p><div className="eq-modal-f"><button type="button" className="secondary-action" onClick={() => setVf(null)}>Cancelar</button><button type="button" className="secondary-action eq-del" onClick={() => excluirVaga({ key: vf.key })}>Excluir</button></div></> : <>
+        <h3>{vf.mode === "add" ? "Incluir vaga" : "Editar vaga"}</h3>
+        <div className="eq-form">{[["func", "Função"], ["tipo", "Tipo de vaga"], ["qtd", "Quantidade"], ["motivo", "Motivo / detalhe"], ["obs", "Observações"]].map(([k, l]) => <label key={k}><span>{l}</span><input value={vf.f[k]} type={k === "qtd" ? "number" : "text"} min={k === "qtd" ? 1 : undefined} onChange={(e) => setVf({ ...vf, f: { ...vf.f, [k]: e.target.value } })} /></label>)}</div>
+        {vf.error && <div className="eq-issue">{vf.error}</div>}
+        <div className="eq-modal-f"><button type="button" className="secondary-action" onClick={() => setVf(null)}>Cancelar</button><button type="button" className="secondary-action" onClick={saveVaga}>Salvar</button></div></>}
+    </div></div>}
 
     {form && <div className="eq-modal-bg" onClick={() => setForm(null)}><div className="eq-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
       {form.mode === "del" ? <>
