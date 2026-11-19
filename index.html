@@ -934,7 +934,14 @@ button.dev-top-row:hover { background: var(--muted); }
 
 /* Férias, blocos de veículos e acesso */
 .eq-group { margin-bottom: 12px; } .eq-group-h { margin: 0 0 6px; font: 700 12px 'IBM Plex Mono', monospace; letter-spacing: .06em; color: var(--foreground); border-bottom: 2px solid var(--foreground); padding-bottom: 3px; } .eq-group-h span { font-weight: 400; color: var(--muted-foreground); margin-left: 8px; }
-.eq-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 8px; } .eq-cards-sm { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.eq-fer-bar { display: flex; justify-content: flex-end; margin-bottom: 6px; } .eq-fer-more { margin-top: 8px; color: var(--foreground); } .eq-fer-more > summary { cursor: pointer; font-size: 12px; padding: 6px 0; }
+.eq-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 8px; }
+.eq-veic .eq-cards:not(.eq-cards-sm) { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
+@media (max-width: 1100px) { .eq-veic .eq-cards:not(.eq-cards-sm) { grid-template-columns: repeat(2, minmax(0, 1fr)); } } @media (max-width: 700px) { .eq-veic .eq-cards:not(.eq-cards-sm) { grid-template-columns: 1fr; } }
+.eq-veic .eq-slot-name { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.2; } .eq-veic .eq-slot-t small { white-space: normal; }
+.eq-vago-sel { width: 100%; font-size: 10px; background: transparent; color: var(--muted-foreground); border: 0; cursor: pointer; text-transform: none; }
+.eq-vago-sel option, .eq-vago-sel optgroup { color: #111; background: #fff; }
+.eq-form label select, .eq-pick-new input { width: 100%; font: inherit; padding: 8px 10px; background: transparent; color: var(--foreground); border: 1px solid var(--border); } .eq-pick-new { display: flex; gap: 6px; align-items: center; } .eq-form label select option { color: #111; background: #fff; } .eq-cards-sm { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
 .eq-vcard { background: var(--card); color: var(--foreground); border: 1px solid var(--border); border-top: 3px solid #2f9e5f; padding: 6px 8px; display: flex; flex-direction: column; gap: 4px; }
 .eq-vcard.is-bad { border-top-color: #b3363a; } .eq-vcard.is-stop { border-top-color: #d19a00; }
 .eq-vcard header { display: flex; align-items: center; gap: 8px; } .eq-vcard .eq-cap { margin-left: auto; }
@@ -4647,6 +4654,15 @@ const eqDow = (iso) => new Date(`${iso}T12:00:00`).getDay();
 const eqDaysOfMonth = (m) => { const [y, mo] = m.split("-").map(Number); const n = new Date(y, mo, 0).getDate(); return Array.from({ length: n }, (_, i) => `${m}-${eqPad(i + 1)}`); };
 const eqMonthLabel = (m) => { const [y, mo] = m.split("-"); return `${["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"][Number(mo) - 1]} de ${y}`; };
 const eqShiftMonth = (m, n) => { const [y, mo] = m.split("-").map(Number); const d = new Date(y, mo - 1 + n, 1); return `${d.getFullYear()}-${eqPad(d.getMonth() + 1)}`; };
+/* Lista com opção de digitar um valor novo (usada no editar/incluir colaborador). */
+function EqPick({ value, options, onChange, label }) {
+  const opts = [...new Set(options.filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+  const [typing, setTyping] = useState(false);
+  if (typing || (value && !opts.includes(value))) return <span className="eq-pick-new"><input value={value} autoFocus={typing} onChange={(e) => onChange(e.target.value)} aria-label={label} placeholder="digite o novo valor" /><button type="button" className="eq-link" onClick={() => { setTyping(false); onChange(""); }}>voltar à lista</button></span>;
+  return <select value={value} aria-label={label} onChange={(e) => { if (e.target.value === "__novo") { setTyping(true); onChange(""); } else onChange(e.target.value); }}>
+    <option value="">— escolher na lista —</option>{opts.map((o) => <option key={o} value={o}>{o}</option>)}<option value="__novo">➕ Novo (digitar)…</option>
+  </select>;
+}
 function GestaoEquipes({ perm }) {
   const ro = perm ? !perm.canEdit : false;
   const [tab, setTab] = useState("resumo");
@@ -4771,7 +4787,16 @@ function GestaoEquipes({ perm }) {
     const rowsAdj = [...base.rows.filter((p) => !(aj.removed || {})[p.mat]).map((p) => ((aj.edits || {})[p.mat] ? { ...p, ...aj.edits[p.mat] } : p)), ...Object.values(aj.added || {}).filter((p) => !(aj.removed || {})[p.mat])];
     const todayF = eqTodayISO();
     const ferByMat = new Map(); const ferByNome = new Map();
-    ferias.rows.forEach((f) => { const rec = { ...f, estado: eqFerEstado(f, todayF) }; if (f.mat) ferByMat.set(String(f.mat), rec); ferByNome.set(frotaNorm(f.nome), rec); });
+    { const grp = new Map();
+      ferias.rows.forEach((f) => { const k = f.mat ? String(f.mat) : frotaNorm(f.nome); if (!grp.has(k)) grp.set(k, []); grp.get(k).push({ ...f, estado: eqFerEstado(f, todayF) }); });
+      const rank = { hoje: 0, prog: 1, pend: 2, real: 3 };
+      grp.forEach((recs) => {
+        const sorted = recs.slice().sort((a, b) => rank[a.estado] - rank[b.estado] || (a.estado === "real" ? b.ini.localeCompare(a.ini) : a.estado === "pend" ? (a.limM || "").localeCompare(b.limM || "") : a.ini.localeCompare(b.ini)));
+        const ch = { ...sorted[0] };
+        const ult = recs.filter((r) => r.ini && r.fim && r.fim < todayF && !(r.ini === ch.ini && r.fim === ch.fim)).sort((a, b) => b.fim.localeCompare(a.fim))[0];
+        ch.ult = ult ? { ini: ult.ini, fim: ult.fim } : null;
+        if (ch.mat) ferByMat.set(String(ch.mat), ch); ferByNome.set(frotaNorm(ch.nome), ch);
+      }); }
     const people = rowsAdj.map((p) => {
       const b = resolve(p.veic);
       const o = ov[p.mat];
@@ -4857,7 +4882,7 @@ function GestaoEquipes({ perm }) {
   const FORM_EMPTY = { nome: "", mat: "", func: "", eq: "", turno: "", gestor: "", veic: "" };
   function openForm(mode, p) {
     if (mode === "add") setForm({ mode, f: { ...FORM_EMPTY, eq: eqNames[0] || "", gestor: people[0]?.gestor || "" } });
-    else setForm({ mode, mat: p.mat, nome: p.nome, f: { ...FORM_EMPTY, nome: p.nome, mat: p.semMat ? "" : p.mat, func: p.func, eq: p.eq, turno: p.turno, gestor: p.gestor } });
+    else setForm({ mode, mat: p.mat, nome: p.nome, f: { ...FORM_EMPTY, nome: p.nome, mat: p.semMat ? "" : p.mat, func: p.func, eq: p.eq, turno: p.turno, gestor: p.gestor, veic: p.vkey && !p.afastado ? p.vkey : "" } });
   }
   function saveForm() {
     const f = form.f; const nome = f.nome.trim().replace(/\s+/g, " ").toUpperCase(); const func = f.func.trim().toUpperCase();
@@ -4868,13 +4893,15 @@ function GestaoEquipes({ perm }) {
       if (people.some((p) => p.mat === mat) || (aj.removed || {})[mat]) { setForm({ ...form, error: "Já existe colaborador com essa matrícula." }); return; }
       next.added[mat] = { mat, semMat: !f.mat.trim(), nome, func, eq: f.eq.trim() || "Sem equipe", gestor: f.gestor.trim(), filial: "", turno: f.turno.trim(), horario: "", veic: "", aus: "", reemb: "", manual: true };
       persistAj(next);
-      const vk = f.veic.trim() && vlist.find((v) => frotaNorm(v.label) === frotaNorm(f.veic) || v.key === frotaNorm(f.veic) || frotaNorm(v.label).split(" - ").includes(frotaNorm(f.veic)));
+      const vk = f.veic && vlist.find((v) => v.key === f.veic);
       if (vk) persistOv({ ...ov, [mat]: { v: vk.key, at: new Date().toISOString() } });
       setNotice(`${nome} incluído${vk ? ` em ${vk.label}` : ""}.`);
     } else {
       const patch = { nome, func, eq: f.eq.trim() || "Sem equipe", turno: f.turno.trim(), gestor: f.gestor.trim() };
       if (next.added[form.mat]) next.added[form.mat] = { ...next.added[form.mat], ...patch }; else next.edits[form.mat] = patch;
       persistAj(next); setNotice(`${nome} atualizado.`);
+      const cur = people.find((x) => x.mat === form.mat);
+      if (cur && (f.veic || "") !== (cur.vkey && !cur.afastado ? cur.vkey : "")) requestMove({ ...cur, nome }, f.veic);
     }
     setForm(null);
   }
@@ -5097,6 +5124,18 @@ function GestaoEquipes({ perm }) {
     <button type="button" className="eq-ic" title="Editar" aria-label={`Editar ${m.nome}`} onClick={() => openForm("edit", m)}>✎</button>
     <button type="button" className="eq-ic eq-del" title="Excluir" aria-label={`Excluir ${m.nome}`} onClick={() => setForm({ mode: "del", mat: m.mat, nome: m.nome })}>✕</button>
   </span>;
+  const pickSem = useMemo(() => people.filter((p) => !p.vkey && !p.afastado), [people]);
+  const pickOut = useMemo(() => people.filter((p) => p.vkey && !p.afastado && p.ft !== "adm"), [people]);
+  const vagoSlot = (v, k, txt) => ro ? <div key={k} className="eq-slot eq-vago"><span>{txt}</span></div> : <div key={k} className="eq-slot eq-vago"><select className="eq-vago-sel" value="" aria-label={`Incluir colaborador em ${v.label}`} onChange={(e) => {
+    const val = e.target.value; if (!val) return;
+    if (val === "__novo") { setForm({ mode: "add", f: { ...FORM_EMPTY, eq: eqNames.find((n) => /EXTERN/i.test(n)) || eqNames[0] || "", gestor: people[0]?.gestor || "", veic: v.key } }); return; }
+    const pp = people.find((x) => x.mat === val); if (pp) requestMove(pp, v.key);
+  }}>
+    <option value="">＋ {txt} — escolher colaborador…</option>
+    <optgroup label="Sem veículo">{pickSem.map((m) => <option key={m.mat} value={m.mat}>{m.nome} · {m.func}</option>)}</optgroup>
+    <optgroup label="Em outro veículo (mover)">{pickOut.filter((m) => m.vkey !== v.key).map((m) => <option key={m.mat} value={m.mat}>{m.nome} · {m.func} · {veh.get(m.vkey)?.label}</option>)}</optgroup>
+    <option value="__novo">➕ Incluir novo colaborador…</option>
+  </select></div>;
   const slotRow = (m) => <div key={m.mat} className={`eq-slot ${m.fer?.estado === "hoje" ? "is-fe" : ""}`}>
     <span className={`eq-ft eq-ft-${m.ft}`}>{EQ_FT_SHORT[m.ft]}</span>
     <div className="eq-slot-t"><span className="eq-slot-name" title={m.nome}>{m.nome}</span><small>{m.func} · {m.semMat ? "s/ matrícula" : m.mat}{m.moved ? " · movido" : ""}</small></div>
@@ -5232,8 +5271,8 @@ function GestaoEquipes({ perm }) {
               </header>
               {v.issues.length > 0 && <div className="eq-issue">{v.issues.join(" · ")}</div>}
               {v.diverge && <div className="eq-issue am" title={`Diagnóstico: ${v.diagMot}`}>Motorista no Diagnóstico: {v.diagMot}</div>}
-              {v.members.length ? <div className="eq-slots">{v.members.map(slotRow)}{Array.from({ length: Math.max(0, cap - v.members.length) }).map((_, i) => <div key={`e${i}`} className="eq-slot eq-vago"><span>vago</span></div>)}</div> : <div className="eq-slots"><div className="eq-slot eq-vago"><span>sem equipe · {cap} vagas</span></div></div>}
-              {!ro && v.members.length > 0 && eqStopped(v.r) && <button type="button" className="eq-link strong" onClick={() => setDlg({ mode: "team", ids: v.members.map((m) => m.mat), stage: "pick", q: "" })}>Realocar equipe</button>}
+              {v.members.length ? <div className="eq-slots">{v.members.map(slotRow)}{Array.from({ length: Math.max(0, cap - v.members.length) }).map((_, i) => vagoSlot(v, `e${i}`, "vago"))}</div> : <div className="eq-slots">{vagoSlot(v, "x", `sem equipe · ${cap} vagas`)}</div>}
+              {!ro && v.members.length > 0 && <button type="button" className={`eq-link ${eqStopped(v.r) ? "strong" : ""}`} onClick={() => setDlg({ mode: "team", ids: v.members.map((m) => m.mat), stage: "pick", q: "" })}>{eqStopped(v.r) ? "Realocar equipe" : "Trocar placa da equipe"}</button>}
             </article>)}
           </div>
         </section>)}
@@ -5530,21 +5569,36 @@ function GestaoEquipes({ perm }) {
           <div className={`diag-kpi static ${F.ideal.length ? "eq-bad" : ""}`}><span>Prazo ideal vencido</span><strong>{F.ideal.length}</strong><small>ainda sem data</small></div>
           <div className={`diag-kpi static ${F.venc.length ? "eq-bad" : ""}`}><span>Prazo máximo vencido</span><strong>{F.venc.length}</strong><small>risco de pagar em dobro</small></div>
         </div>
-        <div className="eq-grid2">
-          <section className="eq-card">
-            <h3>Em férias hoje ({F.hoje.length})</h3>
-            {F.hoje.length ? F.hoje.map((p) => <div key={p.mat} className="eq-frow"><b>{p.nome}</b><span>{p.func}</span><span>{p.eq}</span><span>{veh.get(p.vkey)?.label ?? "sem veículo"}</span><span>até {eqFmtFull(p.fer.fim)} · volta {eqFmtFull(p.fer.ret)}</span></div>) : <p className="eq-note">Ninguém em férias hoje.</p>}
-            <h3 style={{ marginTop: 12 }}>Próximas saídas (60 dias) ({F.prox60.length})</h3>
-            {F.prox60.length ? F.prox60.map((p) => <div key={p.mat} className="eq-frow"><b>{p.nome}</b><span>{p.func}</span><span>{p.eq}</span><span>{veh.get(p.vkey)?.label ?? "sem veículo"}</span><span>{eqFmtFull(p.fer.ini)} a {eqFmtFull(p.fer.fim)} · em {eqDiff(p.fer.ini, today)}d</span></div>) : <p className="eq-note">Nenhuma saída nos próximos 60 dias.</p>}
-          </section>
-          <section className="eq-card">
-            <h3>Prazos para programar</h3>
-            {F.venc.length > 0 && <p className="eq-note"><b className="eq-badtxt">Prazo máximo vencido:</b> {F.venc.map((p) => `${p.nome} (${eqFmtFull(p.fer.limM)})`).join(" · ")}</p>}
-            {F.ideal.length > 0 && <p className="eq-note"><b>Prazo ideal vencido (sem data):</b> {F.ideal.slice(0, 12).map((p) => `${p.nome} (${eqFmt(p.fer.limI)})`).join(" · ")}{F.ideal.length > 12 ? ` … +${F.ideal.length - 12}` : ""}</p>}
-            {!F.venc.length && !F.ideal.length && <p className="eq-note">Nenhum prazo vencido.</p>}
-            <p className="eq-note">Base de férias: {ferias.rows.length} colaboradores. {F.semBase.length} do CDC não estão na planilha de férias{F.semBase.length ? ` (${F.semBase.slice(0, 6).map((p) => p.nome).join(" · ")}${F.semBase.length > 6 ? " …" : ""})` : ""}. {F.foraCdc.length} da planilha de férias não estão no CDC Distribuição (desligados/outras áreas).</p>
-          </section>
-        </div>
+        {(() => {
+          const byCargo = (a, b) => EQ_FT_ORDER[a.ft] - EQ_FT_ORDER[b.ft] || a.func.localeCompare(b.func, "pt-BR") || (a.fer.ini || "").localeCompare(b.fer.ini || "") || a.nome.localeCompare(b.nome, "pt-BR");
+          const setor = (p) => p.eq || p.fer?.setor || "—";
+          const ym = (d) => `${d.slice(5, 7)}/${d.slice(0, 4)}`;
+          const hoje = F.hoje.slice().sort(byCargo), prox = F.prox60.slice().sort(byCargo), pend = F.pend.slice().sort((a, b) => (a.fer.limM || "9").localeCompare(b.fer.limM || "9") || a.nome.localeCompare(b.nome, "pt-BR"));
+          const exportFer = () => {
+            const wb = XLSX.utils.book_new();
+            const add = (nome, head, body) => { const ws = XLSX.utils.aoa_to_sheet([head, ...body]); ws["!cols"] = head.map((h, c) => ({ wch: Math.min(40, Math.max(12, h.length, ...body.map((r) => String(r[c] ?? "").length))) })); XLSX.utils.book_append_sheet(wb, ws, nome); };
+            add("Em férias hoje", ["Colaborador", "Cargo", "Setor", "Início", "Término", "Retorno", "Volta em (dias)"], hoje.map((p) => [p.nome, p.func, setor(p), eqFmtFull(p.fer.ini), eqFmtFull(p.fer.fim), eqFmtFull(p.fer.ret), eqDiff(p.fer.ret, today)]));
+            add("Próximas saídas 60 dias", ["Colaborador", "Cargo", "Setor", "Início", "Término", "Férias em (dias)"], prox.map((p) => [p.nome, p.func, setor(p), eqFmtFull(p.fer.ini), eqFmtFull(p.fer.fim), eqDiff(p.fer.ini, today)]));
+            add("A programar", ["Colaborador", "Cargo", "Setor", "Prazo ideal", "Prazo máximo", "Última férias início", "Última férias término", "Mesmo mês no ano seguinte"], pend.map((p) => [p.nome, p.func, setor(p), eqFmtFull(p.fer.limI), eqFmtFull(p.fer.limM), p.fer.ult ? eqFmtFull(p.fer.ult.ini) : "", p.fer.ult ? eqFmtFull(p.fer.ult.fim) : "", p.fer.ult ? `${p.fer.ult.ini.slice(5, 7)}/${Number(p.fer.ult.ini.slice(0, 4)) + 1}` : ""]));
+            XLSX.writeFile(wb, "Ferias.xlsx");
+          };
+          return <>
+            <div className="eq-fer-bar"><button type="button" className="eq-link" onClick={exportFer}>Extrair férias (Excel)</button></div>
+            <section className="eq-card">
+              <h3>Em férias hoje ({hoje.length})</h3>
+              {hoje.length ? <table className="eq-table eq-table-sug"><thead><tr><th>Colaborador</th><th>Cargo</th><th>Setor</th><th>Início</th><th>Término</th><th>Volta em</th></tr></thead><tbody>{hoje.map((p) => <tr key={p.mat}><td><b>{p.nome}</b></td><td>{p.func}</td><td>{setor(p)}</td><td>{eqFmtFull(p.fer.ini)}</td><td>{eqFmtFull(p.fer.fim)}</td><td>{eqDiff(p.fer.ret, today)} dia(s)</td></tr>)}</tbody></table> : <p className="eq-note">Ninguém em férias hoje.</p>}
+            </section>
+            <section className="eq-card">
+              <h3>Próximas saídas (60 dias) ({prox.length})</h3>
+              {prox.length ? <table className="eq-table eq-table-sug"><thead><tr><th>Colaborador</th><th>Cargo</th><th>Setor</th><th>Início</th><th>Término</th><th>Férias em</th></tr></thead><tbody>{prox.map((p) => <tr key={p.mat}><td><b>{p.nome}</b></td><td>{p.func}</td><td>{setor(p)}</td><td>{eqFmtFull(p.fer.ini)}</td><td>{eqFmtFull(p.fer.fim)}</td><td><b>{eqDiff(p.fer.ini, today)} dia(s)</b></td></tr>)}</tbody></table> : <p className="eq-note">Nenhuma saída nos próximos 60 dias.</p>}
+            </section>
+            <section className="eq-card">
+              <h3>A programar ({pend.length})</h3>
+              {pend.length ? <table className="eq-table eq-table-sug"><thead><tr><th>Colaborador</th><th>Cargo</th><th>Setor</th><th>Prazo ideal</th><th>Prazo máximo</th><th>Última férias</th><th>Mesmo mês no ano seguinte</th></tr></thead><tbody>{pend.map((p) => <tr key={p.mat}><td><b>{p.nome}</b></td><td>{p.func}</td><td>{setor(p)}</td><td className={p.fer.limI && p.fer.limI < today ? "eq-badtxt" : ""}>{eqFmtFull(p.fer.limI) || "—"}</td><td className={p.fer.limM && p.fer.limM < today ? "eq-badtxt" : ""}>{eqFmtFull(p.fer.limM) || "—"}</td><td>{p.fer.ult ? `${eqFmtFull(p.fer.ult.ini)} a ${eqFmtFull(p.fer.ult.fim)}` : "sem registro"}</td><td>{p.fer.ult ? <b>{p.fer.ult.ini.slice(5, 7)}/{Number(p.fer.ult.ini.slice(0, 4)) + 1}</b> : "—"}</td></tr>)}</tbody></table> : <p className="eq-note">Ninguém pendente.</p>}
+              <p className="eq-note">Base de férias: {ferias.rows.length} linhas (um colaborador pode ter mais de um período aquisitivo; vale o período em curso, o mais próximo ou o pendente). {F.semBase.length} do CDC não estão na planilha{F.semBase.length ? ` (${F.semBase.slice(0, 6).map((p) => p.nome).join(" · ")}${F.semBase.length > 6 ? " …" : ""})` : ""}.</p>
+            </section>
+          </>; })()}
+        <details className="eq-fer-more"><summary>Sugestões para otimizar e programação sugerida (opcional)</summary>
         <section className="eq-card">
           <h3>Sugestões para otimizar</h3>
           <ul className="eq-att">
@@ -5569,6 +5623,7 @@ function GestaoEquipes({ perm }) {
           <div className="eq-meses">{F.meses.map((m) => <div key={m.k} className="eq-mes"><span>{m.k.split("-").reverse().join("/")}</span><div className="eq-mes-bar"><i className="a" style={{ height: `${Math.min(100, m.prog * 8)}%` }} /><i className="b" style={{ height: `${Math.min(100, m.sug * 8)}%` }} /></div><small>{m.prog}+{m.sug}</small></div>)}</div>
           <p className="eq-note">Barra escura = já programadas · barra clara = sugeridas.</p>
         </section>
+        </details>
       </div>)}
     </>}
 
@@ -5590,10 +5645,12 @@ function GestaoEquipes({ perm }) {
       </> : <>
         <h3>{form.mode === "add" ? "Incluir colaborador" : `Editar ${form.nome}`}</h3>
         <div className="eq-form">
-          {[["nome", "Nome"], ["func", "Função"], ["eq", "Equipe"], ["turno", "Turno"], ["gestor", "Gestor"], ...(form.mode === "add" ? [["mat", "Matrícula (opcional)"], ["veic", "Veículo (opcional)"]] : [])].map(([k, l]) => <label key={k}><span>{l}</span><input value={form.f[k]} list={k === "func" ? "eq-dl-func" : k === "eq" ? "eq-dl-eq" : k === "veic" ? "eq-dl-veic" : undefined} onChange={(e) => setForm({ ...form, f: { ...form.f, [k]: e.target.value } })} /></label>)}
-          <datalist id="eq-dl-func">{[...new Set(people.map((p) => p.func))].map((f) => <option key={f} value={f} />)}</datalist>
-          <datalist id="eq-dl-eq">{eqNames.map((f) => <option key={f} value={f} />)}</datalist>
-          <datalist id="eq-dl-veic">{vlist.filter((v) => v.r).map((v) => <option key={v.key} value={v.label} />)}</datalist>
+          {[["nome", "Nome"], ["func", "Função"], ["eq", "Equipe / área"], ["turno", "Turno"], ["gestor", "Gestor"], ["veic", "Veículo (placa)"], ...(form.mode === "add" ? [["mat", "Matrícula (opcional)"]] : [])].map(([k, l]) => <label key={k}><span>{l}</span>
+            {k === "veic" ? <select value={form.f.veic} onChange={(e) => setForm({ ...form, f: { ...form.f, veic: e.target.value } })}>
+              <option value="">Sem veículo</option>{vlist.filter((v) => v.r || v.members.length).slice().sort((a, b) => a.label.localeCompare(b.label, "pt-BR", { numeric: true })).map((v) => <option key={v.key} value={v.key}>{v.label}{v.tipo ? ` · ${v.tipo}` : ""} · {v.members.filter((m) => m.mat !== form.mat).length}/{cap}</option>)}</select>
+              : ["func", "eq", "turno", "gestor"].includes(k) ? <EqPick value={form.f[k]} label={l} options={people.map((p) => ({ func: p.func, eq: p.eq, turno: p.turno, gestor: p.gestor }[k]))} onChange={(v) => setForm({ ...form, f: { ...form.f, [k]: v } })} />
+              : <input value={form.f[k]} onChange={(e) => setForm({ ...form, f: { ...form.f, [k]: e.target.value } })} />}</label>)}
+          {form.mode === "edit" && <p className="eq-note" style={{ gridColumn: "1 / -1", margin: 0 }}>Mudou o carro? Troque a placa em "Veículo": se o colaborador é motorista, o Diagnóstico Veículos é atualizado junto (motorista da placa nova e da antiga).</p>}
         </div>
         {form.error && <div className="eq-issue">{form.error}</div>}
         <div className="eq-modal-f"><button type="button" className="secondary-action" onClick={() => setForm(null)}>Cancelar</button><button type="button" className="secondary-action" onClick={saveForm}>Salvar</button></div>
