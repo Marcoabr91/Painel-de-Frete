@@ -636,6 +636,7 @@ html:not(.dark) .sim-grid-row > div strong { color: #17301f; }
 .diag-desde.red b, .diag-desde.red .diag-date { color: var(--red); }
 .diag-desde.amb b, .diag-desde.amb .diag-date { color: #d19a00; }
 .diag-desde b { font-size: 12px; }
+.diag-lib-h { display: flex; justify-content: space-between; align-items: center; gap: 8px; } .diag-reinc { display: block; font-style: normal; font-size: 10px; color: #d19a00; }
 .diag-prev { display: flex; flex-direction: column; gap: 1px; line-height: 1.25; white-space: nowrap; color: var(--foreground); }
 .diag-prev b { font-size: 12px; color: var(--muted-foreground, #8a8f98); font-weight: 600; }
 .diag-prev input { width: 124px; font-size: 11px; padding: 1px 4px; background: transparent; color: var(--foreground); border: 1px solid var(--border, #8884); border-radius: 6px; }
@@ -1011,6 +1012,15 @@ span.eq-code, b.eq-code { cursor: default; height: 18px; min-width: 24px; }
 .eq-map td { padding: 0; text-align: center; border: 1px solid var(--border); height: 22px; min-width: 22px; font: 700 9px 'IBM Plex Mono', monospace; }
 .eq-map .eq-map-n { position: sticky; left: 0; background: var(--card); z-index: 1; text-align: left; padding: 2px 8px; min-width: 210px; max-width: 210px; font: 600 11px inherit; font-family: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .eq-map .eq-map-n small { display: block; font: 400 8px 'IBM Plex Mono', monospace; color: var(--muted-foreground); }
 .eq-map-eq td { text-align: left; padding: 3px 8px; background: rgba(127,127,127,.15); font: 700 10px 'IBM Plex Mono', monospace; text-transform: uppercase; }
+.eq-fq-bar .eq-fq-chk { display: flex; align-items: center; gap: 4px; white-space: nowrap; } .eq-fq-chk input { width: auto; }
+.eq-top-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 8px; margin: 8px 0; } .eq-top { color: var(--foreground); } .eq-top ol { list-style: none; margin: 0; padding: 0; } .eq-top li { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 4px 0; border-top: 1px dashed var(--border); }
+.eq-top-pos { font: 700 12px 'IBM Plex Mono', monospace; color: var(--muted-foreground); } .eq-top-who b { display: block; font-size: 12px; } .eq-top-who small { color: var(--muted-foreground); font-size: 10px; } .eq-top-n { font-size: 18px; } .eq-top-n.c-F { color: #b3363a; } .eq-top-n.c-BH { color: #2a6fb0; } .eq-top-n.c-AT { color: #8a5db5; } .eq-top-n.c-all { color: var(--foreground); }
+.eq-wk-wrap { max-height: 72vh; overflow: auto; } .eq-wk { border-collapse: collapse; width: 100%; font-size: 12px; color: var(--foreground); }
+.eq-wk th { position: sticky; top: 0; z-index: 2; background: var(--card, var(--background)); font: 600 10px 'IBM Plex Mono', monospace; text-transform: uppercase; text-align: left; padding: 4px 6px; border-bottom: 2px solid var(--border); color: var(--muted-foreground); } .eq-wk th small { display: block; font-weight: 400; }
+.eq-wk th.eq-wk-d { text-align: center; cursor: pointer; min-width: 58px; } .eq-wk th.we { opacity: .6; } .eq-wk th.today { color: var(--foreground); border-bottom-color: #1f8a4c; } .eq-wk th.sel { background: rgba(31,138,76,.18); }
+.eq-wk td { padding: 1px 6px; border-bottom: 1px solid var(--border); height: 24px; } .eq-wk-n { font-weight: 600; white-space: nowrap; } .eq-wk-f, .eq-wk-v { color: var(--muted-foreground); font-size: 11px; white-space: nowrap; }
+.eq-wk-c { text-align: center; font-weight: 700; min-width: 58px; user-select: none; } .eq-wk-c.sel { outline: 2px solid rgba(31,138,76,.6); outline-offset: -2px; } .eq-wk-c:hover { filter: brightness(1.15); } .eq-wk tr.afast td { opacity: .6; }
+.eq-wk-eq td { background: rgba(127,127,127,.1); padding: 4px 8px; border-bottom: 1px solid var(--border); } .eq-wk-eq .eq-link { float: right; } .eq-wk-eqh { cursor: pointer; } .eq-wk-eqh small { color: var(--muted-foreground); margin-left: 6px; }
 .eq-map-c { cursor: pointer; } .eq-map-c.we { background: rgba(127,127,127,.12); } .eq-map-c.blank { background: radial-gradient(circle, #b3363a 2px, transparent 3px); } .eq-map-c.auto { opacity: .7; }
 .eq-map-c.c-P { background: #1f8a4c; color: #fff; } .eq-map-c.c-F { background: #b3363a; color: #fff; } .eq-map-c.c-BH { background: #2a6fb0; color: #fff; } .eq-map-c.c-FE { background: #d19a00; color: #1b1500; } .eq-map-c.c-AT { background: #8a5db5; color: #fff; }
 .eq-log { display: grid; grid-template-columns: 90px 120px minmax(0,1fr) auto; gap: 8px; align-items: center; font-size: 12px; padding: 3px 0; border-top: 1px dashed var(--border); color: var(--foreground); }
@@ -3065,6 +3075,10 @@ function DiagnosticoVeiculos() {
   /* Desde quando cada veículo está parado (1ª vez visto em manutenção/inoperante, p/ os que vêm da planilha); ordena do mais antigo ao mais recente. */
   const [since, setSince] = useState(() => lsLoad("frota_desde")?.items ?? {});
   const [prev, setPrev] = useState(() => lsLoad("frota_prev")?.items ?? {});
+  /* Histórico de paradas já encerradas (por placa): { de, ate, dias, classe, motivo } — base para a análise de inoperantes. */
+  const [hist, setHist] = useState(() => lsLoad("frota_hist")?.items ?? {});
+  const [showLib, setShowLib] = useState(() => lsLoad("frota_lib_show")?.v ?? false);
+  const mergeHist = (a, b) => { const o = {}; for (const k of new Set([...Object.keys(a || {}), ...Object.keys(b || {})])) { const m = new Map(); [...((a || {})[k] || []), ...((b || {})[k] || [])].forEach((e) => m.set(e.ate, e)); o[k] = [...m.values()].sort((x, y) => String(x.ate).localeCompare(String(y.ate))); if (!o[k].length) delete o[k]; } return o; };
   const [tipoSel, setTipoSel] = useState("all");
   const [sinceReady, setSinceReady] = useState(false);
   useEffect(() => { if (!motNotice) return undefined; const id = setTimeout(() => setMotNotice(null), 9000); return () => clearTimeout(id); }, [motNotice]);
@@ -3155,10 +3169,27 @@ function DiagnosticoVeiculos() {
     persistMot(next);
     setMotNotice(nome ? `${nome} agora está em ${r.placa}${liberados.length ? ` · ${liberados.join(", ")} ficou SEM MOTORISTA` : ""}.` : `${r.placa} ficou SEM MOTORISTA.`);
   }
+  function saveHist(next, remove) {
+    setHist(next); lsSave("frota_hist", { items: next, updatedAt: new Date().toISOString() });
+    Promise.resolve(cloudLoad("frota_hist")).then((row) => {
+      let base = (row && row.data && row.data.items) || {};
+      if (remove) { base = { ...base, [remove.key]: (base[remove.key] || []).filter((e) => e.ate !== remove.ate) }; }
+      const merged = mergeHist(base, next);
+      if (remove) merged[remove.key] = (merged[remove.key] || []).filter((e) => e.ate !== remove.ate), merged[remove.key].length || delete merged[remove.key];
+      cloudSave("frota_hist", { items: merged }, `${Object.values(merged).reduce((n, l) => n + l.length, 0)} parada(s) encerrada(s)`);
+    }).catch(() => {});
+  }
+  function desfazerLib(r) {
+    const key = frotaPlateKey(r.placa); const ate = r.ajuste?.liberadoAt;
+    removeAdj(key);
+    if (ate && (hist[key] || []).some((e) => e.ate === ate)) { const next = { ...hist, [key]: hist[key].filter((e) => e.ate !== ate) }; if (!next[key].length) delete next[key]; saveHist(next, { key, ate }); }
+  }
   /* "Liberado": o veículo passa a constar como Operando (por cima da planilha) e guarda a data/hora da liberação. */
   function liberar(r) {
     const key = frotaPlateKey(r.placa);
     const now = new Date().toISOString();
+    { const de = desdeOf(r); const dias = de ? Math.max(0, Math.floor((Date.now() - new Date(de).getTime()) / 86400000)) : null;
+      saveHist({ ...hist, [key]: [...(hist[key] || []), { de: de || "", ate: now, dias, classe: r.classe, motivo: adj[key]?.motivo ?? "" }] }); }
     persistAdj({ ...adj, [key]: { placa: r.placa, classe: "Operando", motivo: adj[key]?.motivo ?? "", at: adj[key]?.at ?? now, liberadoAt: now, classeAnterior: r.classe, ...(adj[key]?.novo ? { novo: adj[key].novo } : {}) } });
   }
 
@@ -3177,6 +3208,10 @@ function DiagnosticoVeiculos() {
       if (cancelled || !row || !row.data || !row.data.items) return;
       setSince((p) => { const o = { ...row.data.items }; for (const [k, v] of Object.entries(p)) if (!o[k] || String(v) < String(o[k])) o[k] = v; lsSave("frota_desde", { items: o, updatedAt: row.updated_at }); return o; });
     }).catch(() => {}).then(() => { if (!cancelled) setSinceReady(true); });
+    cloudLoad("frota_hist").then((row) => {
+      if (cancelled || !row || !row.data || !row.data.items) return;
+      setHist((h) => { const m = mergeHist(row.data.items, h); lsSave("frota_hist", { items: m, updatedAt: row.updated_at }); return m; });
+    }).catch(() => {});
     cloudLoad("frota_prev").then((row) => {
       if (cancelled || !row || !row.data || !row.data.items) return;
       setPrev(row.data.items);
@@ -3199,6 +3234,8 @@ function DiagnosticoVeiculos() {
         if (row.id === "frota_ajustes" && row.data.items) {
           setAdj(row.data.items);
           lsSave("frota_ajustes", { items: row.data.items, updatedAt: row.updated_at });
+        } else if (row.id === "frota_hist" && row.data.items) {
+          setHist((h) => { const m = mergeHist(row.data.items, h); lsSave("frota_hist", { items: m, updatedAt: row.updated_at }); return m; });
         } else if (row.id === "frota_prev" && row.data.items) {
           setPrev(row.data.items);
           lsSave("frota_prev", { items: row.data.items, updatedAt: row.updated_at });
@@ -3355,13 +3392,15 @@ function DiagnosticoVeiculos() {
     const parados = manutAll.slice().sort((a, b) => (desdeOf(a) || "9999").localeCompare(desdeOf(b) || "9999") || FROTA_TIPOS.indexOf(a.tipo) - FROTA_TIPOS.indexOf(b.tipo) || a.placa.localeCompare(b.placa))
       .map((r) => [r.placa, r.tipoOriginal || r.tipo, r.classe, catTxt(r), dias(r), fmtD(paradaOf(r)), fmtD(registroOf(r)), paradaOf(r) ? "Data da parada" : "Data do registro", r.ajuste?.motivo ?? "", motTxt(r), prevOf(r) ? prevOf(r).split("-").reverse().join("/") : "", atrasoOf(r) > 0 ? atrasoOf(r) : ""]);
     const lista = listRows.map((r) => [r.placa, r.tipoOriginal || r.tipo, catTxt(r), r.classe, r.ajuste ? (r.ajuste.classe === "Operando" ? `Liberado em ${fmtLiberado(r.ajuste.liberadoAt)}` : `Ajuste manual${r.ajuste.motivo ? ` · ${r.ajuste.motivo}` : ""}`) : `${r.status} · ${r.situacao}`, motTxt(r)]);
-    const liberados = liberadosList.map((r) => [r.placa, r.tipoOriginal || r.tipo, catTxt(r), fmtLiberado(r.ajuste.liberadoAt), r.ajuste.classeAnterior ?? "", r.ajuste.motivo ?? "", motTxt(r)]);
+    const liberados = liberadosList.map((r) => { const h = hist[frotaPlateKey(r.placa)] || []; const cur = h.find((e) => e.ate === r.ajuste.liberadoAt) || h[h.length - 1]; return [r.placa, r.tipoOriginal || r.tipo, catTxt(r), fmtLiberado(r.ajuste.liberadoAt), r.ajuste.classeAnterior ?? "", cur?.dias ?? "", r.ajuste.motivo ?? "", motTxt(r)]; });
+    const historico = Object.entries(hist).flatMap(([k, l]) => l.map((e) => [k, e.de ? new Date(e.de).toLocaleDateString("pt-BR") : "", fmtLiberado(e.ate), e.dias ?? "", e.classe ?? "", e.motivo ?? "", l.length]));
     const wb = XLSX.utils.book_new();
     const add = (nome, head, body, widths) => { const ws = XLSX.utils.aoa_to_sheet([head, ...body]); ws["!cols"] = widths.map((w) => ({ wch: w })); XLSX.utils.book_append_sheet(wb, ws, nome); };
     XLSX.utils.book_append_sheet(wb, (() => { const ws = XLSX.utils.aoa_to_sheet(resumo); ws["!cols"] = [20, 8, 10, 8, 12, 6, 11, 14, 12].map((w) => ({ wch: w })); for (let i = 1; i < resumo.length; i++) { const c = ws[XLSX.utils.encode_cell({ r: i, c: 8 })]; if (c && typeof c.v === "number") c.z = "0.0%"; } return ws; })(), "Resumo por categoria");
     add("Veículos parados", ["Placa", "Categoria (tipo)", "Situação", "Frota / Agregado", "Dias parado", "Data da parada", "Data do registro", "Contagem pela", "Motivo do bloqueio", "Motorista", "Prev. liberação", "Dias em atraso"], parados, [14, 16, 12, 16, 11, 14, 15, 16, 36, 30, 15, 14]);
     add("Lista de veículos", ["Placa", "Tipo", "Categoria", "Classificação", "Status / Situação", "Motorista"], lista, [14, 16, 12, 14, 40, 30]);
-    if (liberados.length) add("Liberados", ["Placa", "Tipo", "Categoria", "Liberado em", "Estava em", "Motivo", "Motorista"], liberados, [14, 16, 12, 20, 14, 36, 30]);
+    if (liberados.length) add("Liberados", ["Placa", "Tipo", "Categoria", "Liberado em", "Estava em", "Dias parado", "Motivo", "Motorista"], liberados, [14, 16, 12, 20, 14, 12, 36, 30]);
+    if (historico.length) add("Histórico de paradas", ["Placa", "Parou em", "Liberado em", "Dias parado", "Estava em", "Motivo", "Nº de paradas da placa"], historico, [14, 14, 20, 12, 14, 36, 20]);
     const d = new Date();
     XLSX.writeFile(wb, `Diagnostico_Veiculos_${scopeLabel.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9]+/g, "_")}_${d.getFullYear()}-${devPad2(d.getMonth() + 1)}-${devPad2(d.getDate())}.xlsx`);
   }
@@ -3432,6 +3471,7 @@ function DiagnosticoVeiculos() {
             <b>{desdeOf(r) ? `${Math.max(0, Math.floor((Date.now() - new Date(desdeOf(r)).getTime()) / 86400000))} dia(s)` : "—"}</b>
             <label className="diag-date" title={paradaOf(r) ? "Data da parada (clique para alterar)" : "Contando da data de registro — clique para informar a data da parada"}>
               <span>{paradaOf(r) ? "parou " : "reg. "}{desdeOf(r) ? new Date(desdeOf(r)).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" }) : "—"}</span>
+              {(() => { const h = hist[frotaPlateKey(r.placa)]; if (!h || !h.length) return null; const last = h[h.length - 1]; const de = desdeOf(r); const volta = de ? Math.floor((new Date(de).getTime() - new Date(last.ate).getTime()) / 86400000) : null; return <em className="diag-reinc" title={`Já ficou parado ${h.length} vez(es): ${h.map((e) => `${e.dias ?? "?"}d`).join(" + ")}`}>{h.length + 1}ª parada · {volta !== null && volta >= 0 ? `voltou ${volta}d após liberar` : `liberado ${fmtLiberado(last.ate).slice(0, 10)}`}</em>; })()}
               <input type="date" aria-label={`Data da parada — ${r.placa}`} max={new Date().toISOString().slice(0, 10)} value={paradaOf(r) ? new Date(new Date(paradaOf(r)).getTime() - 3 * 3600000).toISOString().slice(0, 10) : ""} onClick={(e) => { try { e.currentTarget.showPicker(); } catch (x) {} }} onChange={(e) => setDesde(r, e.target.value)} />
             </label>
           </small>
@@ -3445,12 +3485,16 @@ function DiagnosticoVeiculos() {
         </div>; })}
       </div>}
       {liberadosList.length > 0 && <div className="diag-adj-list diag-released">
-        <div className="diag-adj-count">Liberados · voltaram a operar</div>
-        {liberadosList.map((r) => <div className="diag-adj-item" key={frotaPlateKey(r.placa)}>
+        <div className="diag-adj-count diag-lib-h">
+          <span>Liberados · voltaram a operar ({liberadosList.length})</span>
+          <button type="button" className="secondary-action" onClick={() => { const v = !showLib; setShowLib(v); lsSave("frota_lib_show", { v }); }}>{showLib ? "Ocultar" : "Exibir"}</button>
+        </div>
+        {showLib && liberadosList.map((r) => { const key = frotaPlateKey(r.placa); const h = hist[key] || []; const cur = h.find((e) => e.ate === r.ajuste.liberadoAt) || h[h.length - 1];
+          return <div className="diag-adj-item" key={key}>
           <strong>{r.placa}</strong><span className={`status-pill ${FROTA_CLASSE_TONE[r.classe]}`}>{r.classe}</span>
-          <small>{r.categoria === "FROTA" ? "Frota" : r.categoria === "AGREGADO" ? "Agregado" : r.categoria} · Liberado em {fmtLiberado(r.ajuste.liberadoAt)}{r.ajuste.classeAnterior ? ` (estava em ${r.ajuste.classeAnterior.toLowerCase()})` : ""}{r.ajuste.motivo ? ` · ${r.ajuste.motivo}` : ""}</small>
-          <button type="button" className="secondary-action" onClick={() => removeAdj(frotaPlateKey(r.placa))}>Desfazer</button>
-        </div>)}
+          <small>{r.categoria === "FROTA" ? "Frota" : r.categoria === "AGREGADO" ? "Agregado" : r.categoria} · Liberado em {fmtLiberado(r.ajuste.liberadoAt)}{r.ajuste.classeAnterior ? ` (estava em ${r.ajuste.classeAnterior.toLowerCase()})` : ""}{cur && cur.dias !== null && cur.dias !== undefined ? <> · <b>ficou parado {cur.dias} dia(s)</b>{cur.de ? ` (desde ${new Date(cur.de).toLocaleDateString("pt-BR")})` : ""}</> : ""}{h.length > 1 ? ` · ${h.length} paradas no histórico, ${h.reduce((n, e) => n + (e.dias || 0), 0)} dia(s) no total` : ""}{r.ajuste.motivo ? ` · ${r.ajuste.motivo}` : ""}</small>
+          <button type="button" className="secondary-action" onClick={() => desfazerLib(r)}>Desfazer</button>
+        </div>; })}
       </div>}
     </section>
 
@@ -4687,7 +4731,8 @@ function GestaoEquipes({ perm }) {
   const [fday, setFday] = useState(() => eqTodayISO());
   const [fShowAll, setFShowAll] = useState(false);
   const [attOpen, setAttOpen] = useState({});
-  const [fmode, setFmode] = useState("dia"); // dia | mapa | log
+  const [fmode, setFmode] = useState("lista");
+  const [fOnlyPend, setFOnlyPend] = useState(false); // dia | mapa | log
   const [fLog, setFLog] = useState([]);
   const [fOpen, setFOpen] = useState({});
   const [fCell, setFCell] = useState(null);
@@ -5333,6 +5378,7 @@ function GestaoEquipes({ perm }) {
         const lastDay = fmonth === today.slice(0, 7) ? today : (fmonth < today.slice(0, 7) ? days[days.length - 1] : "");
         const worked = days.filter((d) => d <= lastDay && eqDow(d) >= 1 && eqDow(d) <= 5);
         const blanks = worked.map((d) => ({ d, n: people.filter((p) => !codeOf(p, d)).length })).filter((x) => x.n > 0);
+        const lastDayOf = (d) => (d <= today ? today : "0");
         const done = people.filter((p) => codeOf(p, fday)).length;
         const sumDay = { P: 0, F: 0, BH: 0, FE: 0, AT: 0 }; people.forEach((p) => { const k = (codeOf(p, fday) || "").replace("*", ""); if (k) sumDay[k]++; });
         const stat = people.map((p) => { const c = { P: 0, F: 0, BH: 0, FE: 0, AT: 0 }; days.forEach((d) => { const k = (codeOf(p, d) || "").replace("*", ""); if (k) c[k]++; }); return { p, c, sem: worked.filter((d) => !codeOf(p, d)).length }; });
@@ -5354,10 +5400,77 @@ function GestaoEquipes({ perm }) {
         const codeBtns = (p, d, c) => FQ_CODES.map(([k, l2]) => <button key={k} type="button" disabled={ro || (c === "FE*" && k === "FE")} title={l2} className={`eq-code c-${k} ${c === k || (c === "FE*" && k === "FE") ? "on" : ""}`} onClick={() => applyFreq(d, [p.mat], c === k ? "" : k)}>{k}</button>);
         return <div className="eq-freq">
           <div className="eq-fq-modes">
-            {[["dia", "Preencher o dia"], ["mapa", "Mapa do mês (todos os dias)"], ["log", `Alterações (${fLog.length})`]].map(([k, l]) => <button key={k} type="button" className={fmode === k ? "active" : ""} onClick={() => setFmode(k)}>{l}</button>)}
+            {[["lista", "Lista da semana"], ["indic", "Indicadores e TOP 5"], ["dia", "Por veículo"], ["mapa", "Mapa do mês (todos os dias)"], ["log", `Alterações (${fLog.length})`]].map(([k, l]) => <button key={k} type="button" className={fmode === k ? "active" : ""} onClick={() => setFmode(k)}>{l}</button>)}
             <button type="button" className="eq-link" onClick={exportFreq}>Extrair {eqMonthLabel(fmonth)} (Excel)</button>
           </div>
           <div className="eq-fq-legend">{FQ_CODES.map(([k, l]) => <span key={k}><b className={`eq-code c-${k}`}>{k}</b> {l}</span>)}<span className="eq-note" style={{ margin: 0 }}>Quem está de férias na planilha entra como FE automaticamente.</span></div>
+
+          {fmode === "indic" && (() => {
+            const tot = { P: 0, F: 0, BH: 0, FE: 0, AT: 0 }; stat.forEach((x) => Object.keys(tot).forEach((k) => { tot[k] += x.c[k]; }));
+            const base = tot.P + tot.F + tot.BH + tot.AT; const pc = (n) => (base ? `${(Math.round((n / base) * 1000) / 10).toLocaleString("pt-BR")}%` : "—");
+            const datasDe = (p, k) => days.filter((d) => (codeOf(p, d) || "").replace("*", "") === k);
+            const top = (k, getN) => stat.map((x) => ({ x, n: getN(x) })).filter((r) => r.n > 0).sort((a, b) => b.n - a.n || a.x.p.nome.localeCompare(b.x.p.nome, "pt-BR")).slice(0, 5);
+            const cats = [["F", "Faltas", "c-F", (x) => x.c.F], ["BH", "Banco de horas", "c-BH", (x) => x.c.BH], ["AT", "Atestados", "c-AT", (x) => x.c.AT], ["ALL", "Total de ausências (F + BH + AT)", "c-all", (x) => x.c.F + x.c.BH + x.c.AT]];
+            const exportTop = () => { const wb = XLSX.utils.book_new(); const rows = []; cats.forEach(([k, nm, , g]) => top(k, g).forEach((r, i) => rows.push([nm, i + 1, r.x.p.nome, r.x.p.func, r.x.p.eq, r.n, k === "ALL" ? "" : datasDe(r.x.p, k).map((d) => eqFmt(d)).join(", ")]))); const ws = XLSX.utils.aoa_to_sheet([["Categoria", "Posição", "Colaborador", "Cargo", "Equipe", "Qtd. no mês", "Datas"], ...rows]); ws["!cols"] = [28, 8, 34, 20, 20, 12, 40].map((w) => ({ wch: w })); XLSX.utils.book_append_sheet(wb, ws, "TOP 5"); XLSX.writeFile(wb, `Frequencia_TOP5_${fmonth}.xlsx`); };
+            return <>
+              <div className="eq-fq-bar">{monthNav}<button type="button" className="eq-link" onClick={exportTop}>Extrair TOP 5 (Excel)</button></div>
+              <div className="diag-kpi-grid eq-kpis">
+                <div className="diag-kpi static"><span>Presença</span><strong>{pc(tot.P)}</strong><small>{tot.P} presenças de {base} marcações</small></div>
+                <div className={`diag-kpi static ${tot.F ? "eq-bad" : ""}`}><span>Faltas</span><strong>{tot.F}</strong><small>{pc(tot.F)} das marcações</small></div>
+                <div className="diag-kpi static"><span>Banco de horas</span><strong>{tot.BH}</strong><small>{pc(tot.BH)} das marcações</small></div>
+                <div className="diag-kpi static"><span>Atestados</span><strong>{tot.AT}</strong><small>{pc(tot.AT)} das marcações</small></div>
+                <div className="diag-kpi static"><span>Férias</span><strong>{tot.FE}</strong><small>fora do cálculo de presença</small></div>
+                <div className="diag-kpi static"><span>Dias úteis sem marcação</span><strong>{stat.reduce((n, x) => n + x.sem, 0)}</strong><small>colaborador × dia</small></div>
+              </div>
+              <div className="eq-top-grid">{cats.map(([k, nm, cls, g]) => { const l = top(k, g); return <section key={k} className="eq-card eq-top">
+                <h3>TOP 5 · {nm}</h3>
+                {l.length ? <ol>{l.map((r, i) => <li key={r.x.p.mat}><span className="eq-top-pos">{i + 1}º</span><div className="eq-top-who"><b>{r.x.p.nome}</b><small>{r.x.p.func} · {eqShort(r.x.p.eq)}{k !== "ALL" ? ` · ${datasDe(r.x.p, k).slice(0, 8).map((d) => eqFmt(d)).join(", ")}${datasDe(r.x.p, k).length > 8 ? "…" : ""}` : ` · F ${r.x.c.F} · BH ${r.x.c.BH} · AT ${r.x.c.AT}`}</small></div><b className={`eq-top-n ${cls}`}>{r.n}</b></li>)}</ol> : <p className="eq-note">Nenhum registro em {eqMonthLabel(fmonth)}.</p>}
+              </section>; })}</div>
+              <section className="eq-card"><h3>Presença por equipe · {eqMonthLabel(fmonth)}</h3>
+                <table className="eq-table eq-table-sug"><thead><tr><th>Equipe</th><th>Colab.</th><th>% presença</th><th>P</th><th>F</th><th>BH</th><th>AT</th><th>FE</th><th>Sem marcação</th></tr></thead>
+                  <tbody>{byEq.map((x) => <tr key={x.e}><td>{x.e}</td><td>{x.n}</td><td><b>{pctP(x.t)}</b></td><td>{x.t.P}</td><td>{x.t.F}</td><td>{x.t.BH}</td><td>{x.t.AT}</td><td>{x.t.FE}</td><td className={x.sem ? "eq-badtxt" : ""}>{x.sem}</td></tr>)}</tbody></table>
+                <p className="eq-note">% presença = P ÷ (P + F + BH + AT). Férias ficam fora. O ranking considera só o mês exibido; use "mês anterior" para comparar.</p></section>
+            </>; })()}
+
+          {fmode === "lista" && (() => {
+            const q = frotaNorm(fSearch);
+            const mon = eqAddDays(fday, -((eqDow(fday) + 6) % 7));
+            const wk = [0, 1, 2, 3, 4, 5, 6].map((i) => eqAddDays(mon, i));
+            const CYC = ["", "P", "F", "BH", "AT", "FE"];
+            const click = (p, d) => { if (ro) return; const c = codeOf(p, d); const nx = c === "FE*" ? "P" : CYC[(CYC.indexOf(c) + 1) % CYC.length]; applyFreq(d, [p.mat], nx); };
+            const eqs = fEq === "todos" ? order : [fEq];
+            const DN = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
+            return <>
+              <div className="eq-fq-bar">
+                <button type="button" className="eq-link" onClick={() => setFday(eqAddDays(fday, -7))}>◀ semana</button>
+                <input type="date" className="eq-search eq-date" value={fday} onChange={(e) => e.target.value && setFday(e.target.value)} aria-label="Dia da frequência" />
+                <button type="button" className="eq-link" onClick={() => setFday(eqAddDays(fday, 7))}>semana ▶</button>
+                <button type="button" className="eq-link strong2" onClick={() => setFday(today)}>Hoje</button>
+                <b className="eq-fq-title">Dia marcado: {eqFmtFull(fday)} · {DN[dow]}</b>
+                <span className="eq-fq-sum">{done}/{people.length} marcados · {FQ_CODES.map(([k]) => `${k} ${sumDay[k]}`).join(" · ")}</span>
+              </div>
+              <div className="eq-fq-bar">
+                <div className="eq-chips"><button type="button" className={fEq === "todos" ? "active" : ""} onClick={() => setFEq("todos")}>Todas</button>{order.map((e) => <button key={e} type="button" className={fEq === e ? "active" : ""} onClick={() => setFEq(e)}>{eqShort(e)}</button>)}</div>
+                <input className="eq-search" type="search" placeholder="Buscar nome…" value={fSearch} onChange={(e) => setFSearch(e.target.value)} />
+                <label className="eq-fq-chk"><input type="checkbox" checked={fOnlyPend} onChange={(e) => setFOnlyPend(e.target.checked)} /> só pendentes do dia {eqFmt(fday)}</label>
+              </div>
+              <div className="eq-map-wrap eq-wk-wrap"><table className="eq-wk">
+                <thead><tr><th className="eq-wk-n">Colaborador</th><th>Cargo</th><th>Veículo</th>{wk.map((d) => <th key={d} className={`eq-wk-d ${eqDow(d) === 0 || eqDow(d) === 6 ? "we" : ""} ${d === today ? "today" : ""} ${d === fday ? "sel" : ""}`} onClick={() => setFday(d)} title={`Marcar o dia ${eqFmtFull(d)}`}>{DN[eqDow(d)]}<small>{eqFmt(d)}</small></th>)}</tr></thead>
+                <tbody>{eqs.map((e) => { const all = people.filter((p) => p.eq === e); const pend = all.filter((p) => !codeOf(p, fday)); const open = fOpen[`L:${e}`] ?? true;
+                  const l = all.filter((p) => (!q || frotaNorm(p.nome).includes(q)) && (!fOnlyPend || !codeOf(p, fday)));
+                  const t = { P: 0, F: 0, BH: 0, FE: 0, AT: 0 }; all.forEach((p) => { const k = (codeOf(p, fday) || "").replace("*", ""); if (k) t[k]++; });
+                  return <React.Fragment key={e}>
+                    <tr className="eq-wk-eq"><td colSpan={10}><span className="eq-wk-eqh" onClick={() => setFOpen({ ...fOpen, [`L:${e}`]: !open })}>{open ? "▾" : "▸"} <b>{e}</b> <small>{all.length} colaboradores · P {t.P} · F {t.F} · BH {t.BH} · FE {t.FE} · AT {t.AT} · <span className={pend.length ? "eq-badtxt" : ""}>pendentes {pend.length}</span></small></span>{!ro && pend.length > 0 && <button type="button" className="eq-link" onClick={() => applyFreq(fday, pend.map((p) => p.mat), "P", e)}>Pendentes de {eqFmt(fday)} = P</button>}</td></tr>
+                    {open && l.map((p) => <tr key={p.mat} className={p.afastado ? "afast" : ""}>
+                      <td className="eq-wk-n" title={p.nome}>{p.nome}</td><td className="eq-wk-f">{p.func}</td><td className="eq-wk-v">{p.vkey && !p.afastado ? (veh.get(p.vkey)?.label || p.vkey) : "—"}</td>
+                      {wk.map((d) => { const c = codeOf(p, d); const we = eqDow(d) === 0 || eqDow(d) === 6; const blank = !c && d <= lastDayOf(d) && !we;
+                        return <td key={d} className={`eq-map-c eq-wk-c ${c ? `c-${c.replace("*", "")}` : ""} ${c === "FE*" ? "auto" : ""} ${we ? "we" : ""} ${blank ? "blank" : ""} ${d === fday ? "sel" : ""}`} onClick={() => click(p, d)} title={ro ? "Somente consulta" : "Clique para mudar: P → F → BH → AT → FE → em branco"}>{c.replace("*", "")}</td>; })}
+                    </tr>)}
+                    {open && !l.length && <tr><td colSpan={10} className="eq-note">Ninguém para mostrar.</td></tr>}
+                  </React.Fragment>; })}</tbody>
+              </table></div>
+              <p className="eq-note">{ro ? "Somente consulta." : "Clique na célula do dia para trocar o código (P → F → BH → AT → FE → em branco)."} Clique no cabeçalho do dia para escolher o dia marcado. Ponto vermelho = dia útil sem marcação. Mesma ordem da planilha CDC. Para corrigir um erro, veja a aba Alterações (tem Desfazer).</p>
+            </>; })()}
 
           {fmode === "dia" && <>
             <div className="eq-fq-bar">
