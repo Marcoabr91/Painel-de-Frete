@@ -559,6 +559,52 @@ html:not(.dark) .sim-grid-row > div strong { color: #17301f; }
 @media (max-width: 980px) { .revenue-analytics-grid { grid-template-columns: 1fr; } .weekly-pattern-bars { flex-wrap: wrap; } .weekly-pattern-col { min-width: 90px; } }
 @media (max-width: 980px) { .revenue-split-grid { grid-template-columns: 1fr; } .revenue-split-grid-cols { grid-template-columns: minmax(120px,1.6fr) .4fr .7fr .8fr .7fr !important; font-size: 10px; } }
 
+/* Gestão do Buffer GRU (Recursos - Veículos) */
+.bf { display: grid; gap: 10px; color: var(--foreground); }
+.bf-up { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: flex-start; padding: 10px 12px; background: var(--card); border: 1px solid var(--border); }
+.bf-up > div { display: grid; gap: 4px; }
+.bf-up small { color: var(--muted-foreground); font-size: 10px; font-family: 'IBM Plex Mono', monospace; }
+.bf-busy { color: var(--muted-foreground); font-size: 11px; align-self: center; }
+.bf-kpis { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.bf-kpis .diag-kpi.bf-k-ok { border-left-color: var(--green); } .bf-kpis .diag-kpi.bf-k-ok strong { color: var(--green); }
+.bf-kpis .diag-kpi.bf-k-warn { border-left-color: #d19a00; } .bf-kpis .diag-kpi.bf-k-warn strong { color: #d19a00; }
+.bf-kpis .diag-kpi.bf-k-bad { border-left-color: var(--red); } .bf-kpis .diag-kpi.bf-k-bad strong { color: var(--red); }
+.bf-card { margin-bottom: 0; }
+.bf-card .client-toolbar > div:first-child:not(.client-search) strong { display: block; color: var(--foreground); font-size: 13px; }
+.bf-card .client-toolbar > div:first-child:not(.client-search) small { display: block; color: var(--muted-foreground); margin-top: 2px; }
+.bf-num { display: inline-block; min-width: 20px; text-align: center; margin-right: 8px; padding: 1px 6px; background: var(--green); color: #fff; font: 700 11px 'IBM Plex Mono', monospace; }
+.bf-num.bad { background: var(--red); } .bf-num.warn { background: #d19a00; }
+.bf-alert { border-color: #d19a00 !important; box-shadow: 0 0 0 1px #d19a00 inset; } .bf-btns { display: flex; gap: 6px; }
+.bf-tbl { border-collapse: collapse; width: 100%; min-width: 900px; font-size: 12px; color: var(--foreground); }
+.bf-tbl th { text-align: left; padding: 7px 8px; color: var(--muted-foreground); font: 600 9px 'IBM Plex Mono', monospace; text-transform: uppercase; border-bottom: 2px solid var(--border); white-space: nowrap; }
+.bf-tbl td { padding: 7px 8px; border-bottom: 1px dashed var(--border); vertical-align: top; color: var(--foreground); }
+.bf-tbl td small { display: block; }
+.bf-pl { white-space: nowrap; } .bf-pl b { font: 700 13px 'IBM Plex Mono', monospace; } .bf-pl small { color: var(--muted-foreground); font: 400 10px 'IBM Plex Mono', monospace; }
+.bf-tag { color: var(--muted-foreground); font-size: 10px; line-height: 1.4; }
+.bf-ok { color: var(--green); font-weight: 700; } .bf-bad { color: var(--red); font-weight: 700; } .bf-warn { color: #d19a00; }
+.bf-empty { text-align: center; color: var(--muted-foreground); padding: 14px; }
+.bf-chips { display: inline-flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.bf-chip { display: inline-block; padding: 2px 6px; font: 700 9px 'IBM Plex Mono', monospace; text-transform: uppercase; white-space: nowrap; border: 1px solid transparent; }
+.bf-chip.ok { background: color-mix(in srgb, var(--green) 16%, transparent); color: var(--green); border-color: color-mix(in srgb, var(--green) 40%, transparent); }
+.bf-chip.bad { background: color-mix(in srgb, var(--red) 16%, transparent); color: var(--red); border-color: color-mix(in srgb, var(--red) 40%, transparent); }
+.bf-chip.warn { background: color-mix(in srgb, #d19a00 18%, transparent); color: #d19a00; border-color: color-mix(in srgb, #d19a00 45%, transparent); }
+.bf-chip.info { background: color-mix(in srgb, #4f8fd6 16%, transparent); color: #4f8fd6; border-color: color-mix(in srgb, #4f8fd6 40%, transparent); }
+.bf-chip.mute { background: var(--muted); color: var(--muted-foreground); border-color: var(--border); }
+.bf-btn { padding: 5px 9px; font-size: 10px; white-space: nowrap; }
+.bf-hist { display: grid; gap: 4px; margin-top: 6px; }
+.bf-hrow { display: grid; grid-template-columns: 86px minmax(120px, 1fr) 34px 34px 150px; gap: 10px; align-items: center; font-size: 11px; }
+.bf-hd { font: 600 11px 'IBM Plex Mono', monospace; color: var(--foreground); }
+.bf-hbar { display: flex; height: 8px; background: var(--muted); } .bf-hbar i { display: block; height: 100%; } .bf-hbar i.g { background: var(--green); } .bf-hbar i.r { background: var(--red); }
+.bf-hrow b { text-align: right; }
+.bf-cats { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 8px; }
+.bf-cat { border: 1px solid var(--border); padding: 9px 11px; display: grid; gap: 6px; align-content: start; background: var(--card); }
+.bf-cat h4 { margin: 0; display: flex; justify-content: space-between; font: 700 11px 'IBM Plex Mono', monospace; text-transform: uppercase; color: var(--foreground); }
+.bf-it { border-top: 1px dashed var(--border); padding-top: 6px; display: grid; gap: 3px; font-size: 12px; color: var(--foreground); }
+.bf-it > div { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; } .bf-it b { font: 700 12px 'IBM Plex Mono', monospace; }
+.bf-ret { display: grid; gap: 4px; margin-top: 6px; } .bf-ret-i { display: flex; gap: 10px; align-items: center; font-size: 11px; color: var(--foreground); }
+.bf-rules { margin-top: 2px; }
+@media (max-width: 1100px) { .bf-kpis { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 640px) { .bf-kpis { grid-template-columns: repeat(2, 1fr); } .bf-hrow { grid-template-columns: 74px 1fr 30px 30px; } .bf-hrow small { display: none; } }
 /* Extensão: página "Diagnóstico Veículos" — usa as variáveis de tema (--card, --border, --foreground...), então vale para claro e escuro. */
 .diag-page { --diag-op: var(--green); --diag-bk: #d9a521; --diag-mt: var(--red); --diag-jdi: #4f8fd6; }
 .diag-page .view-tabs { margin-top: 12px; }
@@ -2764,6 +2810,7 @@ function VehicleResources({ manifestDataset, manifestSourceLabel, manifestImport
   const [freqPlateSearch, setFreqPlateSearch] = useState("");
   const [entregasPlateSearch, setEntregasPlateSearch] = useState("");
   const [devolucoesPlateSearch, setDevolucoesPlateSearch] = useState("");
+  const [vtab, setVtab] = useState("buffer");
 
   function addRegistryEntry() {
     const placa = newEntry.placa.trim().toUpperCase();
@@ -2840,6 +2887,14 @@ function VehicleResources({ manifestDataset, manifestSourceLabel, manifestImport
       <div className="client-source"><RouteIcon size={15} /> {manifestSourceLabel}</div>
     </div>
 
+    <div className="view-tabs" role="tablist" aria-label="Recursos - Veículos">
+      <button type="button" role="tab" aria-selected={vtab === "buffer"} className={vtab === "buffer" ? "active" : ""} onClick={() => setVtab("buffer")}>Gestão do Buffer GRU</button>
+      <button type="button" role="tab" aria-selected={vtab === "cadastro"} className={vtab === "cadastro" ? "active" : ""} onClick={() => setVtab("cadastro")}>Cadastro e frequência</button>
+    </div>
+
+    {vtab === "buffer" && <BufferGru />}
+
+    {vtab === "cadastro" && <>
     <div className="client-toolbar import-toolbar">
       <button className="secondary-action" type="button" onClick={() => manifestFileInputRef.current?.click()}><UploadCloud size={15} /> Atualizar relatório de manifesto</button>
       {manifestImportError && <div className="import-error client-import-error">{manifestImportError}</div>}
@@ -2916,7 +2971,375 @@ function VehicleResources({ manifestDataset, manifestSourceLabel, manifestImport
       onSearchChange={setDevolucoesPlateSearch}
       footnote={<><span>Fonte:</span> soma de QTD_CTE_NAO_ENTREGUE por IDENT_VEICULOS_TRACAO e DT_VIAGENS do relatório de manifesto — ajuste esta coluna de origem se o critério de "devolução" do seu setor for outro (ex.: QTD_COLETA_RECUSADA, QT_IDR_VIAGENS).</>}
     />
+    </>}
   </main>;
+}
+
+/* =============================================================================================
+   RECURSOS - VEÍCULOS › GESTÃO DO BUFFER GRU
+   Carretas com o bloqueio "BUFFER GRU" (aba Analise Frota). Onde está: Check Patio (aba da mesma planilha)
+   e, quando a carreta não está no pátio, a última viagem do relatório de viagens. Fora de GRU = bloqueio a retirar.
+   Bloqueios dos veículos do Diagnóstico (coleta) por categoria, só os bloqueados ou que vão bloquear em 3 dias úteis.
+   Ids na nuvem: buffer_base, buffer_viag, buffer_ret, buffer_hist.
+   ============================================================================================= */
+const BF_HERE = new Set(["GRU", "EXA"]);
+const BF_WD = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
+const bfTrim = (v) => String(v ?? "").replace(/\s+/g, " ").trim();
+const bfIsoDay = (d) => `${d.getFullYear()}-${devPad2(d.getMonth() + 1)}-${devPad2(d.getDate())}`;
+const bfD = (iso) => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ""); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; };
+const bfDM = (iso) => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ""); return m ? `${m[3]}/${m[2]}` : "—"; };
+const bfDMY = (iso) => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ""); return m ? `${m[3]}/${m[2]}/${m[1]}` : "—"; };
+const bfHM = (iso) => { const m = /T(\d{2}:\d{2})/.exec(iso || ""); return m ? m[1] : ""; };
+const bfIsWk = (d) => d.getDay() === 0 || d.getDay() === 6;
+function bfWindowEnd(hoje, n) { const d = new Date(hoje); let c = 0; while (c < n) { d.setDate(d.getDate() + 1); if (!bfIsWk(d)) c += 1; } return d; }
+function bfBizDiff(hoje, d) { let c = 0; const x = new Date(hoje); while (x < d) { x.setDate(x.getDate() + 1); if (!bfIsWk(x)) c += 1; } return c; }
+/* Data/hora de planilha (texto dd/mm/aaaa hh:mm:ss, Date ou número serial) → "aaaa-mm-dd" ou "aaaa-mm-ddThh:mm". */
+function bfDT(v) {
+  if (v === null || v === undefined || v === "") return "";
+  if (v instanceof Date) return Number.isNaN(v.getTime()) ? "" : `${bfIsoDay(v)}T${devPad2(v.getHours())}:${devPad2(v.getMinutes())}`;
+  if (typeof v === "number") { const d = new Date(Math.round((v - 25569) * 86400000)); const iso = `${d.getUTCFullYear()}-${devPad2(d.getUTCMonth() + 1)}-${devPad2(d.getUTCDate())}`; return v % 1 ? `${iso}T${devPad2(d.getUTCHours())}:${devPad2(d.getUTCMinutes())}` : iso; }
+  const m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/.exec(String(v).trim());
+  if (!m) return "";
+  const iso = `${m[3]}-${devPad2(+m[2])}-${devPad2(+m[1])}`;
+  return m[4] !== undefined ? `${iso}T${devPad2(+m[4])}:${m[5]}` : iso;
+}
+const BF_MANUT = /PREVENT|PNEU|FREIO|MANUT|VAZ|CHAPA|INFILTR|REPARO|BATENTE|VIDRO|TACOGR|TETO|MOTOR|COMBUSTIV|SUSPENS|EMBREAG|C[AÂ]MBIO|RADIADOR|BATERIA|FAROL|LUZ|ESCAPAMENTO|OLEO|AR CONDICION/;
+const BF_DOC = /\bTAG\b|SEM PARAR|LAUDO|CONTRATO|DOCUMENT|LICENCI|SEGURO|CRLV|IPVA|ANTT|RNTRC|ASSINATURA|CADASTR|MULTA|\bCNH\b|REGULARIZ/;
+/* Classifica o texto do bloqueio. Buffer: "BUFFER GRU" ou "BUFFER GRU · Alvará" (+ manutenção quando houver). Demais: Manutenção / Documento / Outro. */
+function bfClassify(text) {
+  const u = frotaNorm(text);
+  const buffer = /BUFFER\s+GRU/.test(u);
+  const alvara = /ALVAR|EUROFARMA/.test(u);
+  let rest = bfTrim(text);
+  [/BUFFER\s+GRU/gi, /CTA\s+DE[DE]ICADA\s+A\s+COLETA/gi, /ALVAR[ÁA]\s+SANIT[ÁA]RIO\s+GRU/gi, /OPE\S*\s+EUROFARMA/gi].forEach((re) => { rest = rest.replace(re, " "); });
+  rest = rest.replace(/[*\-+/]+/g, " ").replace(/\s+/g, " ").trim();
+  const restN = frotaNorm(rest);
+  const manut = BF_MANUT.test(buffer ? restN : u);
+  const doc = BF_DOC.test(buffer ? restN : u);
+  return { buffer, alvara, manut, doc, rest };
+}
+function bfShort(text, n = 80) { const s = bfTrim(text); const low = s.charAt(0) + s.slice(1).toLowerCase(); return low.length > n ? `${low.slice(0, n - 1)}…` : low; }
+
+/* ---- leitura das planilhas ---- */
+function bfParseBase(wb) {
+  const nm = frotaNorm;
+  const sAf = wb.SheetNames.find((n) => nm(n).includes("ANALISE") && nm(n).includes("FROTA"));
+  if (!sAf) throw new Error('Não encontrei a aba "Analise Frota" nesta planilha.');
+  const rows = XLSX.utils.sheet_to_json(wb.Sheets[sAf], { header: 1, defval: "", raw: true });
+  const hi = rows.findIndex((r) => r.some((c) => nm(c) === "MOT. BLOQUEIO"));
+  if (hi < 0) throw new Error('Não encontrei a coluna "MOT. BLOQUEIO" na aba Analise Frota.');
+  const H = rows[hi].map(nm);
+  const ix = (n) => H.indexOf(n);
+  const iP = ix("NR_PLACA_VEICULOS"), iF = ix("IDENT_VEICULOS"), iT = ix("MOT. BLOQUEIO"), iD = ix("DT_BLOQUEIO"), iC = ix("DS_VEICULOS_CLASSE"), iPr = ix("DT_VALIDADE_CONTROLE_PRAGAS");
+  if (iP < 0) throw new Error('Coluna "NR_PLACA_VEICULOS" não encontrada na aba Analise Frota.');
+  const out = [];
+  rows.slice(hi + 1).forEach((r) => {
+    const m = bfTrim(r[iT]);
+    if (!m) return;
+    out.push({ p: bfTrim(r[iP]).toUpperCase(), f: bfTrim(iF >= 0 ? r[iF] : "").replace(/\.0$/, ""), cl: bfTrim(iC >= 0 ? r[iC] : ""), dt: bfDT(iD >= 0 ? r[iD] : "").slice(0, 10), m: m.slice(0, 400), pr: bfDT(iPr >= 0 ? r[iPr] : "").slice(0, 10) });
+  });
+  const cp = {};
+  const sCp = wb.SheetNames.find((n) => nm(n).includes("CHECK"));
+  let cpCount = 0;
+  if (sCp) {
+    const cr = XLSX.utils.sheet_to_json(wb.Sheets[sCp], { header: 1, defval: "", raw: true });
+    const ch = cr.findIndex((r) => r.some((c) => nm(c) === "FROTAS"));
+    if (ch >= 0) {
+      const CH = cr[ch].map(nm);
+      const iL = CH.findIndex((h) => h.startsWith("LOCALIZ")), iS = CH.indexOf("STATUS"), cols = [CH.indexOf("FROTAS"), CH.indexOf("GENIVAL")].filter((i) => i >= 0);
+      cr.slice(ch + 1).forEach((r) => {
+        const loc = bfTrim(iL >= 0 ? r[iL] : ""), st = bfTrim(iS >= 0 ? r[iS] : "");
+        let hit = false;
+        cols.forEach((c) => {
+          const k = nm(r[c]).replace(/\.0$/, "").replace(/\s/g, "");
+          if (/^[A-Z]{3}\d[A-Z0-9]\d{2}$/.test(k) || /^\d{2,5}$/.test(k)) { cp[k] = [loc || "—", st === "-" ? "" : st]; hit = true; }
+        });
+        if (hit) cpCount += 1;
+      });
+    }
+  }
+  return { rows: out, cp, cpCount, hasCp: !!sCp };
+}
+function bfParseViagens(wb) {
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  if (!ws || !ws["!ref"]) throw new Error("A planilha de viagens está vazia.");
+  const range = XLSX.utils.decode_range(ws["!ref"]);
+  const data = ws["!data"] ?? (Array.isArray(ws) ? ws : null);
+  const cell = (r, c) => { const x = data ? (data[r] && data[r][c]) : ws[XLSX.utils.encode_cell({ r, c })]; return x ? x.v : ""; };
+  const H = []; for (let c = range.s.c; c <= range.e.c; c++) H[c] = frotaNorm(cell(range.s.r, c));
+  const ix = (n) => H.indexOf(n);
+  const iO = ix("SIGLA_FILIAL_ORIGEM"), iDs = ix("SIGLA_FILIAL_DESTINO"), iN = ix("NR_VIAGEM"), iDt = ix("DT_VIAGEM"), iR1 = ix("PLACA_REBOQUE_1"), iR2 = ix("PLACA_REBOQUE_2"), iSt = ix("STATUS_VIAGENS"), iS = ix("SAIDA_REAL"), iCh = ix("CHEGADA_REAL");
+  const miss = [["SIGLA_FILIAL_ORIGEM", iO], ["SIGLA_FILIAL_DESTINO", iDs], ["PLACA_REBOQUE_1", iR1], ["CHEGADA_REAL", iCh], ["STATUS_VIAGENS", iSt]].filter((x) => x[1] < 0).map((x) => x[0]);
+  if (miss.length) throw new Error(`Colunas não encontradas no relatório de viagens: ${miss.join(", ")}.`);
+  const map = {}; let n = 0, maxDt = "", minDt = "9999";
+  for (let r = range.s.r + 1; r <= range.e.r; r++) {
+    const st = frotaNorm(cell(r, iSt));
+    if (st === "CANCELADA") continue;
+    const dtv = bfDT(cell(r, iDt)); n += 1;
+    if (dtv > maxDt) maxDt = dtv; if (dtv && dtv < minDt) minDt = dtv;
+    const sa = bfDT(cell(r, iS)), ch = bfDT(cell(r, iCh));
+    const key = sa || dtv;
+    const rec = [bfTrim(cell(r, iN)), bfTrim(cell(r, iO)).toUpperCase(), bfTrim(cell(r, iDs)).toUpperCase(), sa, ch, st, key];
+    [iR1, iR2].forEach((c) => {
+      if (c < 0) return;
+      const p = bfTrim(cell(r, c)).toUpperCase();
+      if (!p) return;
+      const old = map[p];
+      if (!old || String(rec[6]) > String(old[6])) map[p] = rec;
+    });
+  }
+  Object.values(map).forEach((rec) => rec.pop());
+  return { map, trips: n, plates: Object.keys(map).length, de: minDt === "9999" ? "" : minDt.slice(0, 10), ate: maxDt.slice(0, 10) };
+}
+
+/* ---- regra de localização ---- */
+function bfDecide(inCp, t) {
+  if (t) {
+    const [, o, d, , ch] = t;
+    if (ch) return BF_HERE.has(d) ? { s: "gru", src: inCp ? "cp" : "viagem" } : inCp ? { s: "alerta", src: "cp" } : { s: "fora", src: "viagem" };
+    if (BF_HERE.has(o) && BF_HERE.has(d)) return { s: "gru", src: inCp ? "cp" : "viagem", open: true };
+    return inCp ? { s: "alerta", src: "cp", open: true } : { s: "fora", src: "viagem", open: true };
+  }
+  return inCp ? { s: "gru", src: "cp" } : { s: "fora", src: "semviagem" };
+}
+
+function BufferGru() {
+  const [base, setBase] = useState(() => lsLoad("buffer_base"));
+  const [viag, setViag] = useState(() => lsLoad("buffer_viag"));
+  const [ret, setRet] = useState(() => lsLoad("buffer_ret")?.items ?? {});
+  const [hist, setHist] = useState(() => lsLoad("buffer_hist")?.days ?? {});
+  const [conf, setConf] = useState(() => lsLoad("buffer_conf")?.items ?? {});
+  const [err, setErr] = useState(null);
+  const [busy, setBusy] = useState("");
+  const [search, setSearch] = useState("");
+  const [showRet, setShowRet] = useState(false);
+  const [showAllFora, setShowAllFora] = useState(false);
+  const baseRef = useRef(null), viagRef = useRef(null);
+  const hoje = useMemo(() => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }, []);
+  const hojeIso = bfIsoDay(hoje);
+
+  useEffect(() => {
+    let off = false;
+    const pull = (id, apply) => Promise.resolve(cloudLoad(id)).then((row) => { if (!off && row && row.data) apply(row); }).catch(() => {});
+    pull("buffer_base", (row) => { const at = lsLoad("buffer_base")?.updatedAt; if (row.data.rows && (!at || new Date(row.updated_at) > new Date(at))) { const n = { ...row.data, updatedAt: row.updated_at }; setBase(n); lsSave("buffer_base", n); } });
+    pull("buffer_viag", (row) => { const at = lsLoad("buffer_viag")?.updatedAt; if (row.data.map && (!at || new Date(row.updated_at) > new Date(at))) { const n = { ...row.data, updatedAt: row.updated_at }; setViag(n); lsSave("buffer_viag", n); } });
+    pull("buffer_ret", (row) => { if (row.data.items) { setRet(row.data.items); lsSave("buffer_ret", { items: row.data.items, updatedAt: row.updated_at }); } });
+    pull("buffer_conf", (row) => { if (row.data.items) { setConf(row.data.items); lsSave("buffer_conf", { items: row.data.items, updatedAt: row.updated_at }); } });
+    pull("buffer_hist", (row) => { if (row.data.days) setHist((h) => { const m = { ...row.data.days, ...h }; for (const k of Object.keys(row.data.days)) if (h[k] && (h[k].at || "") < (row.data.days[k].at || "")) m[k] = row.data.days[k]; lsSave("buffer_hist", { days: m, updatedAt: row.updated_at }); return m; }); });
+    return () => { off = true; };
+  }, []);
+
+  async function readBook(file, opts) { return XLSX.read(await file.arrayBuffer(), { type: "array", ...opts }); }
+  async function onBase(e) {
+    const file = e.target.files?.[0]; if (!file) return;
+    setErr(null); setBusy("Lendo a base…");
+    try {
+      const wb = await readBook(file, {});
+      const p = bfParseBase(wb);
+      const now = new Date().toISOString();
+      const next = { rows: p.rows, cp: p.cp, cpCount: p.cpCount, hasCp: p.hasCp, label: file.name, dia: bfIsoDay(new Date()), updatedAt: now };
+      setBase(next); lsSave("buffer_base", next); cloudSave("buffer_base", { rows: p.rows, cp: p.cp, cpCount: p.cpCount, hasCp: p.hasCp, label: file.name, dia: next.dia }, `${file.name} · ${p.rows.length} bloqueio(s)`);
+      if (!p.hasCp) setErr('Não encontrei a aba "Check Patio": nenhuma carreta será considerada no pátio pela planilha.');
+    } catch (ex) { setErr(ex instanceof Error ? ex.message : "Não foi possível ler a planilha."); }
+    finally { setBusy(""); e.target.value = ""; }
+  }
+  async function onViag(e) {
+    const file = e.target.files?.[0]; if (!file) return;
+    setErr(null); setBusy("Lendo o relatório de viagens (pode levar alguns segundos)…");
+    try {
+      await new Promise((r) => setTimeout(r, 30));
+      const wb = await readBook(file, { dense: true, sheets: 0 });
+      const p = bfParseViagens(wb);
+      const now = new Date().toISOString();
+      const next = { map: p.map, trips: p.trips, plates: p.plates, de: p.de, ate: p.ate, label: file.name, updatedAt: now };
+      setViag(next); lsSave("buffer_viag", next); cloudSave("buffer_viag", { map: p.map, trips: p.trips, plates: p.plates, de: p.de, ate: p.ate, label: file.name }, `${file.name} · ${p.trips} viagem(ns)`);
+    } catch (ex) { setErr(ex instanceof Error ? ex.message : "Não foi possível ler o relatório de viagens."); }
+    finally { setBusy(""); e.target.value = ""; }
+  }
+
+  const fleet = useMemo(() => { const s = lsLoad("frota"); return s && Array.isArray(s.rows) && s.rows.length ? s.rows : frotaBaseDefault.map(([placa, status, situacao, tipo, categoria, motorista]) => buildFrotaRecord({ placa, status, situacao, tipo, categoria, motorista })); }, [base]);
+
+  const calc = useMemo(() => {
+    if (!base || !Array.isArray(base.rows)) return null;
+    const cpMap = base.cp || {}, vmap = viag?.map || null;
+    const items = base.rows.filter((r) => /BUFFER\s+GRU/.test(frotaNorm(r.m))).map((r) => {
+      const hit = cpMap[r.p] || (r.f ? cpMap[r.f] : null) || null;
+      const trip = vmap ? (vmap[r.p] || null) : null;
+      let dec = bfDecide(!!hit, trip);
+      const cf = conf[r.p];
+      if (dec.s === "alerta" && cf && trip && cf.nr === trip[0]) dec = { ...dec, s: cf.v === "gru" ? "gru" : "fora", confirmado: cf };
+      const c = bfClassify(r.m);
+      return { ...r, hit, trip, dec, c, prog: !!r.dt && r.dt > hojeIso, pragasVenc: !!r.pr && r.pr < hojeIso, pragasDias: r.pr ? Math.round((bfD(r.pr) - hoje) / 86400000) : null };
+    });
+    const isRet = (x) => ret[x.p] && ret[x.p].baseAt === base.updatedAt;
+    const gru = items.filter((x) => x.dec.s === "gru").sort((a, b) => (a.hit ? 0 : 1) - (b.hit ? 0 : 1) || String(a.dt).localeCompare(String(b.dt)) || a.p.localeCompare(b.p));
+    const alerta = items.filter((x) => x.dec.s === "alerta").sort((a, b) => String(a.dt || "0").localeCompare(String(b.dt || "0")) || a.p.localeCompare(b.p));
+    const foraAll = items.filter((x) => x.dec.s === "fora").sort((a, b) => String(a.dt || "0").localeCompare(String(b.dt || "0")) || a.p.localeCompare(b.p));
+    const fora = foraAll.filter((x) => !isRet(x)), retirados = foraAll.filter(isRet);
+    /* Diagnóstico: veículos da frota de coleta com bloqueio ou que vão bloquear em 3 dias úteis (sábado/domingo não contam). */
+    const end = bfWindowEnd(hoje, 3), endIso = bfIsoDay(end);
+    const byP = new Map(), byF = new Map();
+    base.rows.forEach((r) => { if (!/BUFFER\s+GRU/.test(frotaNorm(r.m))) { byP.set(r.p, r); if (r.f) byF.set(r.f, r); } });
+    const diag = []; const depois = [];
+    fleet.forEach((v) => {
+      const k = frotaPlateKey(v.placa); const tokens = String(v.placa).split(/[\s-]+/).filter(Boolean);
+      const r = byP.get(k) || tokens.map((t) => byF.get(t)).find(Boolean);
+      if (!r) return;
+      const d = r.dt || "";
+      const c = bfClassify(r.m);
+      const tipo = FROTA_TIPOS.includes(v.tipo) ? v.tipo : "Outros";
+      const rec = { placa: v.placa, tipo, dt: d, m: r.m, c };
+      if (!d || d <= hojeIso) { const dias = d ? Math.round((hoje - bfD(d)) / 86400000) : null; diag.push({ ...rec, estado: "bloqueado", dias }); }
+      else if (d <= endIso) { const dd = bfD(d); diag.push({ ...rec, estado: "vai", wd: BF_WD[dd.getDay()], uteis: bfBizDiff(hoje, dd), fds: bfIsWk(dd) }); }
+      else depois.push(rec);
+    });
+    return { items, gru, alerta, fora, retirados, diag, depois, end, kpi: { total: items.length, gru: gru.length, alerta: alerta.length, fora: fora.length + retirados.length, prog: items.filter((x) => x.prog).length, pr: gru.filter((x) => x.pragasVenc).length, sem: foraAll.filter((x) => x.dec.src === "semviagem").length, retirados: retirados.length, cp: gru.filter((x) => x.hit).length } };
+  }, [base, viag, ret, conf, fleet, hoje, hojeIso]);
+
+  /* Histórico diário: guarda por dia da base quantas carretas estavam no Buffer em GRU e fora (e quais). */
+  useEffect(() => {
+    if (!calc || !base?.dia) return;
+    const g = calc.gru.map((x) => x.p).sort(), f = [...calc.fora, ...calc.retirados].map((x) => x.p).sort(), a = calc.alerta.map((x) => x.p).sort();
+    const cur = hist[base.dia];
+    if (cur && cur.g.join() === g.join() && cur.f.join() === f.join() && (cur.a || []).join() === a.join()) return;
+    const next = { ...hist, [base.dia]: { total: calc.kpi.total, gru: g.length, fora: f.length, alerta: a.length, g, f, a, at: new Date().toISOString() } };
+    setHist(next); lsSave("buffer_hist", { days: next, updatedAt: new Date().toISOString() });
+    Promise.resolve(cloudLoad("buffer_hist")).then((row) => {
+      const m = { ...(row?.data?.days || {}) }; for (const k of Object.keys(next)) if (!m[k] || (m[k].at || "") <= (next[k].at || "")) m[k] = next[k];
+      cloudSave("buffer_hist", { days: m }, `${Object.keys(m).length} dia(s) de histórico do Buffer`);
+    }).catch(() => {});
+  }, [calc, base?.dia]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function persistRet(next) { setRet(next); lsSave("buffer_ret", { items: next, updatedAt: new Date().toISOString() }); cloudSave("buffer_ret", { items: next }, `${Object.keys(next).length} retirada(s) de bloqueio`); }
+  function persistConf(next) { setConf(next); lsSave("buffer_conf", { items: next, updatedAt: new Date().toISOString() }); cloudSave("buffer_conf", { items: next }, `${Object.keys(next).length} confirmação(ões) de localização`); }
+  const confirmar = (x, v) => persistConf({ ...conf, [x.p]: { v, nr: x.trip ? x.trip[0] : "", at: new Date().toISOString() } });
+  const desconfirmar = (x) => { const n = { ...conf }; delete n[x.p]; persistConf(n); };
+  const marcar = (x) => persistRet({ ...ret, [x.p]: { at: new Date().toISOString(), baseAt: base.updatedAt } });
+  const desfazer = (x) => { const n = { ...ret }; delete n[x.p]; persistRet(n); };
+
+  const days = useMemo(() => Object.keys(hist).sort().slice(-14), [hist]);
+  const q = search.trim().toUpperCase();
+  const match = (x) => !q || x.p.includes(q) || (x.f || "").includes(q) || (x.placa || "").toUpperCase().includes(q);
+
+  const chipsBloq = (x) => <span className="bf-chips" title={x.m}>
+    <span className="bf-chip ok">{x.c.alvara ? "BUFFER GRU · Alvará" : "BUFFER GRU"}</span>
+    {x.c.manut && <span className="bf-chip warn">Manutenção</span>}
+    {x.c.manut && <small className="bf-tag">{bfShort(x.c.rest, 46)}</small>}
+  </span>;
+  const dtCell = (x) => {
+    if (!x.dt) return "—";
+    if (x.prog) { const d = bfD(x.dt); return <span className="bf-chip info">programado {BF_WD[d.getDay()]} {bfDM(x.dt)}</span>; }
+    const n = Math.round((hoje - bfD(x.dt)) / 86400000);
+    return <>{bfDM(x.dt)} · {n === 0 ? "hoje" : <span className={n >= 7 ? "bf-bad" : ""}>{n} dia{n > 1 ? "s" : ""}</span>}</>;
+  };
+  const pragasCell = (x) => !x.pr ? "—" : x.pragasVenc ? <span className="bf-bad">vencido {bfDMY(x.pr)}</span> : bfDMY(x.pr);
+  const tripLabel = (t) => { const [nr, o, d, , ch] = t; const age = ch ? Math.round((hoje - bfD(ch.slice(0, 10))) / 86400000) : null; return <><span>{nr ? `#${nr} · ` : ""}{o} → <b>{d}</b></span><small className="bf-tag">{ch ? `chegou ${bfDM(ch)} ${bfHM(ch)}` : "viagem aberta, sem chegada"}{age !== null && age >= 7 && <span className="bf-bad"> · há {age} dias</span>}</small></>; };
+  const ondeCell = (x) => x.hit
+    ? <><span className="bf-chip ok">Check Patio</span> {String(x.hit[0]).toLowerCase().replace(/^./, (c) => c.toUpperCase())}{x.hit[1] ? ` · ${x.hit[1]}` : ""}{x.dec.confirmado && <small className="bf-tag bf-warn">confirmado manualmente em {bfDM(x.dec.confirmado.at.slice(0, 10))} · <button type="button" className="eq-link" onClick={() => desconfirmar(x)}>desfazer</button></small>}</>
+    : <><span className="bf-chip info">Pela viagem</span> {x.trip && tripLabel(x.trip)}</>;
+  const confNote = (x) => x.dec.confirmado ? <small className="bf-tag bf-warn">confirmado: viajou em {bfDM(x.dec.confirmado.at.slice(0, 10))} · <button type="button" className="eq-link" onClick={() => desconfirmar(x)}>desfazer</button></small> : null;
+  const ultCell = (x) => x.trip ? tripLabel(x.trip) : <span className="bf-tag">{viag ? "sem viagem no relatório" : "relatório de viagens não carregado"}</span>;
+
+  const gruList = calc ? calc.gru.filter(match) : [];
+  const foraList = calc ? calc.fora.filter(match) : [];
+  const alertaList = calc ? calc.alerta.filter(match) : [];
+  const foraShown = showAllFora ? foraList : foraList.slice(0, 40);
+
+  function exportBuffer() {
+    if (!calc) return;
+    const wb = XLSX.utils.book_new();
+    const add = (nome, head, body, w) => { const ws = XLSX.utils.aoa_to_sheet([head, ...body]); ws["!cols"] = w.map((x) => ({ wch: x })); XLSX.utils.book_append_sheet(wb, ws, nome); };
+    const bl = (x) => (x.c.alvara ? "BUFFER GRU · Alvará" : "BUFFER GRU") + (x.c.manut ? " + Manutenção" : "");
+    const tr = (x) => (x.trip ? `${x.trip[0] ? `#${x.trip[0]} ` : ""}${x.trip[1]} → ${x.trip[2]} ${x.trip[4] ? `(chegou ${bfDM(x.trip[4])} ${bfHM(x.trip[4])})` : "(aberta)"}` : "");
+    add("Buffer em GRU", ["Frota", "Placa", "Onde está", "Bloqueio", "Data do bloqueio", "Controle de pragas", "Texto original"], calc.gru.map((x) => [x.f, x.p, x.hit ? `Check Patio · ${x.hit[0]}${x.hit[1] ? ` · ${x.hit[1]}` : ""}` : `Pela viagem · ${tr(x)}`, bl(x), bfDMY(x.dt), bfDMY(x.pr), x.m]), [8, 10, 46, 26, 14, 16, 80]);
+    add("Fora de GRU - retirar", ["Frota", "Placa", "Última viagem", "Bloqueio", "Data do bloqueio", "Situação", "Texto original"], [...calc.fora, ...calc.retirados].map((x) => [x.f, x.p, tr(x) || "sem viagem no relatório", bl(x), bfDMY(x.dt), ret[x.p] && ret[x.p].baseAt === base.updatedAt ? "retirado" : x.dec.open ? "viagem aberta" : "retirar", x.m]), [8, 10, 46, 26, 14, 16, 80]);
+    if (calc.alerta.length) add("A confirmar", ["Frota", "Placa", "Check Patio", "Última viagem", "Bloqueio", "Data do bloqueio"], calc.alerta.map((x) => [x.f, x.p, `${x.hit[0]}${x.hit[1] ? ` · ${x.hit[1]}` : ""}`, tr(x), bl(x), bfDMY(x.dt)]), [8, 10, 26, 46, 26, 14]);
+    add("Diagnóstico - bloqueios", ["Placa", "Tipo", "Situação", "Data", "Categoria", "Texto original"], calc.diag.map((x) => [x.placa, x.tipo, x.estado === "bloqueado" ? "bloqueado" : `bloqueia em ${x.uteis} dia(s) útil(eis)`, bfDMY(x.dt), [x.c.manut && "Manutenção", x.c.doc && "Documento"].filter(Boolean).join(" + ") || "Outro", x.m]), [14, 14, 26, 12, 22, 80]);
+    add("Histórico diário", ["Dia", "Em GRU", "Fora de GRU", "Total Buffer"], days.map((d) => [bfDMY(d), hist[d].gru, hist[d].fora, hist[d].total]), [12, 10, 12, 12]);
+    XLSX.writeFile(wb, `Buffer_GRU_${hojeIso}.xlsx`);
+  }
+
+  const kpi = calc?.kpi;
+  const cats = ["Cav. Mecanico", "TRUCK", "TOCO", "VUC 3/4", "Outros"];
+  const catLabel = { "Cav. Mecanico": "Cavalo mecânico", TRUCK: "Truck", TOCO: "Toco", "VUC 3/4": "VUC 3/4", Outros: "Outros tipos" };
+  const diagBy = (t) => (calc ? calc.diag.filter((x) => x.tipo === t && match(x)).sort((a, b) => (a.estado === b.estado ? 0 : a.estado === "bloqueado" ? -1 : 1) || String(a.dt).localeCompare(String(b.dt))) : []);
+  const histMax = Math.max(1, ...days.map((d) => hist[d].total || 0));
+
+  return <div className="bf">
+    <input ref={baseRef} className="hidden-file-input" type="file" accept=".xlsx,.xls" onChange={onBase} />
+    <input ref={viagRef} className="hidden-file-input" type="file" accept=".xlsx,.xls" onChange={onViag} />
+    <div className="bf-up">
+      <div><button className="secondary-action" type="button" onClick={() => baseRef.current?.click()}><UploadCloud size={15} /> Subir base do Buffer (Analise Frota + Check Patio)</button>
+        <small>{base ? `${base.label} · base de ${bfDMY(base.dia)} · ${numberInt.format(base.rows.length)} veículo(s) com bloqueio${base.hasCp ? ` · ${numberInt.format(base.cpCount)} no Check Patio` : ""}` : "Nenhuma base carregada"}</small></div>
+      <div><button className="secondary-action" type="button" onClick={() => viagRef.current?.click()}><UploadCloud size={15} /> Subir relatório de viagens</button>
+        <small>{viag ? `${viag.label} · ${numberInt.format(viag.trips)} viagem(ns)${viag.de ? ` de ${bfDM(viag.de)} a ${bfDM(viag.ate)}` : ""}` : "Nenhum relatório de viagens — a localização usa só o Check Patio"}</small></div>
+      <button className="secondary-action" type="button" onClick={exportBuffer} disabled={!calc}><FileDown size={15} /> Extrair (Excel)</button>
+      {busy && <span className="bf-busy" role="status">{busy}</span>}
+    </div>
+    {err && <div className="import-error client-import-error">{err}</div>}
+    {!calc && <div className="empty-client-state"><Truck size={16} /> Suba a planilha do Buffer (abas Analise Frota e Check Patio) para começar.</div>}
+    {calc && <>
+      <div className="bf-kpis">
+        <div className="diag-kpi static"><span>Carretas com BUFFER GRU</span><strong>{kpi.total}</strong><small>no bloqueio da Analise Frota</small></div>
+        <div className="diag-kpi static bf-k-ok"><span>No Buffer em GRU</span><strong>{kpi.gru}</strong><small>{kpi.cp} no Check Patio · {kpi.gru - kpi.cp} pela viagem</small></div>
+        <div className="diag-kpi static bf-k-bad"><span>Fora de GRU · retirar</span><strong>{kpi.fora}</strong><small>{kpi.retirados ? `${kpi.retirados} já retirada(s) hoje` : "não estão em GRU"}</small></div>
+        <div className="diag-kpi static bf-k-warn"><span>A confirmar (alerta)</span><strong>{kpi.alerta}</strong><small>Check Patio diz pátio, viagem diz outra filial</small></div>
+        <div className="diag-kpi static"><span>Bloqueio programado</span><strong>{kpi.prog}</strong><small>data de bloqueio no futuro</small></div>
+        <div className="diag-kpi static bf-k-bad"><span>Controle de pragas vencido</span><strong>{kpi.pr}</strong><small>das {kpi.gru} em GRU</small></div>
+      </div>
+
+      <section className="client-table-card bf-card">
+        <div className="client-toolbar"><div><strong>Carretas no Buffer, por dia</strong><small>gravado a cada upload da base · em GRU (verde) e a retirar (vermelho)</small></div>
+          <div className="client-search"><Search size={14} /><input placeholder="Buscar placa ou frota" value={search} onChange={(e) => setSearch(e.target.value.toUpperCase())} /></div></div>
+        <div className="bf-hist">
+          {days.slice().reverse().map((d, i, arr) => { const h = hist[d]; const prevD = arr[i + 1]; const p = prevD ? hist[prevD] : null; const ent = p ? h.g.filter((x) => !p.g.includes(x)).length : null; const sai = p ? p.g.filter((x) => !h.g.includes(x)).length : null;
+            return <div className="bf-hrow" key={d}><span className="bf-hd">{bfDMY(d)}</span>
+              <span className="bf-hbar"><i className="g" style={{ width: `${(h.gru / histMax) * 100}%` }} /><i className="r" style={{ width: `${(h.fora / histMax) * 100}%` }} /></span>
+              <b className="bf-ok">{h.gru}</b><b className="bf-bad">{h.fora}</b><small className="bf-tag">{p ? `+${ent} entrou · −${sai} saiu` : "primeiro dia"}</small></div>; })}
+        </div>
+      </section>
+
+      {alertaList.length > 0 && <section className="client-table-card bf-card bf-alert">
+        <div className="client-toolbar"><div><strong><span className="bf-num warn">!</span>A confirmar · Check Patio diz que está no pátio, mas a última viagem foi para outra filial ({alertaList.length})</strong><small>o Check Patio pode estar desatualizado · confirme se a carreta viajou ou ficou em GRU · a confirmação vale até a próxima viagem da placa</small></div></div>
+        <div className="diag-scroll"><table className="bf-tbl"><thead><tr><th>Frota / placa</th><th>Check Patio</th><th>Última viagem</th><th>Bloqueio</th><th>Data do bloqueio</th><th>Confirmar</th></tr></thead>
+          <tbody>{alertaList.map((x) => <tr key={x.p}><td className="bf-pl"><b>{x.f || "—"}</b><small>{x.p}</small></td><td><span className="bf-chip ok">Check Patio</span> {String(x.hit[0]).toLowerCase().replace(/^./, (c) => c.toUpperCase())}{x.hit[1] ? ` · ${x.hit[1]}` : ""}</td><td>{x.trip && tripLabel(x.trip)}</td><td>{chipsBloq(x)}</td><td>{dtCell(x)}</td>
+            <td><div className="bf-btns"><button className="secondary-action bf-btn" type="button" onClick={() => confirmar(x, "viajou")}>Viajou</button><button className="secondary-action bf-btn" type="button" onClick={() => confirmar(x, "gru")}>Em GRU</button></div></td></tr>)}</tbody></table></div>
+      </section>}
+
+      <section className="client-table-card bf-card">
+        <div className="client-toolbar"><div><strong><span className="bf-num">1</span>Carretas no Buffer em GRU ({gruList.length}{q ? ` de ${calc.gru.length}` : ""})</strong><small>Check Patio primeiro, depois as confirmadas pela última viagem · bloqueios mais antigos primeiro</small></div></div>
+        <div className="diag-scroll"><table className="bf-tbl"><thead><tr><th>Frota / placa</th><th>Onde está</th><th>Bloqueio</th><th>Data do bloqueio</th><th>Controle de pragas</th></tr></thead>
+          <tbody>{gruList.map((x) => <tr key={x.p}><td className="bf-pl"><b>{x.f || "—"}</b><small>{x.p}</small></td><td>{ondeCell(x)}</td><td>{chipsBloq(x)}</td><td>{dtCell(x)}</td><td>{pragasCell(x)}</td></tr>)}
+            {!gruList.length && <tr><td colSpan={5} className="bf-empty">Nenhuma carreta em GRU{q ? " para a busca" : ""}.</td></tr>}</tbody></table></div>
+      </section>
+
+      <section className="client-table-card bf-card">
+        <div className="client-toolbar"><div><strong><span className="bf-num bad">2</span>Fora de GRU · retirar o bloqueio Buffer ({foraList.length}{q ? ` de ${calc.fora.length}` : ""})</strong><small>não estão no Check Patio e a última viagem terminou em outra filial · mais antigas primeiro</small></div></div>
+        <div className="diag-scroll"><table className="bf-tbl"><thead><tr><th>Frota / placa</th><th>Última viagem</th><th>Bloqueio</th><th>Data do bloqueio</th><th>Situação</th><th>Ação</th></tr></thead>
+          <tbody>{foraShown.map((x) => <tr key={x.p}><td className="bf-pl"><b>{x.f || "—"}</b><small>{x.p}</small></td><td>{ultCell(x)}</td><td>{chipsBloq(x)}</td><td>{dtCell(x)}</td>
+            <td>{x.dec.open ? <span className="bf-chip warn">viagem aberta</span> : x.dec.src === "semviagem" ? <span className="bf-chip mute">sem viagem</span> : <span className="bf-chip bad">retirar</span>}{x.c.manut && <small className="bf-tag">tem manutenção: avaliar antes</small>}{confNote(x)}{ret[x.p] && ret[x.p].baseAt !== base.updatedAt && <small className="bf-tag bf-warn">voltou à fila · retirada em {bfDM(ret[x.p].at.slice(0, 10))}</small>}</td>
+            <td><button className="secondary-action bf-btn" type="button" onClick={() => marcar(x)}>Marcar retirado</button></td></tr>)}
+            {!foraList.length && <tr><td colSpan={6} className="bf-empty">Nenhuma carreta bloqueada fora de GRU{q ? " para a busca" : ""}.</td></tr>}</tbody></table></div>
+        {foraList.length > 40 && <button type="button" className="eq-link" onClick={() => setShowAllFora((v) => !v)}>{showAllFora ? "Mostrar só as 40 mais antigas" : `Ver todas (${foraList.length})`}</button>}
+        {calc.retirados.length > 0 && <div className="bf-ret"><button type="button" className="eq-link" onClick={() => setShowRet((v) => !v)}>{showRet ? "Ocultar" : "Exibir"} retiradas nesta base ({calc.retirados.length})</button>
+          {showRet && calc.retirados.map((x) => <div className="bf-ret-i" key={x.p}><b>{x.f || x.p}</b><span>{x.p}</span><small className="bf-tag">retirada {bfDM(ret[x.p].at.slice(0, 10))} {bfHM(ret[x.p].at.slice(0, 16))}</small><button type="button" className="eq-link" onClick={() => desfazer(x)}>Desfazer</button></div>)}</div>}
+        <div className="client-footnote">Quando o bloqueio é retirado no sistema, "Marcar retirado" guarda a data. Na base do dia seguinte, quem continuar bloqueado e fora de GRU volta para a fila.</div>
+      </section>
+
+      <section className="client-table-card bf-card">
+        <div className="client-toolbar"><div><strong><span className="bf-num">3</span>Frota de coleta (Diagnóstico) · bloqueados ou a bloquear em até 3 dias úteis</strong><small>hoje {BF_WD[hoje.getDay()]} {bfDM(hojeIso)} · janela até {BF_WD[calc.end.getDay()]} {bfDM(bfIsoDay(calc.end))} · sábado e domingo não contam · cruzado com a Analise Frota pela placa</small></div></div>
+        <div className="bf-cats">{cats.map((t) => { const l = diagBy(t); if (t === "Outros" && !l.length) return null;
+          return <div className="bf-cat" key={t}><h4><span>{catLabel[t]}</span><b>{l.length}</b></h4>
+            {l.map((x) => <div className="bf-it" key={x.placa}><div><b>{x.placa}</b> {x.estado === "bloqueado" ? <span className="bf-chip bad">{x.dias === null ? "bloqueado" : x.dias === 0 ? "bloqueado hoje" : `bloqueado desde ${bfDM(x.dt)}`}</span> : <span className="bf-chip warn">bloqueia {x.wd} {bfDM(x.dt)} · {x.fds ? "fim de semana" : `em ${x.uteis} ${x.uteis > 1 ? "dias úteis" : "dia útil"}`}</span>}
+              {x.c.manut && <span className="bf-chip warn">Manutenção</span>}{x.c.doc && <span className="bf-chip info">Documento</span>}{!x.c.manut && !x.c.doc && <span className="bf-chip mute">Outro</span>}</div>
+              <small className="bf-tag" title={x.m}>{bfShort(x.m, 110)}</small></div>)}
+            {!l.length && <small className="bf-tag">Nenhum bloqueio na janela.</small>}</div>; })}</div>
+        {calc.depois.length > 0 && <div className="client-footnote"><span>Depois da janela:</span> {calc.depois.slice().sort((a, b) => a.dt.localeCompare(b.dt)).map((x) => `${x.placa} (${bfDM(x.dt)})`).join(" · ")}</div>}
+      </section>
+
+      <div className="client-footnote bf-rules"><span>Regras:</span> entra na gestão quem tem "BUFFER GRU" no bloqueio (BUFFER CPQ, CBC etc. ficam de fora). Está em GRU se a última viagem terminou em GRU ou EXA; destino em outra filial (e fora do Check Patio) = viajou e vai para o bloco 2. Se o Check Patio lista a placa mas a viagem foi para outra filial, fica em alerta "A confirmar" até você marcar Viajou ou Em GRU. Sem viagem, vale o Check Patio. Viagem aberta GRU → GRU/EXA fica em GRU. Viagem com mais de 7 dias aparece em vermelho (pode ser falta de lançamento). Data de bloqueio futura = programado.</div>
+    </>}
+  </div>;
 }
 
 /* =============================================================================================
