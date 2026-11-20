@@ -988,7 +988,9 @@ span.eq-code, b.eq-code { cursor: default; height: 18px; min-width: 24px; }
 .eq-btnrow { display: flex; gap: 10px; align-items: center; margin-bottom: 6px; flex-wrap: wrap; } .eq-btnrow > span { font: 600 10px 'IBM Plex Mono', monospace; text-transform: uppercase; color: var(--muted-foreground); min-width: 52px; }
 .eq-row-on td { background: rgba(0,200,100,.12); } .eq-table td.eq-left, .eq-table th.eq-left { text-align: left; }
 .eq-plist { display: flex; flex-direction: column; max-height: 520px; overflow: auto; }
-.eq-prow { display: grid; grid-template-columns: minmax(180px,1.5fr) minmax(130px,1fr) 70px minmax(110px,.9fr) 70px minmax(90px,.8fr) auto auto; gap: 8px; align-items: center; font-size: 12px; padding: 3px 0; border-top: 1px dashed var(--border); color: var(--foreground); } .eq-prow-a { grid-template-columns: minmax(180px,1.5fr) minmax(130px,1fr) 70px minmax(160px,1.2fr) 80px; }
+.eq-prow { display: grid; grid-template-columns: minmax(200px,1.6fr) 130px 88px minmax(120px,1fr) 70px minmax(130px,1fr) 100px 66px; gap: 8px; align-items: center; font-size: 12px; padding: 3px 0; border-top: 1px dashed var(--border); color: var(--foreground); } .eq-prow-a { grid-template-columns: minmax(180px,1.5fr) minmax(130px,1fr) 70px minmax(160px,1.2fr) 80px; }
+.eq-prow-h { position: sticky; top: 0; z-index: 2; background: var(--card, var(--background)); border-top: 0; border-bottom: 2px solid var(--border); font: 600 10px 'IBM Plex Mono', monospace; text-transform: uppercase; color: var(--muted-foreground); }
+.eq-prow-g { font: 700 11px 'IBM Plex Mono', monospace; text-transform: uppercase; padding: 6px 0 2px; color: var(--foreground); border-top: 2px solid var(--border); } .eq-prow-n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .eq-prow > .eq-mem-mat { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .eq-prow-c { font: 600 10px 'IBM Plex Mono', monospace; text-transform: uppercase; }
 .eq-fq-modes { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 6px; } .eq-fq-modes button:not(.eq-link) { border: 1px solid var(--border); background: var(--card); color: var(--foreground); font: 600 11px 'IBM Plex Mono', monospace; text-transform: uppercase; padding: 6px 12px; cursor: pointer; } .eq-fq-modes button.active { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); } .eq-fq-modes .eq-link { margin-left: auto; }
 .eq-fq-sum { font: 500 11px 'IBM Plex Mono', monospace; color: var(--muted-foreground); } .eq-fq-nav { display: inline-flex; gap: 8px; align-items: center; font-size: 12px; text-transform: none; letter-spacing: 0; }
@@ -5231,7 +5233,7 @@ function GestaoEquipes({ perm }) {
       </div>
 
       {tab === "resumo" && (() => {
-        const list = people.filter((p) => (rEq === "todos" || p.eq === rEq) && (rCargo === "todos" || eqCargoKey(p) === rCargo)).sort((a, b) => a.eq.localeCompare(b.eq, "pt-BR") || EQ_FT_ORDER[a.ft] - EQ_FT_ORDER[b.ft] || a.nome.localeCompare(b.nome, "pt-BR"));
+        const list = people.filter((p) => (rEq === "todos" || p.eq === rEq) && (rCargo === "todos" || eqCargoKey(p) === rCargo)).sort((a, b) => ["motc", "mot", "conf", "ajud", "adm"].indexOf(eqCargoKey(a)) - ["motc", "mot", "conf", "ajud", "adm"].indexOf(eqCargoKey(b)) || a.func.localeCompare(b.func, "pt-BR") || a.nome.localeCompare(b.nome, "pt-BR"));
         const inEq = people.filter((p) => rEq === "todos" || p.eq === rEq);
         const cargos = {}; list.forEach((p) => { cargos[p.func] = (cargos[p.func] || 0) + 1; });
         const opCols = ["ajud", "conf", "mot", "motC"];
@@ -5268,11 +5270,14 @@ function GestaoEquipes({ perm }) {
           </div></div>
           <p className="eq-note"><b>{list.length}</b> colaborador(es){Object.keys(cargos).length > 1 ? ` · ${Object.entries(cargos).sort((a, b) => b[1] - a[1]).map(([f, n]) => `${f} ${n}`).join(" · ")}` : ""}</p>
           <div className="eq-plist">
-            {list.map((p) => <div key={p.mat} className="eq-prow">
+            <div className="eq-prow eq-prow-h"><span>Colaborador</span><span>Cargo</span><span>Matrícula</span><span>Equipe</span><span>Turno</span><span>Veículo</span><span>Férias</span><span /></div>
+            {list.map((p, i) => <React.Fragment key={p.mat}>
+              {(i === 0 || eqCargoKey(list[i - 1]) !== eqCargoKey(p)) && <div className="eq-prow-g">{{ motc: "Motorista carreta", mot: "Motorista", conf: "Conferente", ajud: "Ajudante", adm: "Administrativo / apoio" }[eqCargoKey(p)]} · {list.filter((x) => eqCargoKey(x) === eqCargoKey(p)).length}</div>}
+              <div className="eq-prow">
               <b className="eq-prow-n">{p.nome}</b><span className={`eq-prow-c eq-ft-${p.ft}`}>{p.func}</span>
               <span className="eq-mem-mat">{p.semMat ? "s/ matrícula" : p.mat}</span><span className="eq-mem-mat">{p.eq}</span><span className="eq-mem-mat">{p.turno}</span>
               <span className="eq-mem-mat">{p.afastado ? "AFASTADO" : (veh.get(p.vkey)?.label ?? "sem veículo")}</span>{ferChip(p) || <span />}{actsFor(p, false)}
-            </div>)}
+            </div></React.Fragment>)}
             {!list.length && <div className="eq-none">Ninguém neste filtro.</div>}
           </div>
         </section>
