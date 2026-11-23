@@ -912,6 +912,34 @@ button.dev-top-row:hover { background: var(--muted); }
 .dev-tb th { padding: 6px 10px; }
 /* Gestão - Equipes */
 .sidebar-link.sidebar-sub { padding-left: 30px; font-size: 12px; }
+.admin-toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 10000; background: #1b1b1b; color: #fff; border: 1px solid #00c853; padding: 10px 16px; font-size: 13px; max-width: 90vw; }
+.sidebar-cat-head { font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; opacity: .8; }
+.sidebar-cat-caret { display: inline-block; width: 17px; text-align: center; }
+.sidebar-cat { display: flex; flex-direction: column; }
+.menu-ed-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.menu-ed { background: var(--card); color: var(--foreground); border: 1px solid var(--border); width: min(720px, 100%); max-height: 90vh; display: flex; flex-direction: column; padding: 16px 18px; gap: 10px; }
+.menu-ed-head { display: flex; justify-content: space-between; align-items: center; font-size: 15px; }
+.menu-ed-x { background: none; border: 0; color: var(--foreground); font-size: 22px; cursor: pointer; }
+.menu-ed-hint { font-size: 12px; opacity: .75; margin: 0; }
+.menu-ed-body { overflow: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 4px; }
+.menu-ed-row { display: flex; align-items: center; gap: 8px; padding: 4px 6px; border: 1px solid var(--border); }
+.menu-ed-row.indent { margin-left: 26px; }
+.menu-ed-row.cat { background: rgba(0,200,83,.10); font-weight: 700; }
+.menu-ed-row.off { opacity: .5; }
+.menu-ed-row input[type=text], .menu-ed-row > input:not([type]) { flex: 1; min-width: 0; padding: 4px 6px; border: 1px solid var(--border); background: var(--card); color: var(--foreground); font-size: 12px; }
+.menu-ed-row select { padding: 4px; border: 1px solid var(--border); background: var(--card); color: var(--foreground); font-size: 11px; width: 160px; flex: none; }
+.menu-ed-arrows { display: inline-flex; flex-direction: column; }
+.menu-ed-arrows button { background: none; border: 0; color: var(--foreground); font-size: 9px; line-height: 1; cursor: pointer; padding: 1px 3px; }
+.menu-ed-hide { font-size: 11px; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; }
+.menu-ed-tag { font-size: 10px; opacity: .7; white-space: nowrap; min-width: 58px; text-align: right; }
+.menu-ed-del { font-size: 11px; border: 1px solid #b3363a; color: #b3363a; background: none; cursor: pointer; padding: 3px 8px; }
+.menu-ed-empty { margin-left: 26px; font-size: 11px; opacity: .6; padding: 3px 0; }
+.menu-ed-new { display: flex; gap: 8px; }
+.menu-ed-new input { flex: 1; padding: 6px 8px; border: 1px solid var(--border); background: var(--card); color: var(--foreground); font-size: 12px; }
+.menu-ed-new button, .menu-ed-foot button { border: 1px solid var(--border); background: var(--card); color: var(--foreground); padding: 6px 12px; font-size: 12px; cursor: pointer; }
+.menu-ed-foot { display: flex; gap: 8px; }
+.menu-ed-foot span { flex: 1; }
+.menu-ed-foot button.primary { background: #00c853; color: #031006; border-color: #00c853; font-weight: 800; }
 .eq-page { color: var(--foreground); }
 .eq-notice { border: 1px solid var(--green); background: var(--card); color: var(--foreground); padding: 8px 12px; font-size: 12px; margin-bottom: 8px; }
 .eq-empty { border: 1px dashed var(--border); background: var(--card); color: var(--foreground); padding: 22px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
@@ -944,6 +972,7 @@ button.dev-top-row:hover { background: var(--muted); }
 .eq-att li.am { border-left-color: #d19a00; } .eq-att li small { color: var(--muted-foreground); font-size: 11px; line-height: 1.4; }
 .eq-rule { border: 1px solid var(--border); background: var(--card); color: var(--foreground); padding: 7px 12px; font-size: 12px; margin-bottom: 8px; }
 .eq-filters { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+.eq-fer-date { display: inline-flex; align-items: center; gap: 6px; } .eq-fer-date input { border: 1px solid var(--border); background: var(--card); color: var(--foreground); padding: 3px 6px; font-size: 12px; font-family: inherit; } .eq-fer-date small { opacity: .7; white-space: nowrap; }
 .eq-search { border: 1px solid var(--border); background: var(--card); color: var(--foreground); padding: 6px 10px; font-size: 12px; min-width: 240px; font-family: inherit; }
 .eq-vlist { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
 .eq-veh { background: var(--card); color: var(--foreground); border: 1px solid var(--border); border-left: 4px solid #2f9e5f; padding: 7px 10px; }
@@ -1715,39 +1744,165 @@ function Metric({ label, value, detail, tone = "default", icon: Icon }) {
   return <div className={`metric metric-${tone}`}><div className="metric-top"><span>{label}</span><Icon size={16} /></div><strong>{value}</strong>{detail && <small>{detail}</small>}</div>;
 }
 
-const modules = [
-  { label: "Simulador de frete", icon: Gauge, page: "home" },
-  { label: "Análise por cliente", icon: UsersRound, page: "clients" },
-  { label: "Coletas", icon: ClipboardList },
-  { label: "Tabelas vigentes", icon: FileSpreadsheet },
-  { label: "Distribuição", icon: Boxes },
-  { label: "Gestão - Equipes", icon: UsersRound, page: "equipes", sub: true },
-  { label: "Recursos - Veículos", icon: Truck, page: "vehicles" },
-  { label: "Diagnóstico Veículos", icon: Wrench, page: "diagnostico" },
-  { label: "Análise Devoluções", icon: Repeat, page: "devolucoes" },
-  { label: "Monitor de filiais", icon: Warehouse },
+const MENU_CATALOG = [
+  { key: "home", label: "Simulador de frete", short: "Simulador", icon: Gauge, page: "home" },
+  { key: "clients", label: "Análise por cliente", icon: UsersRound, topIcon: Building2, page: "clients" },
+  { key: "coletas", label: "Coletas", icon: ClipboardList },
+  { key: "tabelas", label: "Tabelas vigentes", icon: FileSpreadsheet },
+  { key: "distribuicao", label: "Distribuição", icon: Boxes },
+  { key: "equipes", label: "Gestão - Equipes", icon: UsersRound, page: "equipes" },
+  { key: "vehicles", label: "Recursos - Veículos", icon: Truck, page: "vehicles" },
+  { key: "diagnostico", label: "Diagnóstico Veículos", icon: Wrench, page: "diagnostico" },
+  { key: "devolucoes", label: "Análise Devoluções", icon: Repeat, page: "devolucoes" },
+  { key: "monitor", label: "Monitor de filiais", icon: Warehouse },
 ];
+const MENU_DEFAULT_TREE = MENU_CATALOG.map((m) => ({ k: m.key }));
+const menuEntryKey = (e) => (e.cat ? "cat:" + e.cat : e.k);
+/* Junta a configuração salva com o catálogo: ignora chaves que não existem mais e acrescenta ao fim
+   qualquer módulo novo que ainda não esteja na configuração (assim módulos futuros aparecem sozinhos). */
+function menuResolve(cfg) {
+  const valid = new Set(MENU_CATALOG.map((m) => m.key));
+  const seen = new Set();
+  const clean = (arr) => (arr || []).filter((e) => { if (!e || !e.k || !valid.has(e.k) || seen.has(e.k)) return false; seen.add(e.k); return true; });
+  const src = cfg && Array.isArray(cfg.tree) ? cfg.tree : MENU_DEFAULT_TREE;
+  const tree = [];
+  src.forEach((e) => {
+    if (e && e.cat) tree.push({ cat: String(e.cat), label: e.label || "Categoria", items: clean(e.items) });
+    else tree.push(...clean([e]));
+  });
+  MENU_CATALOG.forEach((m) => { if (!seen.has(m.key)) tree.push({ k: m.key }); });
+  return { tree, labels: (cfg && cfg.labels) || {}, hidden: (cfg && cfg.hidden) || [] };
+}
+function menuItemInfo(key, labels) {
+  const m = MENU_CATALOG.find((x) => x.key === key);
+  if (!m) return null;
+  const label = labels[key] || m.label;
+  return { ...m, label, short: labels[key] || m.short || m.label };
+}
+function menuFlat(menu) {
+  const out = [];
+  menu.tree.forEach((e) => { if (e.cat) e.items.forEach((i) => out.push(i.k)); else out.push(e.k); });
+  return out.filter((k) => !menu.hidden.includes(k)).map((k) => menuItemInfo(k, menu.labels)).filter(Boolean);
+}
+function menuMove(tree, key, dir) {
+  const t = JSON.parse(JSON.stringify(tree));
+  const mv = (arr) => { const i = arr.findIndex((e) => menuEntryKey(e) === key); if (i < 0) return false; const j = i + dir; if (j >= 0 && j < arr.length) { const x = arr[i]; arr[i] = arr[j]; arr[j] = x; } return true; };
+  if (!mv(t)) t.forEach((e) => { if (e.cat) mv(e.items); });
+  return t;
+}
+function menuPlace(tree, key, catId) {
+  const t = JSON.parse(JSON.stringify(tree));
+  const rm = (arr) => { const i = arr.findIndex((e) => e.k === key); if (i >= 0) arr.splice(i, 1); };
+  rm(t); t.forEach((e) => { if (e.cat) rm(e.items); });
+  const target = catId ? t.find((e) => e.cat === catId) : null;
+  if (target) target.items.push({ k: key }); else t.push({ k: key });
+  return t;
+}
+function menuCatOf(tree, key) { const c = tree.find((e) => e.cat && e.items.some((i) => i.k === key)); return c ? c.cat : ""; }
+function useMenuCfg() {
+  const [cfg, setCfg] = useState(() => { const s = lsLoad("menu_cfg"); return s && s.data ? s.data : null; });
+  useEffect(() => {
+    let off = false;
+    cloudLoad("menu_cfg").then((row) => { if (!off && row && row.data) { setCfg(row.data); lsSave("menu_cfg", { data: row.data }); } });
+    let ch = null;
+    if (supabaseClient) {
+      ch = supabaseClient.channel("menu_cfg_sync").on("postgres_changes", { event: "*", schema: "public", table: "painel_reports", filter: "id=eq.menu_cfg" }, (p) => { if (p.new && p.new.data) { setCfg(p.new.data); lsSave("menu_cfg", { data: p.new.data }); } }).subscribe();
+    }
+    return () => { off = true; if (ch) supabaseClient.removeChannel(ch); };
+  }, []);
+  const save = (next) => { setCfg(next); lsSave("menu_cfg", { data: next }); cloudSave("menu_cfg", next, "Organização do menu"); };
+  return [cfg, save];
+}
+function MenuEditor({ menu, onSave, onClose }) {
+  const [tree, setTree] = useState(menu.tree);
+  const [labels, setLabels] = useState(menu.labels);
+  const [hidden, setHidden] = useState(menu.hidden);
+  const [newCat, setNewCat] = useState("");
+  const cats = tree.filter((e) => e.cat);
+  const setLabel = (k, v) => setLabels({ ...labels, [k]: v });
+  const toggleHide = (k) => setHidden(hidden.includes(k) ? hidden.filter((x) => x !== k) : [...hidden, k]);
+  function addCat() {
+    const nome = newCat.trim(); if (!nome) return;
+    setTree([...tree, { cat: "c" + Date.now().toString(36), label: nome, items: [] }]); setNewCat("");
+  }
+  function delCat(id) {
+    const c = tree.find((e) => e.cat === id); if (!c) return;
+    const idx = tree.indexOf(c);
+    const t = tree.slice(); t.splice(idx, 1, ...c.items); setTree(t);
+  }
+  function renameCat(id, v) { setTree(tree.map((e) => (e.cat === id ? { ...e, label: v } : e))); }
+  function restore() { setTree(MENU_DEFAULT_TREE); setLabels({}); setHidden([]); }
+  const Row = ({ k, indent }) => {
+    const m = MENU_CATALOG.find((x) => x.key === k); if (!m) return null;
+    return <div className={`menu-ed-row ${indent ? "indent" : ""} ${hidden.includes(k) ? "off" : ""}`}>
+      <span className="menu-ed-arrows"><button type="button" onClick={() => setTree(menuMove(tree, k, -1))} title="Subir">▲</button><button type="button" onClick={() => setTree(menuMove(tree, k, 1))} title="Descer">▼</button></span>
+      <input value={labels[k] ?? m.label} onChange={(e) => setLabel(k, e.target.value)} />
+      <select value={menuCatOf(tree, k)} onChange={(e) => setTree(menuPlace(tree, k, e.target.value))} title="Categoria">
+        <option value="">— Sem categoria —</option>{cats.map((c) => <option key={c.cat} value={c.cat}>{c.label}</option>)}
+      </select>
+      <label className="menu-ed-hide"><input type="checkbox" checked={!hidden.includes(k)} onChange={() => toggleHide(k)} /> exibir</label>
+      {!m.page && <span className="menu-ed-tag">em breve</span>}
+    </div>;
+  };
+  return <div className="menu-ed-overlay" onClick={onClose}>
+    <div className="menu-ed" onClick={(e) => e.stopPropagation()}>
+      <div className="menu-ed-head"><strong>Organizar módulos</strong><button type="button" className="menu-ed-x" onClick={onClose}>×</button></div>
+      <p className="menu-ed-hint">Renomeie, mude a ordem (▲▼), crie categorias e coloque cada módulo dentro delas. A organização vale para todos que abrem o painel.</p>
+      <div className="menu-ed-body">
+        {tree.map((e) => e.cat
+          ? <div key={e.cat} className="menu-ed-cat">
+              <div className="menu-ed-row cat">
+                <span className="menu-ed-arrows"><button type="button" onClick={() => setTree(menuMove(tree, "cat:" + e.cat, -1))}>▲</button><button type="button" onClick={() => setTree(menuMove(tree, "cat:" + e.cat, 1))}>▼</button></span>
+                <input value={e.label} onChange={(ev) => renameCat(e.cat, ev.target.value)} />
+                <span className="menu-ed-tag">categoria · {e.items.length}</span>
+                <button type="button" className="menu-ed-del" onClick={() => delCat(e.cat)} title="Excluir categoria (os módulos voltam para a raiz)">Excluir</button>
+              </div>
+              {e.items.length === 0 && <div className="menu-ed-empty">Vazia — use "Categoria" em um módulo para colocá-lo aqui.</div>}
+              {e.items.map((i) => <Row key={i.k} k={i.k} indent />)}
+            </div>
+          : <Row key={e.k} k={e.k} />)}
+      </div>
+      <div className="menu-ed-new"><input placeholder="Nome da nova categoria" value={newCat} onChange={(e) => setNewCat(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") addCat(); }} /><button type="button" onClick={addCat}>+ Criar categoria</button></div>
+      <div className="menu-ed-foot"><button type="button" onClick={restore}>Restaurar padrão</button><span /><button type="button" onClick={onClose}>Cancelar</button><button type="button" className="primary" onClick={() => onSave({ tree, labels, hidden })}>Salvar</button></div>
+    </div>
+  </div>;
+}
 
-function DashboardLayout({ page, setPage, theme, toggleTheme }) {
+function DashboardLayout({ page, setPage, theme, toggleTheme, menu, onEditMenu, isAdmin, onAdminLogin, onAdminLogout }) {
+  const [open, setOpen] = useState(() => lsLoad("menu_open") || {});
+  const toggle = (id) => { const n = { ...open, [id]: open[id] === false ? true : false }; setOpen(n); lsSave("menu_open", n); };
+  const btn = (k, sub) => {
+    if (menu.hidden.includes(k)) return null;
+    const item = menuItemInfo(k, menu.labels); if (!item) return null;
+    const Icon = item.icon; const active = item.page === page;
+    return item.page
+      ? <button key={k} type="button" className={`sidebar-link ${active ? "active" : ""} ${sub ? "sidebar-sub" : ""}`} title={item.label} onClick={() => setPage(item.page)}><Icon size={17} /><span>{item.label}</span></button>
+      : <button key={k} type="button" className={`sidebar-link sidebar-disabled ${sub ? "sidebar-sub" : ""}`} title={`${item.label} — módulo preparado para expansão`}><Icon size={17} /><span>{item.label}</span></button>;
+  };
   return <aside className="powerbi-sidebar" aria-label="Navegação principal">
     <div className="sidebar-top"><div className="sidebar-brand-mark"><Truck size={20} /></div><span className="sidebar-brand-name">TRAGETTA</span></div>
     <div className="sidebar-section-label">MÓDULOS</div>
-    <nav className="sidebar-nav">{modules.map((item) => { const Icon = item.icon; const active = item.page === page; return item.page ? <button key={item.label} type="button" className={`sidebar-link ${active ? "active" : ""} ${item.sub ? "sidebar-sub" : ""}`} title={item.label} onClick={() => setPage(item.page)}><Icon size={17} /><span>{item.label}</span></button> : <button key={item.label} type="button" className="sidebar-link sidebar-disabled" title={`${item.label} — módulo preparado para expansão`}><Icon size={17} /><span>{item.label}</span></button>; })}</nav>
-    <div className="sidebar-footer"><button type="button" className="sidebar-link sidebar-theme-toggle" onClick={toggleTheme} title={theme === "dark" ? "Alternar para modo claro" : "Alternar para modo escuro"}>{theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}<span>{theme === "dark" ? "Modo claro" : "Modo escuro"}</span></button><button type="button" className="sidebar-link sidebar-disabled" title="Configurações — módulo preparado para expansão"><Settings2 size={17} /><span>Configurações</span></button><div className="sidebar-status"><span className="status-dot" /> Operação online</div></div>
+    <nav className="sidebar-nav">{menu.tree.map((e) => {
+      if (!e.cat) return btn(e.k, false);
+      const vis = e.items.filter((i) => !menu.hidden.includes(i.k));
+      if (!vis.length) return null;
+      const hasActive = vis.some((i) => menuItemInfo(i.k, menu.labels)?.page === page);
+      const isOpen = open[e.cat] !== false || hasActive;
+      return <div key={e.cat} className="sidebar-cat">
+        <button type="button" className="sidebar-link sidebar-cat-head" onClick={() => toggle(e.cat)} title={e.label}><span className="sidebar-cat-caret">{isOpen ? "▾" : "▸"}</span><span>{e.label}</span></button>
+        {isOpen && vis.map((i) => btn(i.k, true))}
+      </div>;
+    })}</nav>
+    <div className="sidebar-footer"><button type="button" className="sidebar-link sidebar-theme-toggle" onClick={toggleTheme} title={theme === "dark" ? "Alternar para modo claro" : "Alternar para modo escuro"}>{theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}<span>{theme === "dark" ? "Modo claro" : "Modo escuro"}</span></button>{isAdmin ? <><button type="button" className="sidebar-link" title="Organizar módulos: renomear, ordenar, criar categorias" onClick={onEditMenu}><Settings2 size={17} /><span>Organizar módulos</span></button><button type="button" className="sidebar-link" title="Sair do modo administrador" onClick={onAdminLogout}><UsersRound size={17} /><span>Sair do admin</span></button></> : <button type="button" className="sidebar-link" title="Entrar como administrador para organizar módulos e atualizar relatórios" onClick={onAdminLogin}><Settings2 size={17} /><span>Entrar como admin</span></button>}<div className="sidebar-status"><span className="status-dot" /> Operação online</div></div>
   </aside>;
 }
 
-function TopBar({ page, setPage }) {
+function TopBar({ page, setPage, menu }) {
   const dateLabel = new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" }).replace(".", "").toUpperCase();
   return <header className="topbar">
     <div className="brand"><div className="brand-mark"><Truck size={18} /></div><div><span className="eyebrow">FRETE GRU / COLETA & ENTREGA</span><h1><span className="wordmark-route">Painel</span> - Distribuição - Coleta</h1></div></div>
     <nav className="topnav">
-      <button type="button" className={`topnav-link ${page === "home" ? "active" : ""}`} onClick={() => setPage("home")}><Truck size={14} /> Simulador</button>
-      <button type="button" className={`topnav-link ${page === "clients" ? "active" : ""}`} onClick={() => setPage("clients")}><Building2 size={14} /> Análise por cliente</button>
-      <button type="button" className={`topnav-link ${page === "vehicles" ? "active" : ""}`} onClick={() => setPage("vehicles")}><Truck size={14} /> Recursos - Veículos</button>
-      <button type="button" className={`topnav-link ${page === "diagnostico" ? "active" : ""}`} onClick={() => setPage("diagnostico")}><Wrench size={14} /> Diagnóstico Veículos</button>
-      <button type="button" className={`topnav-link ${page === "devolucoes" ? "active" : ""}`} onClick={() => setPage("devolucoes")}><Repeat size={14} /> Análise Devoluções</button>
-      <button type="button" className={`topnav-link ${page === "equipes" ? "active" : ""}`} onClick={() => setPage("equipes")}><UsersRound size={14} /> Gestão - Equipes</button>
+      {menuFlat(menu).filter((i) => i.page).map((i) => { const TI = i.topIcon || i.icon; return <button key={i.key} type="button" className={`topnav-link ${page === i.page ? "active" : ""}`} onClick={() => setPage(i.page)}><TI size={14} /> {i.short}</button>; })}
     </nav>
     <div className="topbar-meta"><span className="status-dot" /> Simulação operacional <span className="date-chip">{dateLabel}</span></div>
   </header>;
@@ -5148,6 +5303,9 @@ function GestaoEquipes({ perm }) {
   const [pct, setPct] = useState(() => lsLoad("equipes_cfg")?.pct ?? 10);
   const [ferias, setFerias] = useState(() => { const f = lsLoad("equipes_ferias"); return f && Array.isArray(f.rows) ? f : { rows: [], label: "", updatedAt: null }; });
   const ferRef = useRef(null);
+  const [fprog, setFprog] = useState(() => lsLoad("equipes_ferias_prog")?.items ?? {});
+  const [ferQ, setFerQ] = useState("");
+  const [ferDlg, setFerDlg] = useState(null); // { key, nome, ini }
   const [repBase, setRepBase] = useState(() => { const s = lsLoad("equipes_repos"); return s && Array.isArray(s.rows) ? s : { rows: [], label: "", updatedAt: null }; });
   const [repAj, setRepAj] = useState(() => lsLoad("equipes_repos_aj")?.items ?? { added: {}, removed: {}, edits: {}, regs: {} });
   const [repFilter, setRepFilter] = useState("pend");
@@ -5210,6 +5368,7 @@ function GestaoEquipes({ perm }) {
     pull("equipes_repos_aj", (row) => { if (row.data.items) { setRepAj(row.data.items); lsSave("equipes_repos_aj", { items: row.data.items, updatedAt: row.updated_at }); } });
     pull("equipes_geral", (row) => { if (Array.isArray(row.data.rows)) { const n = { rows: row.data.rows, label: row.label ?? "", updatedAt: row.updated_at }; setGeralBase(n); lsSave("equipes_geral", n); } });
     pull("equipes_geral_aj", (row) => { if (row.data.items) { setGAj(row.data.items); lsSave("equipes_geral_aj", { items: row.data.items, updatedAt: row.updated_at }); } });
+    pull("equipes_ferias_prog", (row) => { if (row.data.items) { setFprog(row.data.items); lsSave("equipes_ferias_prog", { items: row.data.items, updatedAt: row.updated_at }); } });
     pull("equipes_ferias", (row) => { if (Array.isArray(row.data.rows)) { const n = { rows: row.data.rows, label: row.label ?? "", updatedAt: row.updated_at }; setFerias(n); lsSave("equipes_ferias", n); } });
     pull("equipes_veic", (row) => { if (row.data.items) { setOv(row.data.items); lsSave("equipes_veic", { items: row.data.items, updatedAt: row.updated_at }); } });
     pull("frota", (row) => { if (Array.isArray(row.data.rows) && row.data.rows.length) { setFleet(row.data.rows); lsSave("frota", { rows: row.data.rows, label: row.label, updatedAt: row.updated_at }); } });
@@ -5260,7 +5419,9 @@ function GestaoEquipes({ perm }) {
     { const grp = new Map();
       ferias.rows.forEach((f) => { const k = f.mat ? String(f.mat) : frotaNorm(f.nome); if (!grp.has(k)) grp.set(k, []); grp.get(k).push({ ...f, estado: eqFerEstado(f, todayF) }); });
       const rank = { hoje: 0, prog: 1, pend: 2, real: 3 };
-      grp.forEach((recs) => {
+      grp.forEach((recs, gk) => {
+        const pr = fprog[gk];
+        if (pr && pr.ini && pr.fim) { const i = recs.findIndex((r) => r.estado === "pend"); if (i >= 0) { const m = { ...recs[i], ini: pr.ini, fim: pr.fim, ret: pr.ret, prog: true, dias: pr.dias }; m.estado = eqFerEstado(m, todayF); recs[i] = m; } }
         const sorted = recs.slice().sort((a, b) => rank[a.estado] - rank[b.estado] || (a.estado === "real" ? b.ini.localeCompare(a.ini) : a.estado === "pend" ? (a.limM || "").localeCompare(b.limM || "") : a.ini.localeCompare(b.ini)));
         const ch = { ...sorted[0] };
         const ult = recs.filter((r) => r.ini && r.fim && r.fim < todayF && !(r.ini === ch.ini && r.fim === ch.fim)).sort((a, b) => b.fim.localeCompare(a.fim))[0];
@@ -5291,12 +5452,13 @@ function GestaoEquipes({ perm }) {
       return v;
     });
     return { people, vlist, veh };
-  }, [base, ov, effFleet, aj, cap, ferias]);
+  }, [base, ov, effFleet, aj, cap, ferias, fprog]);
 
   const { people, vlist, veh } = model;
   const eqNames = useMemo(() => { const o = []; people.forEach((p) => { if (!o.includes(p.eq)) o.push(p.eq); }); return o; }, [people]);
 
   function persistOv(next) { setOv(next); lsSave("equipes_veic", { items: next, updatedAt: new Date().toISOString() }); cloudSave("equipes_veic", { items: next }, `${Object.keys(next).length} movimentação(ões) de equipe`); }
+  function persistFprog(next) { setFprog(next); lsSave("equipes_ferias_prog", { items: next, updatedAt: new Date().toISOString() }); cloudSave("equipes_ferias_prog", { items: next }, `${Object.keys(next).length} férias programada(s) no painel`); }
   function persistAj(next) { setAj(next); lsSave("equipes_ajustes", { items: next, updatedAt: new Date().toISOString() }); cloudSave("equipes_ajustes", { items: next }, "ajustes de colaboradores (incluir/editar/excluir)"); }
   function saveCfg(c, p) { lsSave("equipes_cfg", { cap: c, pct: p, updatedAt: new Date().toISOString() }); cloudSave("equipes_cfg", { cap: c, pct: p }, "limites (colaboradores por veículo / férias simultâneas)"); }
   function changeCap(v) { const n = Math.max(1, Math.min(12, Number(v) || 3)); setCap(n); saveCfg(n, pct); }
@@ -6114,7 +6276,10 @@ function GestaoEquipes({ perm }) {
           const byCargo = (a, b) => EQ_FT_ORDER[a.ft] - EQ_FT_ORDER[b.ft] || a.func.localeCompare(b.func, "pt-BR") || (a.fer.ini || "").localeCompare(b.fer.ini || "") || a.nome.localeCompare(b.nome, "pt-BR");
           const setor = (p) => p.eq || p.fer?.setor || "—";
           const ym = (d) => `${d.slice(5, 7)}/${d.slice(0, 4)}`;
-          const hoje = F.hoje.slice().sort(byCargo), prox = F.prox60.slice().sort(byCargo), pend = F.pend.slice().sort((a, b) => (a.fer.limM || "9").localeCompare(b.fer.limM || "9") || a.nome.localeCompare(b.nome, "pt-BR"));
+          const hoje = F.hoje.slice().sort(byCargo), prox = F.prox60.slice().sort(byCargo), pendAll = people.filter((p) => p.fer && (p.fer.estado === "pend" || p.fer.prog)).sort((a, b) => (a.fer.limM || "9").localeCompare(b.fer.limM || "9") || a.nome.localeCompare(b.nome, "pt-BR"));
+          const qn = frotaNorm(ferQ).trim();
+          const pend = qn ? pendAll.filter((p) => frotaNorm(p.nome).includes(qn) || String(p.mat).includes(qn)) : pendAll;
+          const fk = (p) => (p.fer.mat ? String(p.fer.mat) : frotaNorm(p.fer.nome));
           const exportFer = () => {
             const wb = XLSX.utils.book_new();
             const add = (nome, head, body) => { const ws = XLSX.utils.aoa_to_sheet([head, ...body]); ws["!cols"] = head.map((h, c) => ({ wch: Math.min(40, Math.max(12, h.length, ...body.map((r) => String(r[c] ?? "").length))) })); XLSX.utils.book_append_sheet(wb, ws, nome); };
@@ -6134,8 +6299,11 @@ function GestaoEquipes({ perm }) {
               {prox.length ? <table className="eq-table eq-table-sug"><thead><tr><th>Colaborador</th><th>Cargo</th><th>Setor</th><th>Início</th><th>Término</th><th>Férias em</th></tr></thead><tbody>{prox.map((p) => <tr key={p.mat}><td><b>{p.nome}</b></td><td>{p.func}</td><td>{setor(p)}</td><td>{eqFmtFull(p.fer.ini)}</td><td>{eqFmtFull(p.fer.fim)}</td><td><b>{eqDiff(p.fer.ini, today)} dia(s)</b></td></tr>)}</tbody></table> : <p className="eq-note">Nenhuma saída nos próximos 60 dias.</p>}
             </section>
             <section className="eq-card">
-              <h3>A programar ({pend.length})</h3>
-              {pend.length ? <table className="eq-table eq-table-sug"><thead><tr><th>Colaborador</th><th>Cargo</th><th>Setor</th><th>Prazo ideal</th><th>Prazo máximo</th><th>Última férias</th><th>Mesmo mês no ano seguinte</th></tr></thead><tbody>{pend.map((p) => <tr key={p.mat}><td><b>{p.nome}</b></td><td>{p.func}</td><td>{setor(p)}</td><td className={p.fer.limI && p.fer.limI < today ? "eq-badtxt" : ""}>{eqFmtFull(p.fer.limI) || "—"}</td><td className={p.fer.limM && p.fer.limM < today ? "eq-badtxt" : ""}>{eqFmtFull(p.fer.limM) || "—"}</td><td>{p.fer.ult ? `${eqFmtFull(p.fer.ult.ini)} a ${eqFmtFull(p.fer.ult.fim)}` : "sem registro"}</td><td>{p.fer.ult ? <b>{p.fer.ult.ini.slice(5, 7)}/{Number(p.fer.ult.ini.slice(0, 4)) + 1}</b> : "—"}</td></tr>)}</tbody></table> : <p className="eq-note">Ninguém pendente.</p>}
+              <h3>A programar ({pend.length}{qn ? ` de ${pendAll.length}` : ""})</h3>
+              <div className="eq-fer-bar"><input className="eq-search" type="search" placeholder="Filtrar por nome…" value={ferQ} onChange={(e) => setFerQ(e.target.value)} aria-label="Filtrar colaborador pelo nome" /></div>
+              {pend.length ? <table className="eq-table eq-table-sug"><thead><tr><th>Colaborador</th><th>Cargo</th><th>Setor</th><th>Prazo ideal</th><th>Prazo máximo</th><th>Última férias</th><th>Mesmo mês no ano seguinte</th><th>Sai de férias em</th><th>Retorno</th></tr></thead><tbody>{pend.map((p) => <tr key={p.mat}><td><b>{p.nome}</b></td><td>{p.func}</td><td>{setor(p)}</td><td className={p.fer.limI && p.fer.limI < today ? "eq-badtxt" : ""}>{eqFmtFull(p.fer.limI) || "—"}</td><td className={p.fer.limM && p.fer.limM < today ? "eq-badtxt" : ""}>{eqFmtFull(p.fer.limM) || "—"}</td><td>{p.fer.ult ? `${eqFmtFull(p.fer.ult.ini)} a ${eqFmtFull(p.fer.ult.fim)}` : "sem registro"}</td><td>{p.fer.ult ? <b>{p.fer.ult.ini.slice(5, 7)}/{Number(p.fer.ult.ini.slice(0, 4)) + 1}</b> : "—"}</td>
+                <td>{ro ? (p.fer.prog ? `${eqFmtFull(p.fer.ini)} · ${p.fer.dias} dias` : "—") : <span className="eq-fer-date"><input type="date" value={p.fer.prog ? p.fer.ini : ""} min={today} onChange={(e) => { if (e.target.value) setFerDlg({ key: fk(p), nome: p.nome, ini: e.target.value }); }} aria-label={`Data de saída de férias de ${p.nome}`} />{p.fer.prog && <small>{p.fer.dias} dias</small>}</span>}</td>
+                <td>{p.fer.prog ? <><b>{eqFmtFull(p.fer.ret)}</b>{!ro && <button type="button" className="eq-link" onClick={() => { const n = { ...fprog }; delete n[fk(p)]; persistFprog(n); }}>limpar</button>}</> : "—"}</td></tr>)}</tbody></table> : <p className="eq-note">{qn ? "Nenhum colaborador com esse nome." : "Ninguém pendente."}</p>}
               <p className="eq-note">Base de férias: {ferias.rows.length} linhas (um colaborador pode ter mais de um período aquisitivo; vale o período em curso, o mais próximo ou o pendente). {F.semBase.length} do CDC não estão na planilha{F.semBase.length ? ` (${F.semBase.slice(0, 6).map((p) => p.nome).join(" · ")}${F.semBase.length > 6 ? " …" : ""})` : ""}.</p>
             </section>
           </>; })()}
@@ -6169,6 +6337,13 @@ function GestaoEquipes({ perm }) {
     </>}
 
     {!empty && Object.keys(aj.removed || {}).length > 0 && tab === "veic" && <section className="eq-card"><h3>Excluídos ({Object.keys(aj.removed).length})</h3>{Object.entries(aj.removed).map(([mat, r]) => <div key={mat} className="eq-mem"><span className="eq-ft">excluído</span><span className="eq-mem-name">{r.nome}</span><span className="eq-mem-mat">{mat}</span><span />{!ro && <span className="eq-acts"><button type="button" className="eq-link" onClick={() => restorePerson(mat)}>Restaurar</button></span>}</div>)}</section>}
+
+    {ferDlg && <div className="eq-modal-bg" onClick={() => setFerDlg(null)}><div className="eq-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+      <h3>Férias de {ferDlg.nome}</h3>
+      <p className="eq-note">Saída em <b>{eqFmtFull(ferDlg.ini)}</b>. Quantos dias de férias?</p>
+      <div className="eq-modal-f">{[15, 30].map((d) => { const fim = eqAddDays(ferDlg.ini, d - 1), ret = eqAddDays(fim, 1); return <button key={d} type="button" className="secondary-action" onClick={() => { persistFprog({ ...fprog, [ferDlg.key]: { ini: ferDlg.ini, dias: d, fim, ret } }); setNotice(`${ferDlg.nome}: ${eqFmtFull(ferDlg.ini)} a ${eqFmtFull(fim)} (${d} dias) · retorna em ${eqFmtFull(ret)}.`); setFerDlg(null); }}><b>{d} dias</b> · retorna {eqFmtFull(ret)}</button>; })}
+        <button type="button" className="secondary-action" onClick={() => setFerDlg(null)}>Cancelar</button></div>
+    </div></div>}
 
     {vf && <div className="eq-modal-bg" onClick={() => setVf(null)}><div className="eq-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
       {vf.mode === "del" ? <><h3>Excluir vaga</h3><p className="eq-note">Excluir a linha <b>{vf.nome}</b> da reposição?</p><div className="eq-modal-f"><button type="button" className="secondary-action" onClick={() => setVf(null)}>Cancelar</button><button type="button" className="secondary-action eq-del" onClick={() => excluirVaga({ key: vf.key })}>Excluir</button></div></> : <>
@@ -6243,7 +6418,7 @@ async function cloudLoadStrict(id) {
   catch (e) { return { ok: false }; }
 }
 const acSessLoad = () => { try { return JSON.parse(window.sessionStorage.getItem("painel_acesso") || "null"); } catch (e) { return null; } };
-const acSessSave = (v) => { try { if (v) window.sessionStorage.setItem("painel_acesso", JSON.stringify(v)); else window.sessionStorage.removeItem("painel_acesso"); } catch (e) { /* sem sessionStorage */ } };
+const acSessSave = (v) => { try { if (v) window.sessionStorage.setItem("painel_acesso", JSON.stringify(v)); else window.sessionStorage.removeItem("painel_acesso"); } catch (e) { /* sem sessionStorage */ } try { window.dispatchEvent(new Event("painel_acesso")); } catch (e) { /* ignora */ } };
 
 function AcessoGate({ modulo, children }) {
   const [status, setStatus] = useState("loading"); // loading | ready | offline
@@ -6253,6 +6428,7 @@ function AcessoGate({ modulo, children }) {
   const [msg, setMsg] = useState(null);
   const [busy, setBusy] = useState(false);
   const [panel, setPanel] = useState(false);
+  useEffect(() => { const h = () => setSess(acSessLoad()); window.addEventListener("painel_acesso", h); return () => window.removeEventListener("painel_acesso", h); }, []);
   useEffect(() => {
     let off = false;
     cloudLoadStrict("acessos").then((r) => {
@@ -6369,8 +6545,44 @@ function AcessoAdmin({ acc, persist }) {
   </main>;
 }
 
+function AdminLogin({ onClose }) {
+  const [pw, setPw] = useState(""); const [msg, setMsg] = useState(null); const [busy, setBusy] = useState(false);
+  async function go(e) {
+    e.preventDefault(); setMsg(null); setBusy(true);
+    try {
+      const r = await cloudLoadStrict("acessos");
+      const acc = r.ok ? (r.row && r.row.data && r.row.data.items) : (lsLoad("acessos")?.items ?? null);
+      if (!acc || !acc.admin) { setMsg('Ainda não há senha de administrador. Defina-a abrindo "Gestão - Equipes" (primeiro acesso).'); setBusy(false); return; }
+      if (!(await acCheck(pw, acc.admin))) { await new Promise((x) => setTimeout(x, 700)); setMsg("Senha incorreta."); setBusy(false); return; }
+      acSessSave({ id: "admin" }); onClose();
+    } catch (er) { setMsg("Este navegador não permite criptografar a senha (use https)."); setBusy(false); }
+  }
+  return <div className="menu-ed-overlay" onClick={onClose}><form className="menu-ed" style={{ width: "min(380px,100%)" }} onClick={(e) => e.stopPropagation()} onSubmit={go}>
+    <div className="menu-ed-head"><strong>Entrar como administrador</strong><button type="button" className="menu-ed-x" onClick={onClose}>×</button></div>
+    <p className="menu-ed-hint">Somente o administrador organiza os módulos e atualiza relatórios.</p>
+    <div className="menu-ed-new"><input type="password" autoFocus placeholder="Senha do admin" autoComplete="current-password" value={pw} onChange={(e) => setPw(e.target.value)} /></div>
+    {msg && <div className="eq-issue">{msg}</div>}
+    <div className="menu-ed-foot"><span /><button type="button" onClick={onClose}>Cancelar</button><button type="submit" className="primary" disabled={busy}>{busy ? "Verificando…" : "Entrar"}</button></div>
+  </form></div>;
+}
+
 function App() {
   const [page, setPage] = useState("home");
+  const [menuCfg, saveMenuCfg] = useMenuCfg();
+  const menu = useMemo(() => menuResolve(menuCfg), [menuCfg]);
+  const [menuEd, setMenuEd] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(() => acSessLoad()?.id === "admin");
+  const [adminLogin, setAdminLogin] = useState(false);
+  const [lockMsg, setLockMsg] = useState(null);
+  useEffect(() => { const h = () => setIsAdmin(acSessLoad()?.id === "admin"); window.addEventListener("painel_acesso", h); return () => window.removeEventListener("painel_acesso", h); }, []);
+  /* Só o administrador atualiza relatórios: bloqueia qualquer seletor de arquivo (clique direto ou via botão) para os demais. */
+  useEffect(() => {
+    if (isAdmin) return;
+    const h = (e) => { const t = e.target; if (t && t.tagName === "INPUT" && t.type === "file") { e.preventDefault(); e.stopPropagation(); setLockMsg("Somente o administrador pode atualizar relatórios. Use “Entrar como admin” na lateral."); } };
+    document.addEventListener("click", h, true);
+    return () => document.removeEventListener("click", h, true);
+  }, [isAdmin]);
+  useEffect(() => { if (!lockMsg) return; const t = setTimeout(() => setLockMsg(null), 4500); return () => clearTimeout(t); }, [lockMsg]);
   const [theme, setTheme] = useState("light");
   const [manifestDataset, setManifestDataset] = useState(() => {
     const saved = lsLoad("manifest");
@@ -6456,8 +6668,11 @@ function App() {
     <div className={`app-shell ${page === "clients" || page === "vehicles" || page === "diagnostico" || page === "devolucoes" || page === "equipes" ? "client-analysis-shell" : ""}`}>
       <style>{CSS_TEXT}</style>
       <input ref={manifestFileInputRef} className="hidden-file-input" type="file" accept=".xlsx,.xls" onChange={handleManifestImport} />
-      <DashboardLayout page={page} setPage={setPage} theme={theme} toggleTheme={toggleTheme} />
-      <TopBar page={page} setPage={setPage} />
+      <DashboardLayout page={page} setPage={setPage} theme={theme} toggleTheme={toggleTheme} menu={menu} isAdmin={isAdmin} onEditMenu={() => setMenuEd(true)} onAdminLogin={() => setAdminLogin(true)} onAdminLogout={() => acSessSave(null)} />
+      <TopBar page={page} setPage={setPage} menu={menu} />
+      {adminLogin && !isAdmin && <AdminLogin onClose={() => setAdminLogin(false)} />}
+      {lockMsg && <div className="admin-toast" role="alert">{lockMsg}</div>}
+      {menuEd && isAdmin && <MenuEditor menu={menu} onClose={() => setMenuEd(false)} onSave={(c) => { if (isAdmin) saveMenuCfg(c); setMenuEd(false); }} />}
       <GlobalStatusBar coletaStatus={coletaStatus} manifestSourceLabel={manifestSourceLabel} manifestUpdatedAt={manifestUpdatedAt} manifestLoaded={!!manifestDataset} receitaStatus={receitaStatus} />
       {page === "home" ? <Home /> : page === "clients" ? <ClientAnalysis manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} onColetaStatusChange={setColetaStatus} onReceitaStatusChange={setReceitaStatus} /> : page === "diagnostico" ? <DiagnosticoVeiculos /> : page === "devolucoes" ? <AnaliseDevolucoes /> : page === "equipes" ? <AcessoGate modulo="equipes">{(perm) => <GestaoEquipes perm={perm} />}</AcessoGate> : <VehicleResources manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} />}
     </div>
