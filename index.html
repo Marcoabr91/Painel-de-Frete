@@ -913,6 +913,39 @@ button.dev-top-row:hover { background: var(--muted); }
 /* Gestão - Equipes */
 .sidebar-link.sidebar-sub { padding-left: 30px; font-size: 12px; }
 .admin-toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 10000; background: #1b1b1b; color: #fff; border: 1px solid #00c853; padding: 10px 16px; font-size: 13px; max-width: 90vw; }
+.data-stamp { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 22px; padding: 7px 24px; border-bottom: 1px solid var(--border); background: var(--card); color: var(--foreground); }
+.data-stamp > b { font-size: 12px; font-weight: 800; }
+.data-stamp-item { display: inline-flex; align-items: baseline; gap: 7px; }
+.data-stamp-item small { color: var(--muted-foreground); font: 600 10px 'IBM Plex Mono', monospace; text-transform: uppercase; }
+.data-stamp-item strong { font: 700 12px 'IBM Plex Mono', monospace; color: var(--foreground); }
+.data-stamp-item strong.none { color: var(--red); }
+.hr-bar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+.hr-tabs { display: flex; flex-wrap: wrap; gap: 4px; }
+.hr-tab { border: 1px solid var(--border); background: var(--card); color: var(--foreground); padding: 6px 12px; font-size: 12px; cursor: pointer; }
+.hr-tab.on { background: var(--green); color: #031006; border-color: var(--green); font-weight: 800; }
+.hr-dia { font-size: 11px; color: var(--muted-foreground); display: inline-flex; gap: 6px; align-items: center; }
+.hr-dia select, .hr-filtros select, .hr-filtros input, .hr-jform select, .hr-jform input { border: 1px solid var(--border); background: var(--card); color: var(--foreground); padding: 5px 7px; font-size: 12px; font-family: inherit; }
+.hr-excl-chip { border: 1px solid #d19a00; color: #d19a00; background: transparent; font-size: 11px; padding: 5px 9px; cursor: pointer; }
+.hr-modo { display: grid; gap: 3px; font-size: 11px; color: var(--foreground); }
+.hr-modo label { display: flex; gap: 6px; align-items: center; } .hr-modo input { width: auto; margin: 0; }
+.bf-up > div:has(> small:only-child) { flex-basis: 100%; } .bf-up small { white-space: normal; }
+.hr-flow { display: flex; height: 34px; border: 1px solid var(--border); }
+.hr-flow > div { display: flex; align-items: center; padding: 0 8px; font-size: 11px; font-weight: 700; overflow: hidden; white-space: nowrap; color: var(--foreground); }
+.hr-f1 { background: color-mix(in srgb, #4f8fd6 28%, transparent); } .hr-f2 { background: color-mix(in srgb, var(--green) 34%, transparent); } .hr-f3 { background: color-mix(in srgb, #d19a00 34%, transparent); }
+.hr-filtros { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.hr-filtros > input { width: 110px; } .hr-filtros .client-search { min-width: 230px; flex: 1; } .hr-filtros small { color: var(--muted-foreground); }
+.hr-scroll { max-height: 440px; overflow: auto; } .hr-scroll.tall { max-height: 68vh; }
+.hr-scroll thead th { position: sticky; top: 0; background: var(--card); z-index: 1; }
+.hr-small { min-width: 0 !important; } .hr-sheet { min-width: 1280px !important; }
+.hr-small td, .hr-small th { white-space: nowrap; } .hr-small td small { white-space: normal; }
+tr.hr-err td { background: color-mix(in srgb, var(--red) 14%, transparent); }
+tr.hr-lote td { background: color-mix(in srgb, #d19a00 14%, transparent); }
+tr.hr-g td { border-top: 2px solid var(--border); }
+.hr-alert { color: var(--red); font-weight: 700; font-size: 11px; white-space: normal !important; }
+.hr-jform { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; align-items: end; }
+.hr-jform label { display: grid; gap: 3px; font-size: 10px; font-weight: 700; color: var(--muted-foreground); text-transform: uppercase; }
+.hr-jform label:first-child { grid-column: span 2; }
+@media (max-width: 900px) { .hr-jform { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .sidebar-cat-head { font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; opacity: .8; }
 .sidebar-cat-caret { display: inline-block; width: 17px; text-align: center; }
 .sidebar-cat { display: flex; flex-direction: column; }
@@ -1397,7 +1430,7 @@ function statusLabel(key) { return STATUS_LABELS[key] ?? key; }
    computador, não compartilhado entre pessoas — ver nota na tela sobre isso. */
 const LS_PREFIX = "painelFreteGru:v1:";
 function lsSave(key, value) {
-  try { window.localStorage.setItem(LS_PREFIX + key, JSON.stringify(value)); return true; }
+  try { window.localStorage.setItem(LS_PREFIX + key, JSON.stringify(value)); try { window.dispatchEvent(new Event("painel_ls")); } catch (e2) { /* ignora */ } return true; }
   catch (e) { console.warn("Não foi possível salvar localmente:", e); return false; }
 }
 function lsLoad(key) {
@@ -1747,7 +1780,7 @@ function Metric({ label, value, detail, tone = "default", icon: Icon }) {
 const MENU_CATALOG = [
   { key: "home", label: "Simulador de frete", short: "Simulador", icon: Gauge, page: "home" },
   { key: "clients", label: "Análise por cliente", icon: UsersRound, topIcon: Building2, page: "clients" },
-  { key: "coletas", label: "Coletas", icon: ClipboardList },
+  { key: "coletas", label: "Coletas - Horários", icon: Clock3, page: "coletas" },
   { key: "tabelas", label: "Tabelas vigentes", icon: FileSpreadsheet },
   { key: "distribuicao", label: "Distribuição", icon: Boxes },
   { key: "equipes", label: "Gestão - Equipes", icon: UsersRound, page: "equipes" },
@@ -5152,6 +5185,381 @@ function GlobalStatusBar({ coletaStatus, manifestSourceLabel, manifestUpdatedAt,
   );
 }
 
+/* ===================== Coletas - Horários ===================== */
+const HR_ID = "horarios", HR_CFG = "horarios_cfg";
+const hrPad = (n) => String(n).padStart(2, "0");
+const HR_CFG_DEFAULT = () => ({ excl: { clientes: { "04020028002276": { nome: "GOLLOG - SERVICOS DE CARGAS DA SOL", motivo: "Embarque aéreo, não é da operação", at: "2026-11-23T12:00:00.000Z" } }, manifestos: {} }, janelas: {} });
+function hrDT(v) {
+  if (v === null || v === undefined || v === "") return null;
+  let y, mo, d, h = 0, mi = 0;
+  if (typeof v === "number") {
+    if (v < 20000) return null;
+    const t = Math.round(((v - 25569) * 86400) / 60) * 60; const dt = new Date(t * 1000);
+    y = dt.getUTCFullYear(); mo = dt.getUTCMonth() + 1; d = dt.getUTCDate(); h = dt.getUTCHours(); mi = dt.getUTCMinutes();
+  } else {
+    const m = String(v).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/);
+    if (!m) return null;
+    d = +m[1]; mo = +m[2]; y = +m[3]; h = m[4] ? +m[4] : 0; mi = m[5] ? +m[5] : 0;
+  }
+  return `${y}-${hrPad(mo)}-${hrPad(d)}T${hrPad(h)}:${hrPad(mi)}`;
+}
+const hrDiff = (a, b) => (a && b ? Math.round((Date.parse(b + ":00Z") - Date.parse(a + ":00Z")) / 60000) : null);
+const hrMinDay = (iso) => (iso ? Number(iso.slice(11, 13)) * 60 + Number(iso.slice(14, 16)) : null);
+const hrHM = (s) => (s && /^\d{1,2}:\d{2}/.test(s) ? Number(s.split(":")[0]) * 60 + Number(s.split(":")[1]) : null);
+const hrFmtD = (m) => (m === null || m === undefined || isNaN(m) ? "—" : `${m < 0 ? "-" : ""}${Math.floor(Math.abs(m) / 60)}h${hrPad(Math.abs(m) % 60)}`);
+const hrDM = (iso) => (iso ? `${iso.slice(8, 10)}/${iso.slice(5, 7)} ${iso.slice(11, 16)}` : "—");
+const hrDMY = (iso) => (iso ? `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}` : "");
+const hrCnpjFmt = (s) => (/^\d{14}$/.test(s || "") ? `${s.slice(0, 2)}.${s.slice(2, 5)}.${s.slice(5, 8)}/${s.slice(8, 12)}-${s.slice(12)}` : String(s || "").replace(/^N:/, ""));
+const hrDigits = (v) => { if (typeof v === "number") return String(Math.round(v)).padStart(14, "0"); const d = String(v ?? "").replace(/\D/g, ""); return d ? d.padStart(14, "0") : ""; };
+
+function hrParse(workbook) {
+  const rowsOf = (n) => XLSX.utils.sheet_to_json(workbook.Sheets[n], { header: 1, defval: "", raw: true });
+  const resName = workbook.SheetNames.find((n) => frotaNorm(n) === "RESUMO");
+  if (!resName) throw new Error('Não encontrei a aba "Resumo" (Saída Mec, chegada e saída do cliente, chegada Mec).');
+  const res = rowsOf(resName);
+  const hi = res.findIndex((r) => r.some((c) => frotaNorm(c) === "SAIDA MEC"));
+  if (hi < 0) throw new Error('Não encontrei o cabeçalho "Saída Mec" na aba Resumo.');
+  const H = res[hi].map((c) => frotaNorm(c));
+  const col = (pred) => H.findIndex(pred);
+  const ix = {
+    sm: col((h) => h === "SAIDA MEC"), cc: col((h) => h.startsWith("DT_CHEGADA_CLIENTES")), sc: col((h) => h === "SAIDA CLIENTE"), cm: col((h) => h === "CHEGADA MEC"),
+    veic: col((h) => h === "VEICULO"), cli: col((h) => h === "RAZAO_SOCIAL_SOL"), col: col((h) => h === "NR_COLETAS"), man: col((h) => h === "MANIFESTO"), mot: col((h) => h === "MOTORISTA"),
+    usr: col((h) => /USUARIO|LOGIN|BAIXADO POR|BAIXA POR/.test(h)),
+  };
+  if (ix.sm < 0 || ix.cc < 0 || ix.sc < 0 || ix.cm < 0 || ix.col < 0 || ix.man < 0) throw new Error("A aba Resumo não tem todas as colunas esperadas (Saída Mec, chegada cliente, saída cliente, chegada Mec, NR_COLETAS, MANIFESTO).");
+  const info = new Map();
+  const relName = workbook.SheetNames.find((n) => frotaNorm(n).startsWith("REL.COLETA"));
+  if (relName) {
+    const rel = rowsOf(relName); const RH = (rel[0] || []).map((c) => frotaNorm(c)); const rc = (n) => RH.indexOf(n);
+    const ic = rc("NR_COLETAS"), icn = rc("CNPJ_CLIENTES_SOL"), icd = rc("NM_CIDADE"), ir = rc("REGIAO"), icl = rc("CLASSE DO VEICULO"), ifl = rc("SIGLA_FILIAIS_ATENDIMENTO");
+    if (ic >= 0) for (let i = 1; i < rel.length; i++) { const r = rel[i]; const k = String(Math.round(Number(r[ic]) || 0)); if (k !== "0") info.set(k, { cnpj: icn >= 0 ? hrDigits(r[icn]) : "", cid: icd >= 0 ? String(r[icd] || "") : "", reg: ir >= 0 ? String(r[ir] || "") : "", cl: icl >= 0 ? String(r[icl] || "") : "", fil: ifl >= 0 ? String(r[ifl] || "") : "" }); }
+  }
+  const out = []; const st = { lidas: 0, semManifesto: 0, semHorario: 0, semRelColeta: 0, relColeta: !!relName };
+  for (let i = hi + 1; i < res.length; i++) {
+    const r = res[i]; const cli = String(r[ix.cli] ?? "").trim(); const c = Math.round(Number(r[ix.col]) || 0);
+    if (!cli || !c) continue;
+    st.lidas++;
+    const man = Math.round(Number(r[ix.man]) || 0); const veic = String(r[ix.veic] ?? "").trim();
+    if (!man || veic === "#N/D" || veic === "") { st.semManifesto++; continue; }
+    const inf = info.get(String(c)); if (!inf) st.semRelColeta++;
+    const row = { m: String(man), c: String(c), cnpj: (inf && inf.cnpj) || `N:${cli}`, cli, v: veic, mot: String(r[ix.mot] ?? "").trim(), sm: hrDT(r[ix.sm]), cc: hrDT(r[ix.cc]), sc: hrDT(r[ix.sc]), cm: hrDT(r[ix.cm]), cid: inf ? inf.cid : "", reg: inf ? inf.reg : "", cl: inf ? inf.cl : "", fil: inf ? inf.fil : "" };
+    if (ix.usr >= 0) row.u = String(r[ix.usr] ?? "").trim();
+    if (!row.cc || !row.sc) st.semHorario++;
+    out.push(row);
+  }
+  if (!out.length) throw new Error("Nenhuma coleta com manifesto encontrada na aba Resumo.");
+  return { rows: out, stats: { ...st, manifestos: new Set(out.map((x) => x.m)).size, cnpjs: new Set(out.map((x) => x.cnpj)).size } };
+}
+
+function hrJanela(j, ccIso) {
+  if (!j) return { tag: "sem janela" };
+  const ini = hrHM(j.de) ?? hrHM(j.ap), fim = hrHM(j.ate) ?? hrHM(j.lim);
+  if (ini === null && fim === null) return { tag: "sem janela" };
+  const m = hrMinDay(ccIso); if (m === null) return { tag: "sem horário" };
+  if (fim !== null && m > fim) return { tag: "atrasou", min: m - fim, ini, fim };
+  if (ini !== null && m < ini) return { tag: "adiantado", min: ini - m, ini, fim };
+  return { tag: "no prazo", ini, fim };
+}
+
+function hrCompute(all, cfg, dia) {
+  const exC = (cfg.excl && cfg.excl.clientes) || {}, exM = (cfg.excl && cfg.excl.manifestos) || {}, jan = cfg.janelas || {};
+  let excluidas = 0;
+  const rows = all.filter((r) => { const x = exC[r.cnpj] || exM[r.m]; if (x) excluidas++; return !x; });
+  const g = new Map(); for (const r of rows) { if (!g.has(r.m)) g.set(r.m, []); g.get(r.m).push(r); }
+  const mans = [], tabela = [];
+  const stopsAll = [];
+  for (const [m, list] of g) {
+    list.sort((a, b) => String(a.cc || "~").localeCompare(String(b.cc || "~")) || String(a.sc || "~").localeCompare(String(b.sc || "~")) || a.c.localeCompare(b.c));
+    const sm = (list.find((r) => r.sm) || {}).sm || null;
+    const dKey = (sm || (list.find((r) => r.cc) || {}).cc || "").slice(0, 10);
+    if (dia && dKey !== dia) continue;
+    const cm = list.reduce((a, r) => (r.cm && (!a || r.cm > a) ? r.cm : a), null);
+    const lastSc = list.reduce((a, r) => (r.sc && (!a || r.sc > a) ? r.sc : a), null);
+    const sk = new Map();
+    list.forEach((r) => { const k = `${r.cc || ""}|${r.sc || ""}`; if (!sk.has(k)) sk.set(k, { cc: r.cc, sc: r.sc, rows: [] }); sk.get(k).rows.push(r); });
+    const stops = [...sk.values()];
+    stops.forEach((s, i) => {
+      s.i = i; s.lote = s.rows.length > 1 && new Set(s.rows.map((r) => r.cnpj)).size > 1;
+      s.errs = new Set();
+      if (s.cc && sm && s.cc === sm) s.errs.add("Chegada = saída Mec");
+      if (s.cc && sm && s.cc < sm) s.errs.add("Chegada antes da saída do Mec");
+      if (s.cc && s.sc && s.sc < s.cc) s.errs.add("Saída antes da chegada");
+      s.hard = s.errs.size > 0;
+      s.perm = !s.hard ? hrDiff(s.cc, s.sc) : null;
+      const prev = stops[i - 1];
+      s.ida = i === 0 ? (!s.hard ? hrDiff(sm, s.cc) : null) : null;
+      s.desl = i > 0 && prev.sc && s.cc ? (() => { const d = hrDiff(prev.sc, s.cc); return d >= 0 ? d : null; })() : null;
+    });
+    const last = stops.reduce((a, s) => (s.sc && (!a || s.sc >= a.sc) ? s : a), null);
+    const mecAntes = !!(cm && lastSc && cm < lastSc);
+    const ret = last && !last.hard && !mecAntes && cm ? hrDiff(last.sc, cm) : null;
+    const errTipos = new Set(); stops.forEach((s) => s.errs.forEach((e) => errTipos.add(e))); if (mecAntes) errTipos.add("Mec antes do cliente");
+    const mm = { m, veic: list[0].v, mot: list[0].mot, sm, cm, n: list.length, nStops: stops.length, dia: dKey, pc: stops[0] ? stops[0].cc : null, ida: stops[0] ? stops[0].ida : null, ret, total: sm && cm ? hrDiff(sm, cm) : null, errTipos: [...errTipos], stops, last, lastSc, pos12: sm ? hrMinDay(sm) >= 720 : false, user: [...new Set(list.map((r) => r.u).filter(Boolean))].join(", "), rows: list };
+    mm.janStat = stops.map((s) => { const j = jan[s.rows[0].cnpj]; const w = hrJanela(j, s.cc); const prev = stops[s.i - 1]; let causa = ""; if (w.tag === "atrasou") { if (s.i === 0) causa = hrMinDay(sm) >= 720 ? `saída após as 12h (${sm.slice(11, 16)})` : `ida longa (${hrFmtD(s.ida)})`; else if (prev && prev.sc && hrMinDay(prev.sc) > w.fim) causa = `preso em ${prev.rows[0].cli.slice(0, 22)} até ${prev.sc.slice(11, 16)}`; else causa = `deslocamento entre clientes (${hrFmtD(s.desl)})`; } return { ...w, causa, cli: s.rows[0].cli }; });
+    mans.push(mm);
+    list.forEach((r, i) => {
+      const s = sk.get(`${r.cc || ""}|${r.sc || ""}`);
+      const hard = [...s.errs]; if (mecAntes && s === last) hard.push("Mec antes do cliente");
+      tabela.push({ mk: String(mm.sm || mm.pc || ""), r, ord: `${i + 1}/${list.length}`, first: i === 0, lote: s.lote, errs: hard, perm: s.hard ? null : hrDiff(r.cc, r.sc), ida: s === stops[0] && r === s.rows[0] ? s.ida : null, desl: r === s.rows[0] ? s.desl : null, ret: s === last && ret !== null && r === s.rows[s.rows.length - 1] ? ret : null, total: mm.total });
+    });
+    stops.forEach((s) => stopsAll.push({ m, s }));
+  }
+  mans.sort((a, b) => String(a.sm || a.pc || "").localeCompare(String(b.sm || b.pc || "")) || a.m.localeCompare(b.m));
+  tabela.sort((x, y) => x.mk.localeCompare(y.mk) || x.r.m.localeCompare(y.r.m));
+  const avg = (a) => (a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length) : null);
+  const perms = stopsAll.filter((x) => x.s.perm !== null).map((x) => x.s.perm);
+  const idas = mans.filter((x) => x.ida !== null && x.ida > 0).map((x) => x.ida);
+  const rets = mans.filter((x) => x.ret !== null && x.ret >= 0).map((x) => x.ret);
+  const pos = mans.filter((x) => x.pos12);
+  const cmH = (x) => (x.cm ? hrMinDay(x.cm) : null);
+  const erros = mans.filter((x) => x.errTipos.length);
+  const grp = new Map();
+  stopsAll.forEach(({ s }) => { if (s.perm === null) return; const seen = new Set(); s.rows.forEach((r) => { if (seen.has(r.cnpj)) return; seen.add(r.cnpj); if (!grp.has(r.cnpj)) grp.set(r.cnpj, { cnpj: r.cnpj, nome: r.cli, v: [] }); grp.get(r.cnpj).v.push(s.perm); }); });
+  const segura = [...grp.values()].map((x) => ({ cnpj: x.cnpj, nome: x.nome, p: x.v.length, med: avg(x.v), mx: Math.max(...x.v), h: x.v.reduce((a, b) => a + b, 0) / 60 })).sort((a, b) => b.h - a.h);
+  const rg = new Map();
+  mans.forEach((x) => { if (x.ret === null || x.ret < 0 || !x.last) return; const r = x.last.rows[0]; if (!rg.has(r.cnpj)) rg.set(r.cnpj, { cnpj: r.cnpj, nome: r.cli, v: [] }); rg.get(r.cnpj).v.push(x.ret); });
+  const retorno = [...rg.values()].filter((x) => x.v.length >= 2).map((x) => ({ cnpj: x.cnpj, nome: x.nome, m: x.v.length, med: avg(x.v), mx: Math.max(...x.v) })).sort((a, b) => b.med - a.med);
+  return {
+    mans, tabela, segura, retorno, erros, pos, excluidas,
+    kpi: { mans: mans.length, coletas: mans.reduce((a, x) => a + x.n, 0), paradas: perms.length, perm: avg(perms), ida: avg(idas), ret: avg(rets), nRet: rets.length, pos12: pos.length, pos18: pos.filter((x) => cmH(x) !== null && cmH(x) >= 1080).length, pos20: pos.filter((x) => cmH(x) !== null && cmH(x) >= 1200).length, erros: erros.length },
+  };
+}
+
+function HorariosColeta({ isAdmin }) {
+  const [data, setData] = useState(() => lsLoad(HR_ID));
+  const [cfg, setCfg] = useState(() => lsLoad(HR_CFG)?.cfg ?? HR_CFG_DEFAULT());
+  const [tab, setTab] = useState("geral");
+  const [dia, setDia] = useState("");
+  const [modo, setModo] = useState("add");
+  const [busy, setBusy] = useState("");
+  const [err, setErr] = useState(null);
+  const [fMan, setFMan] = useState(""), [fVeic, setFVeic] = useState(""), [fBusca, setFBusca] = useState(""), [fMostrar, setFMostrar] = useState("todos");
+  const [lim, setLim] = useState(150);
+  const [fJan, setFJan] = useState({ cnpj: "", de: "", ate: "", ap: "", lim: "" });
+  const [fEx, setFEx] = useState({ q: "", motivo: "" });
+  const [msg, setMsg] = useState(null);
+  const fileRef = useRef(null);
+
+  useEffect(() => {
+    let off = false;
+    cloudLoad(HR_ID).then((row) => { if (off || !row || !row.data || !Array.isArray(row.data.rows)) return; const at = lsLoad(HR_ID)?.updatedAt; if (!at || new Date(row.updated_at) > new Date(at)) { const n = { rows: row.data.rows, label: row.label, updatedAt: row.updated_at, de: row.data.de, ate: row.data.ate, file: row.data.file, last: row.data.last }; setData(n); lsSave(HR_ID, n); } });
+    cloudLoad(HR_CFG).then((row) => { if (off || !row || !row.data || !row.data.excl) return; setCfg({ excl: row.data.excl, janelas: row.data.janelas || {} }); lsSave(HR_CFG, { cfg: { excl: row.data.excl, janelas: row.data.janelas || {} }, updatedAt: row.updated_at }); });
+    let ch = null;
+    if (supabaseClient) {
+      ch = supabaseClient.channel("horarios_sync").on("postgres_changes", { event: "*", schema: "public", table: "painel_reports" }, (p) => {
+        const row = p.new; if (!row || !row.data) return;
+        if (row.id === HR_ID && Array.isArray(row.data.rows)) { const n = { rows: row.data.rows, label: row.label, updatedAt: row.updated_at, de: row.data.de, ate: row.data.ate, file: row.data.file, last: row.data.last }; setData(n); lsSave(HR_ID, n); }
+        if (row.id === HR_CFG && row.data.excl) { const c = { excl: row.data.excl, janelas: row.data.janelas || {} }; setCfg(c); lsSave(HR_CFG, { cfg: c, updatedAt: row.updated_at }); }
+      }).subscribe();
+    }
+    return () => { off = true; if (ch) supabaseClient.removeChannel(ch); };
+  }, []);
+
+  const rows = data?.rows ?? [];
+  const calc = useMemo(() => (rows.length ? hrCompute(rows, cfg, dia) : null), [rows, cfg, dia]);
+  const dias = useMemo(() => [...new Set(rows.map((r) => (r.sm || r.cc || "").slice(0, 10)).filter(Boolean))].sort(), [rows]);
+  const clientes = useMemo(() => { const m = new Map(); rows.forEach((r) => m.set(r.cnpj, r.cli)); return [...m.entries()].map(([cnpj, nome]) => ({ cnpj, nome })).sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")); }, [rows]);
+
+  function persistCfg(next) { setCfg(next); lsSave(HR_CFG, { cfg: next, updatedAt: new Date().toISOString() }); cloudSave(HR_CFG, next, `${Object.keys(next.excl.clientes).length} cliente(s) e ${Object.keys(next.excl.manifestos).length} manifesto(s) fora da análise · ${Object.keys(next.janelas).length} janela(s)`); }
+  const deny = () => { if (!isAdmin) { setMsg("Somente o administrador altera exclusões e janelas."); return true; } return false; };
+  function exclCliente(cnpj, nome, motivo) { if (deny()) return; const mo = motivo ?? window.prompt(`Motivo para desconsiderar ${nome}:`, "Fora da operação"); if (mo === null) return; persistCfg({ ...cfg, excl: { ...cfg.excl, clientes: { ...cfg.excl.clientes, [cnpj]: { nome, motivo: mo || "Fora da operação", at: new Date().toISOString() } } } }); }
+  function exclManifesto(m, motivo) { if (deny()) return; const mo = motivo ?? window.prompt(`Motivo para desconsiderar o manifesto ${m}:`, "Fora da operação"); if (mo === null) return; persistCfg({ ...cfg, excl: { ...cfg.excl, manifestos: { ...cfg.excl.manifestos, [m]: { motivo: mo || "Fora da operação", at: new Date().toISOString() } } } }); }
+  function restaurar(tipo, k) { if (deny()) return; const c = { ...cfg.excl[tipo] }; delete c[k]; persistCfg({ ...cfg, excl: { ...cfg.excl, [tipo]: c } }); }
+  function addExcl() {
+    if (deny()) return; const q = fEx.q.trim(); if (!q) return;
+    const dg = q.replace(/\D/g, "");
+    if (dg.length >= 14) { const cnpj = dg.slice(-14); const c = clientes.find((x) => x.cnpj === cnpj); exclCliente(cnpj, c ? c.nome : cnpj, fEx.motivo.trim() || "Fora da operação"); }
+    else if (dg.length >= 4 && rows.some((r) => r.m === dg)) exclManifesto(dg, fEx.motivo.trim() || "Fora da operação");
+    else { setMsg("Escolha um cliente da lista (com CNPJ) ou informe um número de manifesto que exista na base."); return; }
+    setFEx({ q: "", motivo: "" });
+  }
+  function saveJan() { if (deny()) return; if (!fJan.cnpj) { setMsg("Escolha o cliente."); return; } if (!fJan.de && !fJan.ate && !fJan.ap && !fJan.lim) { setMsg("Informe ao menos um horário (De/Até, A partir de ou Limite de)."); return; } const c = clientes.find((x) => x.cnpj === fJan.cnpj); persistCfg({ ...cfg, janelas: { ...cfg.janelas, [fJan.cnpj]: { nome: c ? c.nome : fJan.cnpj, de: fJan.de, ate: fJan.ate, ap: fJan.ap, lim: fJan.lim } } }); setFJan({ cnpj: "", de: "", ate: "", ap: "", lim: "" }); }
+  function delJan(k) { if (deny()) return; const j = { ...cfg.janelas }; delete j[k]; persistCfg({ ...cfg, janelas: j }); }
+
+  async function onFile(e) {
+    const file = e.target.files?.[0]; e.target.value = ""; if (!file) return;
+    setErr(null); setBusy("Lendo a planilha…");
+    try {
+      await new Promise((r) => setTimeout(r, 30));
+      const wb = XLSX.read(await file.arrayBuffer(), { type: "array" });
+      const p = hrParse(wb);
+      let next = p.rows;
+      if (modo === "add" && rows.length) { const m = new Map(rows.map((r) => [`${r.c}|${r.m}`, r])); next.forEach((r) => m.set(`${r.c}|${r.m}`, r)); next = [...m.values()]; }
+      const cut = new Date(Date.now() - 180 * 86400000).toISOString().slice(0, 10);
+      next = next.filter((r) => (r.sm || r.cc || "9999").slice(0, 10) >= cut);
+      const ds = next.map((r) => (r.sm || r.cc || "").slice(0, 10)).filter(Boolean).sort();
+      const at = new Date().toISOString();
+      const label = `${file.name} · ${numberInt.format(next.length)} coleta(s)`;
+      const n = { rows: next, label, updatedAt: at, de: ds[0], ate: ds[ds.length - 1], file: file.name, last: p.stats };
+      setData(n); lsSave(HR_ID, n); setDia("");
+      cloudSave(HR_ID, { rows: next, de: n.de, ate: n.ate, file: n.file, last: n.last }, label);
+    } catch (er) { setErr(er instanceof Error ? er.message : "Não foi possível ler a planilha de horários."); }
+    setBusy("");
+  }
+
+  function exportar() {
+    if (!calc) return;
+    const wb = XLSX.utils.book_new();
+    const add = (nome, head, body, w) => { const ws = XLSX.utils.aoa_to_sheet([head, ...body]); ws["!cols"] = w.map((x) => ({ wch: x })); XLSX.utils.book_append_sheet(wb, ws, nome); };
+    add("Por manifesto", ["Manifesto", "Ordem", "Saída Mec", "Chegada cliente", "Saída cliente", "Chegada Mec", "Ida", "Permanência", "Retorno", "Tempo de serviço", "Veículo", "Cliente", "CNPJ", "Nº coleta", "Motorista", "Alerta"], calc.tabela.map((t) => [t.r.m, t.ord, hrDM(t.r.sm), hrDM(t.r.cc), hrDM(t.r.sc), hrDM(t.r.cm), hrFmtD(t.ida ?? t.desl), hrFmtD(t.perm), hrFmtD(t.ret), hrFmtD(t.total), t.r.v, t.r.cli, hrCnpjFmt(t.r.cnpj), t.r.c, t.r.mot, t.errs.join(" + ") + (t.lote ? " Baixa em lote" : "")]), [10, 7, 14, 14, 14, 14, 8, 11, 9, 14, 10, 38, 20, 10, 28, 30]);
+    add("Quem segura o carro", ["Cliente", "CNPJ", "Paradas", "Média", "Máximo", "Horas paradas"], calc.segura.map((x) => [x.nome, hrCnpjFmt(x.cnpj), x.p, hrFmtD(x.med), hrFmtD(x.mx), Math.round(x.h * 10) / 10]), [38, 20, 9, 9, 9, 13]);
+    add("Retorno à filial", ["Último cliente", "CNPJ", "Manifestos", "Retorno médio", "Máximo"], calc.retorno.map((x) => [x.nome, hrCnpjFmt(x.cnpj), x.m, hrFmtD(x.med), hrFmtD(x.mx)]), [38, 20, 11, 14, 10]);
+    add("Saídas após 12h", ["Manifesto", "Placa", "Motorista", "Saída Mec", "Coletas", "1ª chegada", "Chegada Mec"], calc.pos.map((x) => [x.m, x.veic, x.mot, hrDM(x.sm), x.n, hrDM(x.pc), hrDM(x.cm)]), [10, 10, 28, 14, 8, 14, 14]);
+    add("Baixas com erro", ["Manifesto", "Placa", "Motorista", "Erro", "Usuário da baixa"], calc.erros.map((x) => [x.m, x.veic, x.mot, x.errTipos.join(" + "), x.user || "não informado no relatório"]), [10, 10, 28, 46, 24]);
+    const d = new Date(); XLSX.writeFile(wb, `Coletas_Horarios_${d.getFullYear()}-${devPad2(d.getMonth() + 1)}-${devPad2(d.getDate())}.xlsx`);
+  }
+
+  const q = fBusca.trim().toUpperCase(); const qd = q.replace(/\D/g, "");
+  const tabFilt = useMemo(() => {
+    if (!calc) return [];
+    const mm = fMan.trim(), vv = fVeic.trim().toUpperCase();
+    return calc.tabela.filter((t) => (!mm || t.r.m.includes(mm)) && (!vv || t.r.v.toUpperCase().includes(vv)) && (!q || t.r.cli.toUpperCase().includes(q) || (qd && (t.r.cnpj.includes(qd) || t.r.c.includes(qd)))) && (fMostrar === "todos" || (fMostrar === "erro" && t.errs.length) || (fMostrar === "pos12" && t.r.sm && hrMinDay(t.r.sm) >= 720)));
+  }, [calc, fMan, fVeic, q, qd, fMostrar]);
+  const exclN = Object.keys(cfg.excl.clientes).length + Object.keys(cfg.excl.manifestos).length;
+  const TABS = [["geral", "Visão geral"], ["planilha", "Planilha por manifesto"], ["pos12", "Saídas após as 12h"], ["janelas", "Janelas por cliente"], ["erros", `Baixas com erro${calc ? ` (${calc.kpi.erros})` : ""}`], ["excl", `Fora da análise (${exclN})`]];
+  const kp = calc?.kpi;
+  const bar = calc && kp.ida && kp.perm && kp.ret ? [kp.ida, kp.perm, kp.ret] : null;
+  const delBtn = (fn) => isAdmin ? <button type="button" className="eq-link" onClick={fn}>Desconsiderar</button> : null;
+
+  return <div className="bf">
+    <input ref={fileRef} className="hidden-file-input" type="file" accept=".xlsx,.xls" onChange={onFile} />
+    <section className="client-table-card bf-card">
+      <div className="client-toolbar"><div><strong>Coletas · Horários</strong><small>Saída do Mec → chegada no cliente → saída do cliente → chegada no Mec · análise por número de coleta e CNPJ completo</small></div></div>
+      <div className="bf-up">
+        <div><button className="secondary-action" type="button" onClick={() => fileRef.current?.click()}><UploadCloud size={15} /> Atualizar relatório de horários (Horarios_Coleta.xlsx)</button>
+          <small>{data ? `${data.file || data.label} · ${numberInt.format(rows.length)} coleta(s) · ${data.de ? `de ${hrDMY(data.de)} a ${hrDMY(data.ate)}` : ""}` : "Nenhum relatório carregado"}</small></div>
+        <div className="hr-modo"><label><input type="radio" checked={modo === "add"} onChange={() => setModo("add")} /> Acrescentar ao histórico (mesma coleta é atualizada)</label><label><input type="radio" checked={modo === "sub"} onChange={() => setModo("sub")} /> Substituir tudo</label></div>
+        <div>{data?.last && <small>Última leitura: {numberInt.format(data.last.lidas)} linhas · {data.last.manifestos} manifestos · {data.last.cnpjs} CNPJs · {numberInt.format(data.last.semManifesto)} sem manifesto/veículo (ignoradas) · {numberInt.format(data.last.semHorario)} sem horário no cliente{data.last.relColeta ? "" : " · aba Rel.Coleta ausente (sem CNPJ)"}</small>}</div>
+        <button className="secondary-action" type="button" onClick={exportar} disabled={!calc}><FileDown size={15} /> Extrair (Excel)</button>
+        {busy && <span className="bf-busy" role="status">{busy}</span>}
+      </div>
+      {!isAdmin && <small className="bf-tag">Somente o administrador atualiza o relatório, as exclusões e as janelas.</small>}
+    </section>
+    {err && <div className="import-error client-import-error">{err}</div>}
+    {msg && <div className="import-error client-import-error" onClick={() => setMsg(null)}>{msg}</div>}
+    {!calc && <div className="empty-client-state"><Clock3 size={16} /> Suba o Horarios_Coleta.xlsx (aba Resumo + Rel.Coleta TMSU) para começar.</div>}
+    {calc && <>
+      <div className="hr-bar">
+        <div className="hr-tabs">{TABS.map(([k, l]) => <button key={k} type="button" className={`hr-tab ${tab === k ? "on" : ""}`} onClick={() => setTab(k)}>{l}</button>)}</div>
+        <label className="hr-dia">Dia da saída <select value={dia} onChange={(e) => setDia(e.target.value)}><option value="">Todos ({dias.length} dia(s))</option>{dias.map((d) => <option key={d} value={d}>{hrDMY(d)}</option>)}</select></label>
+        {exclN > 0 && <button type="button" className="hr-excl-chip" onClick={() => setTab("excl")}>Fora da análise: {calc.excluidas} coleta(s) · ver</button>}
+      </div>
+
+      {tab === "geral" && <>
+        <div className="bf-kpis">
+          <div className="diag-kpi static"><span>Manifestos</span><strong>{kp.mans}</strong><small>{numberInt.format(kp.coletas)} coletas · {numberInt.format(kp.paradas)} paradas válidas</small></div>
+          <div className="diag-kpi static"><span>Permanência média no cliente</span><strong>{hrFmtD(kp.perm)}</strong><small>paradas sem erro de baixa</small></div>
+          <div className="diag-kpi static"><span>Retorno médio ao Mec</span><strong>{hrFmtD(kp.ret)}</strong><small>{kp.nRet} manifestos · último cliente</small></div>
+          <div className="diag-kpi static bf-k-warn"><span>Saídas após as 12h</span><strong>{kp.pos12}</strong><small>{kp.mans ? Math.round((kp.pos12 / kp.mans) * 100) : 0}% dos manifestos</small></div>
+          <div className="diag-kpi static bf-k-warn"><span>Dessas, chegam no Mec após as 18h</span><strong>{kp.pos18}</strong><small>{kp.pos20} após as 20h</small></div>
+          <div className="diag-kpi static bf-k-bad"><span>Manifestos com baixa com erro</span><strong>{kp.erros}</strong><small>ficam fora das médias</small></div>
+        </div>
+        {bar && <section className="client-table-card bf-card"><div className="client-toolbar"><div><strong>Onde o tempo do carro foi (média por manifesto)</strong><small>Ida = saída do Mec até o 1º cliente · permanência = parada no cliente · retorno = saída do ÚLTIMO cliente até o Mec</small></div></div>
+          <div className="hr-flow">{[["Ida", bar[0], "hr-f1"], ["Permanência no cliente", bar[1], "hr-f2"], ["Retorno", bar[2], "hr-f3"]].map(([l, v, c]) => <div key={l} className={c} style={{ flex: v }}>{l} · {hrFmtD(v)}</div>)}</div></section>}
+        <div className="eq-grid2">
+          <section className="client-table-card bf-card"><div className="client-toolbar"><div><strong>Quem segura o carro</strong><small>Permanência por CNPJ, ordenado por horas de veículo paradas · sem limite fixo</small></div></div>
+            <div className="diag-scroll hr-scroll"><table className="bf-tbl hr-small"><thead><tr><th>Cliente · CNPJ</th><th>Paradas</th><th>Média</th><th>Máx.</th><th>Horas</th><th>Janela</th><th></th></tr></thead>
+              <tbody>{calc.segura.slice(0, 30).map((x) => <tr key={x.cnpj}><td><b>{x.nome}</b><small>{hrCnpjFmt(x.cnpj)}</small></td><td>{x.p}</td><td><b>{hrFmtD(x.med)}</b></td><td>{hrFmtD(x.mx)}</td><td>{x.h.toFixed(1).replace(".", ",")}</td><td>{cfg.janelas[x.cnpj] ? <span className="bf-chip ok">cadastrada</span> : <span className="bf-chip mute">sem janela</span>}</td><td>{delBtn(() => exclCliente(x.cnpj, x.nome))}</td></tr>)}</tbody></table></div></section>
+          <section className="client-table-card bf-card"><div className="client-toolbar"><div><strong>Quem demora no retorno</strong><small>Último cliente do manifesto · mínimo de 2 manifestos</small></div></div>
+            <div className="diag-scroll hr-scroll"><table className="bf-tbl hr-small"><thead><tr><th>Último cliente · CNPJ</th><th>Manifestos</th><th>Retorno médio</th><th>Máx.</th><th></th></tr></thead>
+              <tbody>{calc.retorno.slice(0, 30).map((x) => <tr key={x.cnpj}><td><b>{x.nome}</b><small>{hrCnpjFmt(x.cnpj)}</small></td><td>{x.m}</td><td><b>{hrFmtD(x.med)}</b></td><td>{hrFmtD(x.mx)}</td><td>{delBtn(() => exclCliente(x.cnpj, x.nome))}</td></tr>)}{!calc.retorno.length && <tr><td colSpan={5} className="bf-empty">Sem clientes com 2 manifestos ou mais.</td></tr>}</tbody></table></div></section>
+        </div>
+      </>}
+
+      {tab === "planilha" && <section className="client-table-card bf-card">
+        <div className="client-toolbar"><div><strong>Planilha por manifesto e ordem de coleta</strong><small>Ordem pela chegada no cliente · rosa = baixa com erro (fora das médias) · amarelo = baixa em lote (conta uma parada) · retorno só na última coleta</small></div></div>
+        <div className="hr-filtros">
+          <input placeholder="Manifesto" value={fMan} onChange={(e) => setFMan(e.target.value)} />
+          <input placeholder="Placa" value={fVeic} onChange={(e) => setFVeic(e.target.value)} />
+          <div className="client-search"><Search size={14} /><input placeholder="Cliente, CNPJ ou nº da coleta" value={fBusca} onChange={(e) => setFBusca(e.target.value)} /></div>
+          <select value={fMostrar} onChange={(e) => setFMostrar(e.target.value)}><option value="todos">Todos</option><option value="erro">Só com erro de baixa</option><option value="pos12">Só saídas após as 12h</option></select>
+          <small>{numberInt.format(tabFilt.length)} linha(s)</small>
+        </div>
+        <div className="diag-scroll hr-scroll tall"><table className="bf-tbl hr-small hr-sheet"><thead><tr><th>Manifesto</th><th>Ordem</th><th>Saída Mec</th><th>Chegada cliente</th><th>Saída cliente</th><th>Chegada Mec</th><th>Ida / desl.</th><th>Perman.</th><th>Retorno</th><th>T. serviço</th><th>Veículo</th><th>Cliente · CNPJ</th><th>Nº coleta</th><th>Motorista</th><th>Alerta</th><th></th></tr></thead>
+          <tbody>{tabFilt.slice(0, lim).map((t) => <tr key={`${t.r.m}-${t.r.c}`} className={`${t.errs.length ? "hr-err" : t.lote ? "hr-lote" : ""} ${t.first ? "hr-g" : ""}`}>
+            <td><b>{t.r.m}</b></td><td>{t.ord}</td><td>{hrDM(t.r.sm)}</td><td><b>{hrDM(t.r.cc)}</b></td><td><b>{hrDM(t.r.sc)}</b></td><td>{hrDM(t.r.cm)}</td><td>{hrFmtD(t.ida ?? t.desl)}</td><td><b>{hrFmtD(t.perm)}</b></td><td><b>{hrFmtD(t.ret)}</b></td><td>{hrFmtD(t.total)}</td>
+            <td><b>{t.r.v}</b></td><td>{t.r.cli}<small>{hrCnpjFmt(t.r.cnpj)}{t.r.cid ? ` · ${t.r.cid}` : ""}</small></td><td>{t.r.c}</td><td>{t.r.mot}</td>
+            <td className="hr-alert">{t.errs.join(" + ")}{t.lote ? (t.errs.length ? " · " : "") + "Baixa em lote" : ""}</td><td>{delBtn(() => exclCliente(t.r.cnpj, t.r.cli))}</td></tr>)}
+            {!tabFilt.length && <tr><td colSpan={16} className="bf-empty">Nenhuma linha para os filtros.</td></tr>}</tbody></table></div>
+        {tabFilt.length > lim && <button className="secondary-action" type="button" onClick={() => setLim(lim + 200)}>Mostrar mais ({numberInt.format(tabFilt.length - lim)} restantes)</button>}
+      </section>}
+
+      {tab === "pos12" && <section className="client-table-card bf-card">
+        <div className="client-toolbar"><div><strong>Saídas após as 12h · saída do manifesto na filial</strong><small>{kp.pos12} de {kp.mans} manifestos · {kp.pos18} chegam no Mec após as 18h · {kp.pos20} após as 20h · a janela do cliente indica se a chegada atrasou e por quê</small></div></div>
+        <div className="diag-scroll hr-scroll tall"><table className="bf-tbl hr-small"><thead><tr><th>Manifesto</th><th>Placa</th><th>Motorista</th><th>Saída Mec</th><th>Coletas</th><th>1ª chegada</th><th>Janela dos clientes</th><th>Causa do atraso</th><th>Chegada Mec</th></tr></thead>
+          <tbody>{calc.pos.map((x) => { const at = x.janStat.filter((j) => j.tag === "atrasou"); const ok = x.janStat.filter((j) => j.tag === "no prazo" || j.tag === "adiantado").length; const sj = x.janStat.filter((j) => j.tag === "sem janela").length;
+            return <tr key={x.m}><td>{x.m}</td><td><b>{x.veic}</b></td><td>{x.mot}</td><td><b>{hrDM(x.sm)}</b></td><td>{x.n}</td><td>{hrDM(x.pc)}</td>
+              <td>{at.length ? <span className="bf-chip bad">{at.length} atrasou{at.length > 1 ? "ram" : ""} · até {hrFmtD(Math.max(...at.map((j) => j.min)))}</span> : ok ? <span className="bf-chip ok">no prazo</span> : <span className="bf-chip mute">sem janela</span>}{sj > 0 && (at.length || ok) ? <small>{sj} sem janela</small> : null}</td>
+              <td><small>{at.map((j, i) => <span key={i} style={{ display: "block" }}>{j.cli.slice(0, 24)}: {j.causa}</span>)}</small></td><td>{hrDM(x.cm)}</td></tr>; })}
+            {!calc.pos.length && <tr><td colSpan={9} className="bf-empty">Nenhum manifesto saiu depois das 12h no período.</td></tr>}</tbody></table></div>
+        <small className="bf-tag">Causa: 1º cliente = saída após as 12h ou ida longa · demais clientes = preso em cliente anterior (saiu depois do fim da janela) ou deslocamento entre clientes. Só aparece para clientes com janela cadastrada.</small>
+      </section>}
+
+      {tab === "janelas" && <section className="client-table-card bf-card">
+        <div className="client-toolbar"><div><strong>Janelas de coleta por cliente</strong><small>Use De–Até para janela fechada, ou apenas "A partir de" / "Limite de". Vai acumulando a memória de cada cliente (CNPJ).</small></div></div>
+        <div className="hr-jform">
+          <label>Cliente · CNPJ<select value={fJan.cnpj} disabled={!isAdmin} onChange={(e) => { const j = cfg.janelas[e.target.value]; setFJan({ cnpj: e.target.value, de: j?.de || "", ate: j?.ate || "", ap: j?.ap || "", lim: j?.lim || "" }); }}><option value="">Selecionar…</option>{clientes.map((c) => <option key={c.cnpj} value={c.cnpj}>{c.nome} · {hrCnpjFmt(c.cnpj)}{cfg.janelas[c.cnpj] ? " ✓" : ""}</option>)}</select></label>
+          <label>De<input type="time" value={fJan.de} disabled={!isAdmin} onChange={(e) => setFJan({ ...fJan, de: e.target.value })} /></label>
+          <label>Até<input type="time" value={fJan.ate} disabled={!isAdmin} onChange={(e) => setFJan({ ...fJan, ate: e.target.value })} /></label>
+          <label>A partir de<input type="time" value={fJan.ap} disabled={!isAdmin} onChange={(e) => setFJan({ ...fJan, ap: e.target.value })} /></label>
+          <label>Limite de<input type="time" value={fJan.lim} disabled={!isAdmin} onChange={(e) => setFJan({ ...fJan, lim: e.target.value })} /></label>
+          <button className="secondary-action" type="button" onClick={saveJan}>Salvar janela</button>
+        </div>
+        <div className="diag-scroll hr-scroll"><table className="bf-tbl hr-small"><thead><tr><th>Cliente · CNPJ</th><th>De – até</th><th>A partir de</th><th>Limite de</th><th></th></tr></thead>
+          <tbody>{Object.entries(cfg.janelas).sort((a, b) => a[1].nome.localeCompare(b[1].nome, "pt-BR")).map(([k, j]) => <tr key={k}><td><b>{j.nome}</b><small>{hrCnpjFmt(k)}</small></td><td>{j.de || j.ate ? `${j.de || "—"} – ${j.ate || "—"}` : "—"}</td><td>{j.ap || "—"}</td><td>{j.lim || "—"}</td><td>{isAdmin && <><button type="button" className="eq-link" onClick={() => setFJan({ cnpj: k, de: j.de || "", ate: j.ate || "", ap: j.ap || "", lim: j.lim || "" })}>Editar</button> · <button type="button" className="eq-link" onClick={() => delJan(k)}>Excluir</button></>}</td></tr>)}
+            {!Object.keys(cfg.janelas).length && <tr><td colSpan={5} className="bf-empty">Nenhuma janela cadastrada. {clientes.length} CNPJ(s) na base.</td></tr>}</tbody></table></div>
+        <small className="bf-tag">{Object.keys(cfg.janelas).length} de {clientes.length} CNPJs com janela.</small>
+      </section>}
+
+      {tab === "erros" && <section className="client-table-card bf-card">
+        <div className="client-toolbar"><div><strong>Baixas com erro · manifestos para corrigir</strong><small>Chegada no cliente igual à saída do Mec, Mec antes da saída do cliente ou saída antes da chegada · ficam fora das médias</small></div></div>
+        <div className="diag-scroll hr-scroll tall"><table className="bf-tbl hr-small"><thead><tr><th>Manifesto</th><th>Placa</th><th>Motorista</th><th>Clientes e horários</th><th>Erro</th><th>Usuário da baixa</th><th></th></tr></thead>
+          <tbody>{calc.erros.map((x) => <tr key={x.m} className="hr-err"><td><b>{x.m}</b></td><td><b>{x.veic}</b></td><td>{x.mot}</td>
+            <td>{x.stops.map((s, i) => <small key={i} style={{ display: "block" }}>{s.rows.map((r) => r.cli).filter((v, i2, a) => a.indexOf(v) === i2).join(" / ").slice(0, 40)}: {hrDM(s.cc)} → {hrDM(s.sc)}</small>)}<small>Saída Mec {hrDM(x.sm)} · chegada Mec {hrDM(x.cm)}</small></td>
+            <td className="hr-alert">{x.errTipos.join(" + ")}</td><td>{x.user || <span className="bf-tag">não informado no relatório</span>}</td><td>{delBtn(() => exclManifesto(x.m))}</td></tr>)}
+            {!calc.erros.length && <tr><td colSpan={7} className="bf-empty">Nenhuma baixa com erro.</td></tr>}</tbody></table></div>
+        <small className="bf-tag">O relatório atual não traz o usuário da baixa. Inclua uma coluna com o login/usuário (nome contendo USUARIO ou LOGIN) na aba Resumo e ele passa a aparecer aqui.</small>
+      </section>}
+
+      {tab === "excl" && <section className="client-table-card bf-card">
+        <div className="client-toolbar"><div><strong>Fora da análise · clientes e manifestos desconsiderados</strong><small>Não entram em médias, rankings nem na planilha. Só o admin exclui e restaura · {calc.excluidas} coleta(s) afetada(s) na base atual</small></div></div>
+        <div className="hr-jform">
+          <label style={{ gridColumn: "span 2" }}>Cliente (CNPJ) ou nº do manifesto<input list="hr-cli" value={fEx.q} disabled={!isAdmin} onChange={(e) => setFEx({ ...fEx, q: e.target.value })} placeholder="Digite o nome ou o manifesto…" /></label>
+          <datalist id="hr-cli">{clientes.map((c) => <option key={c.cnpj} value={`${c.nome} · ${hrCnpjFmt(c.cnpj)}`} />)}</datalist>
+          <label style={{ gridColumn: "span 2" }}>Motivo<input value={fEx.motivo} disabled={!isAdmin} onChange={(e) => setFEx({ ...fEx, motivo: e.target.value })} placeholder="Ex.: embarque aéreo" /></label>
+          <button className="secondary-action" type="button" onClick={addExcl}>Desconsiderar</button>
+        </div>
+        <div className="diag-scroll hr-scroll"><table className="bf-tbl hr-small"><thead><tr><th>Tipo</th><th>Cliente / manifesto</th><th>Motivo</th><th>Desde</th><th></th></tr></thead>
+          <tbody>{Object.entries(cfg.excl.clientes).map(([k, x]) => <tr key={`c${k}`}><td>Cliente</td><td><b>{x.nome}</b><small>{hrCnpjFmt(k)}</small></td><td>{x.motivo}</td><td>{hrDMY((x.at || "").slice(0, 10))}</td><td>{isAdmin && <button type="button" className="eq-link" onClick={() => restaurar("clientes", k)}>Restaurar</button>}</td></tr>)}
+            {Object.entries(cfg.excl.manifestos).map(([k, x]) => <tr key={`m${k}`}><td>Manifesto</td><td><b>{k}</b></td><td>{x.motivo}</td><td>{hrDMY((x.at || "").slice(0, 10))}</td><td>{isAdmin && <button type="button" className="eq-link" onClick={() => restaurar("manifestos", k)}>Restaurar</button>}</td></tr>)}
+            {!exclN && <tr><td colSpan={5} className="bf-empty">Nada desconsiderado.</td></tr>}</tbody></table></div>
+      </section>}
+    </>}
+  </div>;
+}
+
+/* Faixa "Dados atualizados": data e hora do último upload de cada relatório do módulo aberto. */
+const STAMP_SRC = {
+  receita: ["Receita", "receita"], coletas: ["Coleta", "coletas"], manifest: ["Manifesto", "manifest"], frota: ["Frota", "frota"], bufb: ["Base do Buffer", "buffer_base"], bufv: ["Viagens", "buffer_viag"],
+  dev: ["Devoluções", "devolucoes"], eqb: ["CDC - OPL GERAL", "equipes_base"], eqf: ["Férias", "equipes_ferias"], hor: ["Horários de coleta", "horarios"],
+};
+const STAMP_PAGE = { home: ["receita", "coletas"], clients: ["manifest", "coletas", "receita"], vehicles: ["frota", "bufb", "bufv"], diagnostico: ["frota"], devolucoes: ["dev"], equipes: ["eqb", "eqf"], coletas: ["hor"] };
+function stampFmt(iso) {
+  const d = new Date(iso); if (isNaN(d)) return "";
+  return `${hrPad(d.getDate())}/${hrPad(d.getMonth() + 1)}/${String(d.getFullYear()).slice(2)}, ${hrPad(d.getHours())}:${hrPad(d.getMinutes())}`;
+}
+function DataStamp({ page }) {
+  const keys = STAMP_PAGE[page] || [];
+  const read = () => keys.map((k) => { const [label, ls] = STAMP_SRC[k]; const v = lsLoad(ls); return { label, at: v && v.updatedAt ? v.updatedAt : null }; });
+  const [items, setItems] = useState(read);
+  useEffect(() => { const upd = () => { const n = read(); setItems((o) => (JSON.stringify(o) === JSON.stringify(n) ? o : n)); }; setItems(read()); window.addEventListener("painel_ls", upd); const t = setInterval(() => { const n = read(); setItems((o) => (JSON.stringify(o) === JSON.stringify(n) ? o : n)); }, 2500); return () => { clearInterval(t); window.removeEventListener("painel_ls", upd); }; }, [page]);
+  if (!keys.length) return null;
+  return <div className="data-stamp" role="status" aria-label="Dados atualizados">
+    <b>Dados atualizados</b>
+    {items.map((x) => <span key={x.label} className="data-stamp-item"><small>{x.label}</small><strong className={x.at ? "" : "none"}>{x.at ? stampFmt(x.at) : "sem relatório"}</strong></span>)}
+  </div>;
+}
+
 /* ===================== Gestão - Equipes (Distribuição) ===================== */
 const EQ_FT = (f) => { const n = frotaNorm(f); if (n.startsWith("MOTORISTA")) return "mot"; if (n.startsWith("CONFERENTE")) return "conf"; if (n.startsWith("AJUD")) return "ajud"; return "adm"; };
 const EQ_FT_LABEL = { mot: "Motorista", conf: "Conferente", ajud: "Ajudante", adm: "Adm./apoio" };
@@ -6665,7 +7073,7 @@ function App() {
   }
 
   return (
-    <div className={`app-shell ${page === "clients" || page === "vehicles" || page === "diagnostico" || page === "devolucoes" || page === "equipes" ? "client-analysis-shell" : ""}`}>
+    <div className={`app-shell ${page === "clients" || page === "vehicles" || page === "diagnostico" || page === "devolucoes" || page === "equipes" || page === "coletas" ? "client-analysis-shell" : ""}`}>
       <style>{CSS_TEXT}</style>
       <input ref={manifestFileInputRef} className="hidden-file-input" type="file" accept=".xlsx,.xls" onChange={handleManifestImport} />
       <DashboardLayout page={page} setPage={setPage} theme={theme} toggleTheme={toggleTheme} menu={menu} isAdmin={isAdmin} onEditMenu={() => setMenuEd(true)} onAdminLogin={() => setAdminLogin(true)} onAdminLogout={() => acSessSave(null)} />
@@ -6674,7 +7082,8 @@ function App() {
       {lockMsg && <div className="admin-toast" role="alert">{lockMsg}</div>}
       {menuEd && isAdmin && <MenuEditor menu={menu} onClose={() => setMenuEd(false)} onSave={(c) => { if (isAdmin) saveMenuCfg(c); setMenuEd(false); }} />}
       <GlobalStatusBar coletaStatus={coletaStatus} manifestSourceLabel={manifestSourceLabel} manifestUpdatedAt={manifestUpdatedAt} manifestLoaded={!!manifestDataset} receitaStatus={receitaStatus} />
-      {page === "home" ? <Home /> : page === "clients" ? <ClientAnalysis manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} onColetaStatusChange={setColetaStatus} onReceitaStatusChange={setReceitaStatus} /> : page === "diagnostico" ? <DiagnosticoVeiculos /> : page === "devolucoes" ? <AnaliseDevolucoes /> : page === "equipes" ? <AcessoGate modulo="equipes">{(perm) => <GestaoEquipes perm={perm} />}</AcessoGate> : <VehicleResources manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} />}
+      <DataStamp page={page} />
+      {page === "home" ? <Home /> : page === "clients" ? <ClientAnalysis manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} onColetaStatusChange={setColetaStatus} onReceitaStatusChange={setReceitaStatus} /> : page === "diagnostico" ? <DiagnosticoVeiculos /> : page === "coletas" ? <HorariosColeta isAdmin={isAdmin} /> : page === "devolucoes" ? <AnaliseDevolucoes /> : page === "equipes" ? <AcessoGate modulo="equipes">{(perm) => <GestaoEquipes perm={perm} />}</AcessoGate> : <VehicleResources manifestDataset={manifestDataset} manifestSourceLabel={manifestSourceLabel} manifestImportError={manifestImportError} manifestFileInputRef={manifestFileInputRef} handleManifestImport={handleManifestImport} />}
     </div>
   );
 }
