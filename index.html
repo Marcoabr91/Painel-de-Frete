@@ -972,15 +972,16 @@ tr.hr-adjrow td { background: color-mix(in srgb, #4f8fd6 10%, transparent); }
 .pd-meta-t { display: grid; gap: 3px; font-size: 11px; } .pd-meta-t strong { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted-foreground); } .pd-meta-t b { font-size: 15px; } .pd-meta svg { flex: none; } .pd-meta-t { min-width: 0; } .pd-meta-t small { color: var(--muted-foreground); font-size: 10px; }
 .pd-meta-in { width: 58px; border: 1px solid var(--border); background: var(--background); color: var(--foreground); padding: 2px 5px; font: 700 14px inherit; text-align: right; }
 .pd-pos { color: var(--green); } .pd-neg { color: var(--red); }
-.pd-cols { display: flex; gap: 14px; align-items: flex-start; position: relative; padding: 14px 4px 4px; }
-.pd-col { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center; }
-.pd-col strong { font-size: 11px; color: var(--foreground); } .pd-col small { font-size: 10px; color: var(--muted-foreground); }
+.pd-cols { display: flex; gap: 10px; align-items: flex-start; position: relative; padding: 18px 4px 6px; overflow-x: auto; }
+.pd-col { flex: 1 0 74px; min-width: 74px; display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center; }
+.pd-col strong { font-size: 11px; color: var(--foreground); } .pd-col small { font-size: 10px; color: var(--muted-foreground); overflow-wrap: anywhere; line-height: 1.25; }
 .pd-bar { position: relative; width: 74%; max-width: 92px; height: 150px; display: flex; flex-direction: column-reverse; }
 .pd-bar.click { cursor: pointer; }
 .pd-bar i { position: relative; z-index: 1; text-shadow: 0 0 3px rgba(0,0,0,.55); display: flex; align-items: center; justify-content: center; font: 800 11px 'IBM Plex Mono', monospace; font-style: normal; color: #fff; overflow: hidden; min-height: 0; }
 .pd-s-ok { background: var(--green); } .pd-s-bad { background: var(--red); } .pd-s-warn { background: #d19a00; } .pd-s-info { background: #4f8fd6; } .pd-s-mute { background: #7d8a83; }
 .pd-line { z-index: 0; position: absolute; left: -10px; right: -10px; border-top: 2px dashed var(--foreground); pointer-events: none; text-decoration: none; }
-.pd-line-l { position: absolute; right: 4px; top: 0; font-size: 10px; font-weight: 700; color: var(--foreground); }
+.pd-line-h { display: flex; gap: 6px; align-items: center; justify-content: flex-end; font-size: 10px; font-weight: 700; margin-top: 6px; } .pd-line-h u { display: inline-block; width: 22px; border-top: 2px dashed var(--foreground); text-decoration: none; }
+.pd-line-l { position: sticky; align-self: flex-start; right: 4px; margin-left: -80px; top: 0; z-index: 2; background: var(--card); padding: 0 4px; font-size: 10px; font-weight: 700; color: var(--foreground); }
 .pd-tbl { width: 100%; border-collapse: collapse; font-size: 12px; } .pd-tbl th { text-align: right; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted-foreground); padding: 6px 8px; border-bottom: 2px solid var(--border); white-space: nowrap; } .pd-tbl td { color: var(--foreground); text-align: right; padding: 6px 8px; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .pd-tbl th:first-child, .pd-tbl td:first-child { text-align: left; } .pd-tbl tfoot td { font-weight: 800; background: var(--muted); border-bottom: 0; } .pd-tbl tr.click { cursor: pointer; } .pd-tbl tr.click:hover td { background: color-mix(in srgb, var(--green) 8%, transparent); }
 .pd-flow { display: flex; height: 34px; border: 1px solid var(--border); margin: 10px 0 8px; } .pd-flow > div { display: flex; align-items: center; padding: 0 8px; font-size: 11px; font-weight: 700; overflow: hidden; white-space: nowrap; color: var(--foreground); }
@@ -5303,7 +5304,7 @@ function PdMeta({ pct, label, title, metaKey, metas, setMeta, admin, note }) {
 }
 /* Colunas de 100% por categoria: % dentro do segmento, quantidade embaixo; linha tracejada = meta do 1º grupo (disponível). */
 function PdCols({ items, metaPct, metaLabel, onPick }) {
-  return <div className="pd-cols">{items.map((it) => { const tot = it.parts.reduce((a, p) => a + p.v, 0) || 1; return <div key={it.label} className="pd-col">
+  return <div>{metaPct != null && <div className="pd-line-h"><u /> {metaLabel}</div>}<div className="pd-cols">{items.map((it) => { const tot = it.parts.reduce((a, p) => a + p.v, 0) || 1; return <div key={it.label} className="pd-col">
     <div className={`pd-bar ${onPick ? "click" : ""}`} onClick={onPick ? () => onPick(it) : undefined}>
       {it.parts.map((p) => p.v > 0 && <i key={p.name} className={`pd-s-${p.tone}`} style={{ flexGrow: p.v }} title={`${p.name}: ${p.v} (${pdF((p.v / tot) * 100)})`}>{(p.v / tot) * 100 >= 9 ? `${Math.round((p.v / tot) * 1000) / 10}%`.replace(".", ",") : ""}</i>)}
       {metaPct != null && <u className="pd-line" style={{ bottom: `${metaPct}%` }} />}
@@ -5311,7 +5312,7 @@ function PdCols({ items, metaPct, metaLabel, onPick }) {
     <strong>{it.label}</strong>
     <small>{it.parts.filter((p) => p.v > 0).map((p) => `${numberInt.format(p.v)} ${p.name.toLowerCase()}`).join(" · ")}</small>
     <small>de {numberInt.format(it.parts.reduce((a, p) => a + p.v, 0))}</small>
-  </div>; })}{metaPct != null && <span className="pd-line-l">{metaLabel}</span>}</div>;
+  </div>; })}</div></div>;
 }
 
 /* ===================== Coletas - Horários ===================== */
@@ -5654,10 +5655,10 @@ function HorariosColeta({ isAdmin }) {
         </div>
         <div className="pd-row two">
           <section className="client-table-card bf-card"><div className="client-toolbar"><div><strong>Saídas por dia · antes e após as 12h</strong><small>cada barra = 100% dos manifestos do dia · quantidade abaixo · tracejado = meta · clique na barra para filtrar o dia</small></div></div>
-            <PdCols items={porDia.map((d) => ({ label: hrDMY(d.dia).slice(0, 5), dia: d.dia, parts: [{ name: "Antes 12h", v: d.n - d.pos, tone: "ok" }, { name: "Após 12h", v: d.pos, tone: "warn" }] }))} metaPct={metas.hor_aprov} metaLabel={`meta ${pdF(metas.hor_aprov)}`} onPick={(it) => { setFDe(it.dia); setFAte(it.dia); }} /></section>
+            <PdCols items={porDia.filter((d) => d.dia).map((d) => ({ label: hrDMY(d.dia).slice(0, 5), dia: d.dia, parts: [{ name: "Antes 12h", v: d.n - d.pos, tone: "ok" }, { name: "Após 12h", v: d.pos, tone: "warn" }] }))} metaPct={metas.hor_aprov} metaLabel={`meta ${pdF(metas.hor_aprov)}`} onPick={(it) => { setFDe(it.dia); setFAte(it.dia); }} /></section>
           <section className="client-table-card bf-card"><div className="client-toolbar"><div><strong>Detalhamento por dia da saída</strong><small>manifestos × antes/após 12h × diferença para a meta · clique na linha para filtrar o dia</small></div></div>
             <div className="diag-scroll hr-scroll"><table className="pd-tbl"><thead><tr><th>Dia</th><th>Manifestos</th><th>Antes 12h</th><th>Após 12h</th><th>% aprov.</th><th>vs meta</th><th>Baixas c/ erro</th></tr></thead>
-              <tbody>{porDia.map((d) => { const p = pdP(d.n - d.pos, d.n); return <tr key={d.dia} className="click" onClick={() => { setFDe(d.dia); setFAte(d.dia); }}><td>{hrDMY(d.dia)}</td><td>{d.n}</td><td>{d.n - d.pos}</td><td>{d.pos}</td><td>{pdF(p)}</td><td className={p >= metas.hor_aprov ? "pd-pos" : "pd-neg"}>{pdPP(p - metas.hor_aprov)}</td><td>{d.err}</td></tr>; })}</tbody>
+              <tbody>{porDia.map((d) => { const p = pdP(d.n - d.pos, d.n); return <tr key={d.dia} className="click" onClick={() => { if (d.dia) { setFDe(d.dia); setFAte(d.dia); } }}><td>{d.dia ? hrDMY(d.dia) : "Sem data de saída"}</td><td>{d.n}</td><td>{d.n - d.pos}</td><td>{d.pos}</td><td>{pdF(p)}</td><td className={p >= metas.hor_aprov ? "pd-pos" : "pd-neg"}>{pdPP(p - metas.hor_aprov)}</td><td>{d.err}</td></tr>; })}</tbody>
               <tfoot><tr><td>Total / média</td><td>{kp.mans}</td><td>{kp.mans - kp.pos12}</td><td>{kp.pos12}</td><td>{pdF(pdP(kp.mans - kp.pos12, kp.mans))}</td><td className={pdP(kp.mans - kp.pos12, kp.mans) >= metas.hor_aprov ? "pd-pos" : "pd-neg"}>{pdPP(pdP(kp.mans - kp.pos12, kp.mans) - metas.hor_aprov)}</td><td>{kp.erros}</td></tr></tfoot></table></div></section>
         </div>
         <div className="pd-row two">
