@@ -959,6 +959,32 @@ tr.hr-dmax td { background: color-mix(in srgb, var(--red) 12%, transparent); } t
 .hr-adjtag { color: #4f8fd6; font-weight: 800; font-size: 10px; text-transform: uppercase; }
 tr.hr-adjrow td { background: color-mix(in srgb, #4f8fd6 10%, transparent); }
 @media (max-width: 900px) { .hr-fgrid { grid-template-columns: 1fr 1fr; } }
+.pd-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(300px, 1.15fr); gap: 8px; margin-bottom: 8px; align-items: stretch; }
+@media (max-width: 1100px) { .pd-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .pd-row { grid-template-columns: 1fr; } }
+.pd-row.two { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); align-items: start; }
+.pd-row.duo { grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; }
+.pd-kpi { --tone: var(--green); display: flex; flex-direction: column; gap: 2px; text-align: left; font-family: inherit; color: var(--foreground); padding: 12px 16px; min-height: 104px; box-sizing: border-box; border: 1px solid color-mix(in srgb, var(--tone) 35%, var(--border)); background: color-mix(in srgb, var(--tone) 14%, var(--card)); }
+.pd-kpi.click { cursor: pointer; } .pd-kpi.click:hover, .pd-kpi.on { border-color: var(--tone); }
+.pd-kpi span { font-size: 11px; font-weight: 700; } .pd-kpi b { font-size: 34px; line-height: 1.05; font-weight: 800; letter-spacing: -.03em; color: var(--tone); } .pd-kpi small { font-size: 10px; color: var(--muted-foreground); font-family: 'IBM Plex Mono', monospace; }
+.pd-ok { --tone: var(--green); } .pd-bad { --tone: var(--red); } .pd-warn { --tone: #d19a00; } .pd-info { --tone: #4f8fd6; }
+.pd-meta { display: flex; gap: 14px; align-items: center; justify-content: center; flex-wrap: nowrap; background: var(--card); border: 1px solid var(--border); padding: 10px 14px; box-sizing: border-box; color: var(--foreground); }
+.pd-meta-t { display: grid; gap: 3px; font-size: 11px; } .pd-meta-t strong { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted-foreground); } .pd-meta-t b { font-size: 15px; } .pd-meta svg { flex: none; } .pd-meta-t { min-width: 0; } .pd-meta-t small { color: var(--muted-foreground); font-size: 10px; }
+.pd-meta-in { width: 58px; border: 1px solid var(--border); background: var(--background); color: var(--foreground); padding: 2px 5px; font: 700 14px inherit; text-align: right; }
+.pd-pos { color: var(--green); } .pd-neg { color: var(--red); }
+.pd-cols { display: flex; gap: 14px; align-items: flex-start; position: relative; padding: 14px 4px 4px; }
+.pd-col { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center; }
+.pd-col strong { font-size: 11px; color: var(--foreground); } .pd-col small { font-size: 10px; color: var(--muted-foreground); }
+.pd-bar { position: relative; width: 74%; max-width: 92px; height: 150px; display: flex; flex-direction: column-reverse; }
+.pd-bar.click { cursor: pointer; }
+.pd-bar i { position: relative; z-index: 1; text-shadow: 0 0 3px rgba(0,0,0,.55); display: flex; align-items: center; justify-content: center; font: 800 11px 'IBM Plex Mono', monospace; font-style: normal; color: #fff; overflow: hidden; min-height: 0; }
+.pd-s-ok { background: var(--green); } .pd-s-bad { background: var(--red); } .pd-s-warn { background: #d19a00; } .pd-s-info { background: #4f8fd6; } .pd-s-mute { background: #7d8a83; }
+.pd-line { z-index: 0; position: absolute; left: -10px; right: -10px; border-top: 2px dashed var(--foreground); pointer-events: none; text-decoration: none; }
+.pd-line-l { position: absolute; right: 4px; top: 0; font-size: 10px; font-weight: 700; color: var(--foreground); }
+.pd-tbl { width: 100%; border-collapse: collapse; font-size: 12px; } .pd-tbl th { text-align: right; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted-foreground); padding: 6px 8px; border-bottom: 2px solid var(--border); white-space: nowrap; } .pd-tbl td { color: var(--foreground); text-align: right; padding: 6px 8px; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pd-tbl th:first-child, .pd-tbl td:first-child { text-align: left; } .pd-tbl tfoot td { font-weight: 800; background: var(--muted); border-bottom: 0; } .pd-tbl tr.click { cursor: pointer; } .pd-tbl tr.click:hover td { background: color-mix(in srgb, var(--green) 8%, transparent); }
+.pd-flow { display: flex; height: 34px; border: 1px solid var(--border); margin: 10px 0 8px; } .pd-flow > div { display: flex; align-items: center; padding: 0 8px; font-size: 11px; font-weight: 700; overflow: hidden; white-space: nowrap; color: var(--foreground); }
+.pd-tags { display: flex; gap: 6px; flex-wrap: wrap; } .pd-tags span { font-size: 10px; font-weight: 700; background: var(--muted); color: var(--muted-foreground); padding: 3px 7px; }
 tr.hr-err td { background: color-mix(in srgb, var(--red) 14%, transparent); }
 tr.hr-lote td { background: color-mix(in srgb, #d19a00 14%, transparent); }
 tr.hr-g td { border-top: 2px solid var(--border); }
@@ -3689,6 +3715,7 @@ function DiagnosticoVeiculos() {
       updatedAt: null,
     };
   });
+  const isAdminP = useIsAdmin(); const [metas, setMeta] = useMetas();
   const [scope, setScope] = useState("all");
   const [classFilter, setClassFilter] = useState(null); // null | "Operando" | "Backup" | "Manutenção" | "JDI" | "SEM_MOTORISTA"
   const [search, setSearch] = useState("");
@@ -4067,6 +4094,13 @@ function DiagnosticoVeiculos() {
       {FROTA_SCOPES.map((s) => <button key={s.key} type="button" role="tab" aria-selected={scope === s.key} className={scope === s.key ? "active" : ""} onClick={() => setScope(s.key)}>{s.label}</button>)}
     </div>
 
+    <div className="pd-row">
+      <PdKpi tone="info" label="Veículos da frota" value={numberInt.format(t.total)} sub={`${tiposVisiveis.length} categoria(s) · ${scopeLabel}`} />
+      <PdKpi tone="ok" label="Disponíveis (operando + backup)" value={numberInt.format(t.operando + t.backup)} sub={`${frotaPct(t.total ? (t.operando + t.backup) / t.total : 0)} da frota`} />
+      <PdKpi tone="bad" label="Fora de operação" value={numberInt.format(t.total - t.operando - t.backup)} sub={`${frotaPct(t.total ? (t.total - t.operando - t.backup) / t.total : 0)} · manutenção, JDI e inoperantes`} onClick={() => setClassFilter(classFilter === "Manutenção" ? null : "Manutenção")} active={classFilter === "Manutenção"} />
+      <PdMeta pct={t.total ? t.disponivel * 100 : 0} label="disponível" title="% Disponível" metaKey="veic_disp" metas={metas} setMeta={setMeta} admin={isAdminP} note="(operando + backup) ÷ total" />
+    </div>
+    <div className="client-toolbar" style={{ marginBottom: 4 }}><div><strong>Filtrar a lista de veículos por indicador</strong></div></div>
     <div className="diag-kpi-grid">
       {kpis.map((k) => <button key={k.label} type="button" className={`diag-kpi ${k.key !== null && classFilter === k.key ? "active" : ""}`} aria-pressed={k.key !== null && classFilter === k.key} onClick={() => setClassFilter(k.key === null || classFilter === k.key ? null : k.key)}>
         <span>{k.label}</span><strong>{numberInt.format(k.value)}</strong><small>{k.sub}</small>
@@ -4148,17 +4182,9 @@ function DiagnosticoVeiculos() {
     </section>
 
     <section className="client-table-card diag-bars-card">
-      <div className="client-toolbar"><div><strong>Composição por situação</strong><small>cada barra = 100% dos veículos da categoria</small></div>
+      <div className="client-toolbar"><div><strong>Composição por situação</strong><small>cada barra = 100% dos veículos da categoria · % dentro da barra, quantidade abaixo · tracejado = meta de disponibilidade</small></div>
         <div className="diag-legend">{segs.map((s) => <span key={s.key}><i className={`diag-dot ${s.cls}`} />{s.label}</span>)}</div></div>
-      <div className="diag-bars">
-        {[...tiposVisiveis, { ...t, tipo: "TOTAL" }].map((r) => <div className="diag-bar-row" key={r.tipo}>
-          <strong>{r.tipo}</strong>
-          <div className="diag-bar-track" role="img" aria-label={`${r.tipo}: ${segs.map((s) => `${r[s.key]} ${s.label}`).join(", ")}`}>
-            {segs.map((s) => r[s.key] > 0 && <i key={s.key} className={s.cls} style={{ flexGrow: r[s.key] }} title={`${s.label}: ${r[s.key]} (${frotaPct(r[s.key] / r.total)})`} />)}
-          </div>
-          <small>{segs.filter((s) => r[s.key] > 0).map((s) => `${r[s.key]} ${s.label.toLowerCase()}`).join(" · ")}</small>
-        </div>)}
-      </div>
+      <PdCols items={[...tiposVisiveis, { ...t, tipo: "TOTAL" }].map((r) => ({ label: r.tipo, parts: [{ name: "Operando", v: r.operando, tone: "ok" }, { name: "Backup", v: r.backup, tone: "info" }, { name: "Manutenção", v: r.manutencao, tone: "bad" }, { name: "JDI", v: r.jdi, tone: "warn" }, { name: "Inoperante", v: r.inoperante, tone: "mute" }] }))} metaPct={metas.veic_disp} metaLabel={`meta ${pdF(metas.veic_disp)} disponível`} />
     </section>
 
     <section className="client-table-card">
@@ -4609,6 +4635,7 @@ function DevClientBox({ clis, activeKeys, onPick }) {
 }
 
 function AnaliseDevolucoes() {
+  const isAdminP = useIsAdmin(); const [metas, setMeta] = useMetas();
   const todayOff = useMemo(() => { const d = new Date(); return isoToDayOffset(`${d.getFullYear()}-${devPad2(d.getMonth() + 1)}-${devPad2(d.getDate())}`); }, []);
   const [data, setData] = useState(() => {
     const s = lsLoad("devolucoes");
@@ -4929,6 +4956,13 @@ function AnaliseDevolucoes() {
     { label: "Dias médios na filial", value: tot.dias === null ? "—" : number.format(tot.dias), sub: "desde a chegada em GRU/filial" },
     { label: "Sem responsável", value: numberInt.format(semRespClientes), sub: "cliente(s) a definir", onClick: () => setFacet("resp", [DEV_SEM_RESP]), active: devSame(f.resp, [DEV_SEM_RESP]), tone: semRespClientes ? "bad" : "" },
   ];
+  const agingFil = useMemo(() => {
+    const by = new Map(); rows.forEach((r) => { if (r.dias === null || r.dias === undefined) return; const k = r.filAtual || "—"; if (!by.has(k)) by.set(k, []); by.get(k).push(r); });
+    const sm = (l) => devSummarize(l).cte;
+    const list = [...by.entries()].map(([fil, l]) => ({ fil, a: sm(l.filter((r) => r.dias <= 30)), b: sm(l.filter((r) => r.dias > 30 && r.dias <= 60)), c: sm(l.filter((r) => r.dias > 60)) })).sort((x, y) => (y.a + y.b + y.c) - (x.a + x.b + x.c));
+    const all = rows.filter((r) => r.dias !== null && r.dias !== undefined);
+    return { list: list.slice(0, 8), a: sm(all.filter((r) => r.dias <= 30)), b: sm(all.filter((r) => r.dias > 30 && r.dias <= 60)), c: sm(all.filter((r) => r.dias > 60)) };
+  }, [rows]);
   const maxOcor = ocorFunnel.reduce((m, o) => Math.max(m, o.nf), 1);
   const permBase = permCards.reduce((a, b) => a + b.cte, 0) || 1;
   const cols = [["cli", "Cliente"], ["cat", "Categoria"], ["resp", "Responsável"], ["cte", "CTes"], ["nf", "NFs"], ["vol", "Volumes"], ["valor", "Valor NF"], ["pctVenc", "Vencidas"], ["ag", "Aguard. agend."], ["cte90", "+90 dias"], ["dias", "Dias na filial"]];
@@ -5001,6 +5035,21 @@ function AnaliseDevolucoes() {
       <span className="dev-scope-hint">{fils.length === 0 ? "todas as filiais" : fils.length === 1 ? "1 filial" : `${fils.length} filiais somadas`} · clique em uma ou várias para comparar cenários; os números abaixo seguem a seleção</span>
     </div>
 
+    <div className="pd-row">
+      <PdKpi tone="info" label="CTes únicos na filial" value={numberInt.format(tot.cte)} sub={`${numberInt.format(tot.nf)} NFs · ${devMoney0.format(tot.valor)}`} />
+      <PdKpi tone="bad" label="CTes +90 dias na filial" value={numberInt.format(tot.cte90)} sub={`${devPct(tot.cte90, tot.cte)} dos CTes`} onClick={() => setFacet("perm", ["Acima de 90 dias"])} active={devSame(f.perm, ["Acima de 90 dias"])} />
+      <PdKpi tone="warn" label="NFs vencidas" value={numberInt.format(tot.venc)} sub={`${devPct(tot.venc, tot.nf)} das NFs · ${numberInt.format(tot.hoje + tot.amanha)} vencem hoje/amanhã`} onClick={() => setFacet("statusEntrega", ["Vencido"])} active={devSame(f.statusEntrega, ["Vencido"])} />
+      <PdMeta pct={pdP(agingFil.a, (agingFil.a + agingFil.b + agingFil.c))} label="CTes até 30 dias" title="Dentro do prazo" metaKey="dev_prazo" metas={metas} setMeta={setMeta} admin={isAdminP} note="CTes com até 30 dias na filial ÷ CTes com chegada registrada" />
+    </div>
+    <div className="pd-row two">
+      <section className="client-table-card"><div className="client-toolbar"><div><strong>Permanência por filial atual</strong><small>cada barra = 100% dos CTes da filial · verde até 30 dias · âmbar 31 a 60 · vermelho acima de 60 · tracejado = meta · quantidade abaixo</small></div></div>
+        <PdCols items={agingFil.list.map((x) => ({ label: x.fil, parts: [{ name: "Até 30 dias", v: x.a, tone: "ok" }, { name: "31 a 60", v: x.b, tone: "warn" }, { name: "Acima de 60", v: x.c, tone: "bad" }] }))} metaPct={metas.dev_prazo} metaLabel={`meta ${pdF(metas.dev_prazo)}`} /></section>
+      <section className="client-table-card"><div className="client-toolbar"><div><strong>Detalhamento por faixa</strong><small>CTes × % da carteira com chegada registrada</small></div></div>
+        <div className="diag-scroll"><table className="pd-tbl"><thead><tr><th>Faixa</th><th>CTes</th><th>% carteira</th></tr></thead>
+          <tbody>{[["Até 30 dias", agingFil.a, "pd-pos"], ["31 a 60 dias", agingFil.b, ""], ["Acima de 60 dias", agingFil.c, "pd-neg"]].map(([l, v, c]) => <tr key={l}><td>{l}</td><td>{numberInt.format(v)}</td><td className={c}>{pdF(pdP(v, (agingFil.a + agingFil.b + agingFil.c)))}</td></tr>)}</tbody>
+          <tfoot><tr><td>Total</td><td>{numberInt.format((agingFil.a + agingFil.b + agingFil.c))}</td><td>100,00%</td></tr></tfoot></table></div></section>
+    </div>
+    <div className="client-toolbar" style={{ marginBottom: 4 }}><div><strong>Filtrar por indicador</strong></div></div>
     <div className="dev-kpi-grid">
       {kpis.map((k) => k.onClick
         ? <button key={k.label} type="button" className={`diag-kpi ${k.active ? "active" : ""} ${k.tone === "bad" ? "dev-bad" : ""}`} aria-pressed={!!k.active} onClick={k.onClick}><span>{k.label}</span><strong>{k.value}</strong><small>{k.sub}</small></button>
@@ -5204,6 +5253,65 @@ function GlobalStatusBar({ coletaStatus, manifestSourceLabel, manifestUpdatedAt,
       <span className={`global-status-chip ${receitaStatus ? "status-ok" : "status-missing"}`}><CircleDollarSign size={12} /> Receita: {receitaStatus ? <>carregada <small>{relativeTime(receitaStatus.updatedAt)}</small></> : "não carregada"}</span>
     </div>
   );
+}
+
+/* ===================== Padrão de indicadores (cartões, anel com meta, barras em %) ===================== */
+const PD_METAS_ID = "metas_painel";
+const PD_METAS_DEF = { hor_aprov: 85, hor_baixas: 95, veic_disp: 90, dev_prazo: 70 };
+const pdP = (a, b) => (b ? (a / b) * 100 : 0);
+const pdF = (v) => `${(Math.round(v * 100) / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+const pdPP = (v) => `${v >= 0 ? "+" : "-"}${Math.abs(Math.round(v * 100) / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} p.p.`;
+function useIsAdmin() {
+  const [a, setA] = useState(() => acSessLoad()?.id === "admin");
+  useEffect(() => { const h = () => setA(acSessLoad()?.id === "admin"); window.addEventListener("painel_acesso", h); return () => window.removeEventListener("painel_acesso", h); }, []);
+  return a;
+}
+function useMetas() {
+  const [m, setM] = useState(() => ({ ...PD_METAS_DEF, ...((lsLoad(PD_METAS_ID) || {}).metas || {}) }));
+  useEffect(() => {
+    let off = false; let ch = null;
+    cloudLoad(PD_METAS_ID).then((row) => { if (off || !row || !row.data || !row.data.metas) return; setM({ ...PD_METAS_DEF, ...row.data.metas }); lsSave(PD_METAS_ID, { metas: row.data.metas, updatedAt: row.updated_at }); });
+    if (supabaseClient) ch = supabaseClient.channel(`metas_sync_${Math.random().toString(36).slice(2)}`).on("postgres_changes", { event: "*", schema: "public", table: "painel_reports", filter: `id=eq.${PD_METAS_ID}` }, (p) => { const row = p.new; if (row && row.data && row.data.metas) setM({ ...PD_METAS_DEF, ...row.data.metas }); }).subscribe();
+    return () => { off = true; if (ch) supabaseClient.removeChannel(ch); };
+  }, []);
+  const setMeta = (k, v) => { const n = { ...m, [k]: v }; setM(n); lsSave(PD_METAS_ID, { metas: n, updatedAt: new Date().toISOString() }); cloudSave(PD_METAS_ID, { metas: n }, "Metas dos indicadores"); };
+  return [m, setMeta];
+}
+function PdKpi({ tone = "ok", label, value, sub, onClick, active }) {
+  const C = onClick ? "button" : "div";
+  return <C type={onClick ? "button" : undefined} className={`pd-kpi pd-${tone} ${onClick ? "click" : ""} ${active ? "on" : ""}`} onClick={onClick}><span>{label}</span><b>{value}</b><small>{sub}</small></C>;
+}
+function PdMeta({ pct, label, title, metaKey, metas, setMeta, admin, note }) {
+  const meta = metas[metaKey]; const diff = pct - meta; const ok = diff >= 0; const c = 2 * Math.PI * 54; const v = Math.max(0, Math.min(100, pct));
+  const [txt, setTxt] = useState(String(meta).replace(".", ","));
+  useEffect(() => { setTxt(String(meta).replace(".", ",")); }, [meta]);
+  const commit = () => { const n = Number(txt.replace(",", ".")); if (isFinite(n) && n > 0 && n <= 100 && n !== meta) setMeta(metaKey, n); else setTxt(String(meta).replace(".", ",")); };
+  return <div className="pd-meta">
+    <svg viewBox="0 0 140 140" width="108" height="108" role="img" aria-label={`${label} ${pdF(pct)}`}>
+      <circle cx="70" cy="70" r="54" fill="none" stroke="var(--muted)" strokeWidth="16" />
+      <circle cx="70" cy="70" r="54" fill="none" stroke={ok ? "var(--green)" : "var(--red)"} strokeWidth="16" strokeDasharray={`${(c * v) / 100} ${c}`} transform="rotate(-90 70 70)" />
+      <text x="70" y="68" textAnchor="middle" fontSize="19" fontWeight="800" fill="currentColor">{pdF(pct)}</text>
+      <text x="70" y="85" textAnchor="middle" fontSize="9.5" fontWeight="600" fill="var(--muted-foreground)">{label}</text>
+    </svg>
+    <div className="pd-meta-t"><strong>{title}</strong>
+      <span>Meta {admin ? <input className="pd-meta-in" value={txt} onChange={(e) => setTxt(e.target.value)} onBlur={commit} onKeyDown={(e) => { if (e.key === "Enter") e.target.blur(); }} aria-label={`Meta de ${title}`} /> : <b>{pdF(meta)}</b>}{admin ? "%" : ""}</span>
+      <span>Diferença <b className={ok ? "pd-pos" : "pd-neg"}>{pdPP(diff)}</b></span>
+      {note && <small>{note}</small>}
+      {!admin && <small>Meta definida pelo administrador</small>}
+    </div>
+  </div>;
+}
+/* Colunas de 100% por categoria: % dentro do segmento, quantidade embaixo; linha tracejada = meta do 1º grupo (disponível). */
+function PdCols({ items, metaPct, metaLabel, onPick }) {
+  return <div className="pd-cols">{items.map((it) => { const tot = it.parts.reduce((a, p) => a + p.v, 0) || 1; return <div key={it.label} className="pd-col">
+    <div className={`pd-bar ${onPick ? "click" : ""}`} onClick={onPick ? () => onPick(it) : undefined}>
+      {it.parts.map((p) => p.v > 0 && <i key={p.name} className={`pd-s-${p.tone}`} style={{ flexGrow: p.v }} title={`${p.name}: ${p.v} (${pdF((p.v / tot) * 100)})`}>{(p.v / tot) * 100 >= 9 ? `${Math.round((p.v / tot) * 1000) / 10}%`.replace(".", ",") : ""}</i>)}
+      {metaPct != null && <u className="pd-line" style={{ bottom: `${metaPct}%` }} />}
+    </div>
+    <strong>{it.label}</strong>
+    <small>{it.parts.filter((p) => p.v > 0).map((p) => `${numberInt.format(p.v)} ${p.name.toLowerCase()}`).join(" · ")}</small>
+    <small>de {numberInt.format(it.parts.reduce((a, p) => a + p.v, 0))}</small>
+  </div>; })}{metaPct != null && <span className="pd-line-l">{metaLabel}</span>}</div>;
 }
 
 /* ===================== Coletas - Horários ===================== */
@@ -5420,6 +5528,8 @@ function HorariosColeta({ isAdmin }) {
   const filtAtivo = !!(fDe || fAte || flt.cnpj);
   const calc = useMemo(() => (rows.length ? hrCompute(rows, cfg, flt) : null), [rows, cfg, flt]);
   const ajLista = useMemo(() => hrAjLista(rows, cfg.ajustes), [rows, cfg.ajustes]);
+  const [metas, setMeta] = useMetas();
+  const porDia = useMemo(() => { if (!calc) return []; const g = new Map(); calc.mans.forEach((x) => { if (!g.has(x.dia)) g.set(x.dia, { dia: x.dia, n: 0, pos: 0, err: 0 }); const o = g.get(x.dia); o.n++; if (x.pos12) o.pos++; if (x.errTipos.length) o.err++; }); return [...g.values()].sort((a, b) => a.dia.localeCompare(b.dia)); }, [calc]);
   const dias = useMemo(() => [...new Set(rows.map((r) => (r.sm || r.cc || "").slice(0, 10)).filter(Boolean))].sort(), [rows]);
 
   function persistCfg(next) { setCfg(next); lsSave(HR_CFG, { cfg: next, updatedAt: new Date().toISOString() }); cloudSave(HR_CFG, next, `${Object.keys(next.excl.clientes).length} cliente(s) e ${Object.keys(next.excl.manifestos).length} manifesto(s) fora da análise · ${Object.keys(next.janelas).length} janela(s) · ${Object.keys(next.ajustes || {}).length} ajuste(s) manual(is)`); }
@@ -5536,17 +5646,29 @@ function HorariosColeta({ isAdmin }) {
       </section>}
 
       {tab === "geral" && <>
-        <div className="bf-kpis">
-          <div className="diag-kpi static"><span>Manifestos</span><strong>{kp.mans}</strong><small>{numberInt.format(kp.coletas)} coletas · {numberInt.format(kp.paradas)} paradas válidas</small></div>
-          <div className="diag-kpi static"><span>Permanência média no cliente</span><strong>{hrFmtD(kp.perm)}</strong><small>paradas sem erro de baixa</small></div>
-          <div className="diag-kpi static"><span>Retorno médio ao Mec</span><strong>{hrFmtD(kp.ret)}</strong><small>{kp.nRet} manifestos · último cliente</small></div>
-          <div className="diag-kpi static bf-k-warn"><span>Saídas após as 12h</span><strong>{kp.pos12}</strong><small>{kp.mans ? Math.round((kp.pos12 / kp.mans) * 100) : 0}% dos manifestos</small></div>
-          <div className="diag-kpi static bf-k-warn"><span>Dessas, chegam no Mec após as 18h</span><strong>{kp.pos18}</strong><small>{kp.pos20} após as 20h</small></div>
-          {Object.keys(cfg.janelas).length > 0 && <div className="diag-kpi static bf-k-bad"><span>Cliente segurou (saiu após o horário)</span><strong>{kp.aSegurou}</strong><small>{kp.aChegou} chegamos após a janela</small></div>}
-          <div className="diag-kpi static bf-k-bad"><span>Manifestos com baixa com erro</span><strong>{kp.erros}</strong><small>ficam fora das médias</small></div>
+        <div className="pd-row">
+          <PdKpi tone="info" label="Manifestos no período" value={numberInt.format(kp.mans)} sub={`${numberInt.format(kp.coletas)} coletas · ${porDia.length} dia(s) de saída`} />
+          <PdKpi tone="ok" label="Saíram antes das 12h" value={numberInt.format(kp.mans - kp.pos12)} sub={`${pdF(pdP(kp.mans - kp.pos12, kp.mans))} dos manifestos`} />
+          <PdKpi tone="bad" label="Saíram após as 12h" value={numberInt.format(kp.pos12)} sub={`${pdF(pdP(kp.pos12, kp.mans))} · ${kp.pos18} chegam no Mec após 18h`} onClick={() => setTab("pos12")} />
+          <PdMeta pct={pdP(kp.mans - kp.pos12, kp.mans)} label="saída até 12h" title="Aproveitamento" metaKey="hor_aprov" metas={metas} setMeta={setMeta} admin={isAdmin} />
         </div>
-        {bar && <section className="client-table-card bf-card"><div className="client-toolbar"><div><strong>Onde o tempo do carro foi (média por manifesto)</strong><small>Ida = saída do Mec até o 1º cliente · permanência = parada no cliente · retorno = saída do ÚLTIMO cliente até o Mec</small></div></div>
-          <div className="hr-flow">{[["Ida", bar[0], "hr-f1"], ["Permanência no cliente", bar[1], "hr-f2"], ["Retorno", bar[2], "hr-f3"]].map(([l, v, c]) => <div key={l} className={c} style={{ flex: v }}>{l} · {hrFmtD(v)}</div>)}</div></section>}
+        <div className="pd-row two">
+          <section className="client-table-card bf-card"><div className="client-toolbar"><div><strong>Saídas por dia · antes e após as 12h</strong><small>cada barra = 100% dos manifestos do dia · quantidade abaixo · tracejado = meta · clique na barra para filtrar o dia</small></div></div>
+            <PdCols items={porDia.map((d) => ({ label: hrDMY(d.dia).slice(0, 5), dia: d.dia, parts: [{ name: "Antes 12h", v: d.n - d.pos, tone: "ok" }, { name: "Após 12h", v: d.pos, tone: "warn" }] }))} metaPct={metas.hor_aprov} metaLabel={`meta ${pdF(metas.hor_aprov)}`} onPick={(it) => { setFDe(it.dia); setFAte(it.dia); }} /></section>
+          <section className="client-table-card bf-card"><div className="client-toolbar"><div><strong>Detalhamento por dia da saída</strong><small>manifestos × antes/após 12h × diferença para a meta · clique na linha para filtrar o dia</small></div></div>
+            <div className="diag-scroll hr-scroll"><table className="pd-tbl"><thead><tr><th>Dia</th><th>Manifestos</th><th>Antes 12h</th><th>Após 12h</th><th>% aprov.</th><th>vs meta</th><th>Baixas c/ erro</th></tr></thead>
+              <tbody>{porDia.map((d) => { const p = pdP(d.n - d.pos, d.n); return <tr key={d.dia} className="click" onClick={() => { setFDe(d.dia); setFAte(d.dia); }}><td>{hrDMY(d.dia)}</td><td>{d.n}</td><td>{d.n - d.pos}</td><td>{d.pos}</td><td>{pdF(p)}</td><td className={p >= metas.hor_aprov ? "pd-pos" : "pd-neg"}>{pdPP(p - metas.hor_aprov)}</td><td>{d.err}</td></tr>; })}</tbody>
+              <tfoot><tr><td>Total / média</td><td>{kp.mans}</td><td>{kp.mans - kp.pos12}</td><td>{kp.pos12}</td><td>{pdF(pdP(kp.mans - kp.pos12, kp.mans))}</td><td className={pdP(kp.mans - kp.pos12, kp.mans) >= metas.hor_aprov ? "pd-pos" : "pd-neg"}>{pdPP(pdP(kp.mans - kp.pos12, kp.mans) - metas.hor_aprov)}</td><td>{kp.erros}</td></tr></tfoot></table></div></section>
+        </div>
+        <div className="pd-row two">
+          <section className="client-table-card bf-card"><div className="client-toolbar"><div><strong>Onde o tempo do carro foi</strong><small>média por manifesto · % do tempo total · ida = saída do Mec até o 1º cliente · retorno = saída do ÚLTIMO cliente até o Mec</small></div></div>
+            {bar ? <><div className="pd-flow">{[["Ida", bar[0], "hr-f1"], ["No cliente", bar[1], "hr-f2"], ["Retorno", bar[2], "hr-f3"]].map(([l, v, c]) => <div key={l} className={c} style={{ flex: v }}>{l} · {hrFmtD(v)} · {Math.round((v / (bar[0] + bar[1] + bar[2])) * 100)}%</div>)}</div>
+              <div className="pd-tags"><span>Permanência média {hrFmtD(kp.perm)}</span><span>Retorno médio {hrFmtD(kp.ret)} ({kp.nRet} manifestos)</span><span>Ida média {hrFmtD(kp.ida)}</span></div></> : <small className="bf-tag">Sem dados suficientes para as médias.</small>}</section>
+          <div className="pd-row duo">
+            <PdMeta pct={pdP(kp.mans - kp.erros, kp.mans)} label="baixas corretas" title="Qualidade das baixas" metaKey="hor_baixas" metas={metas} setMeta={setMeta} admin={isAdmin} note={`${kp.mans - kp.erros} corretas · ${kp.erros} com erro (fora das médias)`} />
+            {Object.keys(cfg.janelas).length > 0 ? <PdKpi tone="bad" label="Cliente segurou (saiu após o horário)" value={numberInt.format(kp.aSegurou)} sub={`${kp.aChegou} chegamos após a janela`} onClick={() => setFAl("segurou")} /> : <PdKpi tone="info" label="Alertas de janela" value="—" sub="cadastre janelas por cliente para ver" onClick={() => setTab("janelas")} />}
+          </div>
+        </div>
         {Object.keys(cfg.janelas).length > 0 && <section className="client-table-card bf-card"><div className="client-toolbar"><div><strong>Alertas de janela · {calc.alertas.length}</strong><small>Só clientes com janela cadastrada · usa o fim da janela (Até / Limite de) · paradas com erro de baixa ficam de fora</small></div>
           <select className="hr-sel" value={fAl} onChange={(e) => setFAl(e.target.value)}><option value="todos">Todos</option><option value="segurou">Só cliente segurou</option><option value="chegou">Só chegamos após a janela</option></select></div>
           <div className="diag-scroll hr-scroll"><table className="bf-tbl hr-small"><thead><tr><th>Cliente · CNPJ</th><th>Manifesto</th><th>Placa</th><th>Janela</th><th>Chegada</th><th>Saída</th><th>Alerta</th></tr></thead>
