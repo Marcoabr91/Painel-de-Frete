@@ -1025,6 +1025,8 @@ tr.hr-g td { border-top: 2px solid var(--border); }
 .eq-notice { border: 1px solid var(--green); background: var(--card); color: var(--foreground); padding: 8px 12px; font-size: 12px; margin-bottom: 8px; }
 .eq-empty { border: 1px dashed var(--border); background: var(--card); color: var(--foreground); padding: 22px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
 .eq-kpis { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+.eq-kpis button.diag-kpi { cursor: pointer; text-align: left; } .diag-kpi.on { border-color: var(--green); box-shadow: inset 0 -3px 0 var(--green); }
+.eq-drill { margin: 8px 0; } .eq-drill-h { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; } .eq-drill-a { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; } .eq-drill-s { max-height: 400px; overflow: auto; }
 .diag-kpi.static { cursor: default; }
 .diag-kpi.eq-bad strong { color: #b3363a; }
 .diag-kpi.eq-na { border-style: dashed; } .diag-kpi.eq-na strong { font-size: 15px; color: var(--muted-foreground); padding: 4px 0; }
@@ -3126,9 +3128,11 @@ function VehicleResources({ manifestDataset, manifestSourceLabel, manifestImport
     <div className="view-tabs" role="tablist" aria-label="Recursos - Veículos">
       <button type="button" role="tab" aria-selected={vtab === "buffer"} className={vtab === "buffer" ? "active" : ""} onClick={() => setVtab("buffer")}>Gestão do Buffer GRU</button>
       <button type="button" role="tab" aria-selected={vtab === "cadastro"} className={vtab === "cadastro" ? "active" : ""} onClick={() => setVtab("cadastro")}>Cadastro e frequência</button>
+      <button type="button" role="tab" aria-selected={vtab === "viagens"} className={vtab === "viagens" ? "active" : ""} onClick={() => setVtab("viagens")}>Relatório de viagens</button>
     </div>
 
     {vtab === "buffer" && <BufferGru />}
+    {vtab === "viagens" && <ViagensRel />}
 
     {vtab === "cadastro" && <>
     <div className="client-toolbar import-toolbar">
@@ -3314,14 +3318,14 @@ function bfParseViagens(wb) {
     const dtv = bfDT(cell(r, iDt)); n += 1;
     if (dtv > maxDt) maxDt = dtv; if (dtv && dtv < minDt) minDt = dtv;
     const sa = bfDT(cell(r, iS)), ch = bfDT(cell(r, iCh));
-    const key = sa || dtv;
-    const rec = [bfTrim(cell(r, iN)), bfTrim(cell(r, iO)).toUpperCase(), bfTrim(cell(r, iDs)).toUpperCase(), sa, ch, st, key];
+    const nr = bfTrim(cell(r, iN)); const key = `${dtv.slice(0, 10)}|${sa}|${nr.padStart(12, "0")}`;
+    const rec = [nr, bfTrim(cell(r, iO)).toUpperCase(), bfTrim(cell(r, iDs)).toUpperCase(), sa, ch, st, dtv, key];
     [iR1, iR2].forEach((c) => {
       if (c < 0) return;
       const p = bfTrim(cell(r, c)).toUpperCase();
       if (!p) return;
       const old = map[p];
-      if (!old || String(rec[6]) > String(old[6])) map[p] = rec;
+      if (!old || String(rec[7]) > String(old[7])) map[p] = rec;
     });
   }
   Object.values(map).forEach((rec) => rec.pop());
@@ -3337,6 +3341,81 @@ function bfDecide(inCp, t) {
     return inCp ? { s: "alerta", src: "cp", open: true } : { s: "fora", src: "viagem", open: true };
   }
   return inCp ? { s: "gru", src: "cp" } : { s: "fora", src: "semviagem" };
+}
+
+/* Regra do Relatório de viagens (última viagem da placa):
+   • origem e destino em GRU/EXA → está em GRU
+   • qualquer origem com destino GRU/EXA → está em GRU somente com chegada real
+   • destino em outra filial → em trânsito */
+function bfViagClass(t) {
+  const [, o, d, , ch] = t; const hO = BF_HERE.has(o), hD = BF_HERE.has(d);
+  if (hD && hO) return { s: "gru", m: `${o} → ${d} (origem e destino em GRU/EXA)${ch ? " · chegada real registrada" : " · sem chegada real ainda"}` };
+  if (hD && ch) return { s: "gru", m: `Chegou em ${d} vindo de ${o} (chegada real)` };
+  if (hD) return { s: "transito", m: `A caminho de ${d} vindo de ${o} · sem chegada real` };
+  return { s: "transito", m: ch ? `Destino ${d} (outra filial) · chegou lá, ainda não voltou para GRU` : `Destino ${d} (outra filial) · em trânsito, sem chegada real` };
+}
+function ViagensRel() {
+  const [viag, setViag] = useState(() => lsLoad("buffer_viag"));
+  const [err, setErr] = useState(null); const [busy, setBusy] = useState("");
+  const [fS, setFS] = useState("todas"); const [q, setQ] = useState(""); const [fD, setFD] = useState(""); const [fCh, setFCh] = useState("todas");
+  const ref = useRef(null); const admin = useIsAdmin();
+  useEffect(() => {
+    let off = false;
+    Promise.resolve(cloudLoad("buffer_viag")).then((row) => { if (off || !row || !row.data || !row.data.map) return; const at = lsLoad("buffer_viag")?.updatedAt; if (!at || new Date(row.updated_at) > new Date(at)) { const n = { ...row.data, updatedAt: row.updated_at }; setViag(n); lsSave("buffer_viag", n); } }).catch(() => {});
+    return () => { off = true; };
+  }, []);
+  async function onFile(e) {
+    const file = e.target.files?.[0]; if (!file) return;
+    setErr(null); setBusy("Lendo o relatório de viagens (pode levar alguns segundos)…");
+    try {
+      await new Promise((r) => setTimeout(r, 30));
+      const wb = XLSX.read(await file.arrayBuffer(), { type: "array", dense: true, sheets: 0 });
+      const p = bfParseViagens(wb); const next = { map: p.map, trips: p.trips, plates: p.plates, de: p.de, ate: p.ate, label: file.name, updatedAt: new Date().toISOString() };
+      setViag(next); lsSave("buffer_viag", next); cloudSave("buffer_viag", { map: p.map, trips: p.trips, plates: p.plates, de: p.de, ate: p.ate, label: file.name }, `${file.name} · ${p.trips} viagem(ns)`);
+    } catch (ex) { setErr(ex instanceof Error ? ex.message : "Não foi possível ler o relatório de viagens."); }
+    finally { setBusy(""); e.target.value = ""; }
+  }
+  const all = useMemo(() => { if (!viag || !viag.map) return []; return Object.entries(viag.map).map(([placa, t]) => { const c = bfViagClass(t); return { placa, nr: t[0], o: t[1], d: t[2], sa: t[3], ch: t[4], st: t[5], dt: t[6] || (t[3] || "").slice(0, 10), s: c.s, m: c.m }; }).sort((a, b) => (a.s === b.s ? 0 : a.s === "gru" ? -1 : 1) || (b.dt || "").localeCompare(a.dt || "") || a.placa.localeCompare(b.placa)); }, [viag]);
+  const dests = useMemo(() => [...new Set(all.map((r) => r.d))].sort(), [all]);
+  const rows = useMemo(() => { const k = q.trim().toUpperCase(); return all.filter((r) => (fS === "todas" || r.s === fS) && (!fD || r.d === fD) && (fCh === "todas" || (fCh === "com" ? !!r.ch : !r.ch)) && (!k || r.placa.includes(k))); }, [all, fS, fD, fCh, q]);
+  const nG = all.filter((r) => r.s === "gru").length, nT = all.length - nG, nSem = all.filter((r) => !r.ch).length;
+  function exportar() {
+    const wb = XLSX.utils.book_new();
+    const aoa = [["Placa (carreta)", "Data da viagem", "Nº viagem", "Origem", "Destino", "Saída real", "Chegada real", "Status da viagem", "Situação", "Critério"], ...rows.map((r) => [r.placa, bfDMY(r.dt), r.nr, r.o, r.d, r.sa ? `${bfDMY(r.sa)} ${bfHM(r.sa)}` : "", r.ch ? `${bfDMY(r.ch)} ${bfHM(r.ch)}` : "", r.st, r.s === "gru" ? "Em GRU" : "Em trânsito", r.m])];
+    const ws = XLSX.utils.aoa_to_sheet(aoa); ws["!cols"] = [14, 14, 10, 8, 8, 17, 17, 14, 12, 70].map((w) => ({ wch: w }));
+    XLSX.utils.book_append_sheet(wb, ws, "Relatorio viagens"); const d = new Date();
+    XLSX.writeFile(wb, `Relatorio_viagens_${d.getFullYear()}${devPad2(d.getMonth() + 1)}${devPad2(d.getDate())}.xlsx`);
+  }
+  return <div className="bf-wrap">
+    <div className="bf-up">
+      <div><button className="secondary-action" type="button" onClick={() => ref.current?.click()}><UploadCloud size={15} /> Subir relatório de viagens</button>
+        <small>{viag ? `${viag.label} · ${numberInt.format(viag.trips)} viagem(ns)${viag.de ? ` de ${bfDMY(viag.de)} a ${bfDMY(viag.ate)}` : ""} · ${numberInt.format(viag.plates)} carreta(s)` : "Nenhum relatório de viagens carregado"}</small></div>
+      <button className="secondary-action" type="button" onClick={exportar} disabled={!rows.length}><FileDown size={15} /> Extrair (Excel)</button>
+      {busy && <span className="bf-busy" role="status">{busy}</span>}
+      <input ref={ref} type="file" accept=".xlsx,.xls,.xlsm,.csv" className="hidden-file-input" onChange={onFile} />
+    </div>
+    {err && <div className="import-error client-import-error">{err}</div>}
+    {!viag && <div className="bf-empty-state">Suba o relatório de viagens (aba com SIGLA_FILIAL_ORIGEM, SIGLA_FILIAL_DESTINO, DT_VIAGEM, PLACA_REBOQUE_1/2, SAIDA_REAL e CHEGADA_REAL). O mesmo relatório alimenta a Gestão do Buffer GRU.</div>}
+    {viag && <>
+      <div className="pd-row">
+        <PdKpi tone="info" label="Carretas analisadas" value={numberInt.format(all.length)} sub="última viagem de cada placa · canceladas fora" />
+        <PdKpi tone="ok" label="Em GRU" value={numberInt.format(nG)} sub={`${pdF(pdP(nG, all.length))} das carretas`} onClick={() => setFS(fS === "gru" ? "todas" : "gru")} active={fS === "gru"} />
+        <PdKpi tone="warn" label="Em trânsito" value={numberInt.format(nT)} sub={`${pdF(pdP(nT, all.length))} das carretas`} onClick={() => setFS(fS === "transito" ? "todas" : "transito")} active={fS === "transito"} />
+        <PdKpi tone="bad" label="Última viagem sem chegada real" value={numberInt.format(nSem)} sub={`${pdF(pdP(nSem, all.length))} · viagem ainda aberta`} onClick={() => setFCh(fCh === "sem" ? "todas" : "sem")} active={fCh === "sem"} />
+      </div>
+      <div className="client-toolbar bf-filters">
+        <div className="hr-tabs">{[["todas", "Todas"], ["gru", "Em GRU"], ["transito", "Em trânsito"]].map(([k, l]) => <button key={k} type="button" className={`hr-tab ${fS === k ? "on" : ""}`} onClick={() => setFS(k)}>{l}</button>)}</div>
+        <label className="hr-dia">Destino <select value={fD} onChange={(e) => setFD(e.target.value)}><option value="">Todos</option>{dests.map((d) => <option key={d} value={d}>{d}</option>)}</select></label>
+        <label className="hr-dia">Chegada real <select value={fCh} onChange={(e) => setFCh(e.target.value)}><option value="todas">Todas</option><option value="com">Com chegada real</option><option value="sem">Sem chegada real</option></select></label>
+        <input className="eq-search" placeholder="Buscar placa…" value={q} onChange={(e) => setQ(e.target.value)} />
+      </div>
+      <section className="client-table-card bf-card"><div className="client-toolbar"><div><strong>Placas × última viagem · {numberInt.format(rows.length)} de {numberInt.format(all.length)}</strong><small>Em GRU = origem e destino GRU/EXA, ou qualquer origem chegando em GRU/EXA com chegada real · destino em outra filial = em trânsito</small></div></div>
+        <div className="diag-scroll hr-scroll tall"><table className="bf-tbl hr-small"><thead><tr><th>Placa</th><th>Data da viagem</th><th>Viagem</th><th>Origem → Destino</th><th>Saída real</th><th>Chegada real</th><th>Status</th><th>Situação</th><th>Critério</th></tr></thead>
+          <tbody>{rows.slice(0, 400).map((r) => <tr key={r.placa} className={r.s === "gru" ? "" : "hr-lote"}><td><b>{r.placa}</b></td><td>{bfDMY(r.dt)}</td><td>{r.nr}</td><td>{r.o} → <b>{r.d}</b></td><td>{r.sa ? `${bfDM(r.sa)} ${bfHM(r.sa)}` : "—"}</td><td>{r.ch ? <b>{`${bfDM(r.ch)} ${bfHM(r.ch)}`}</b> : <span className="bf-tag">sem chegada</span>}</td><td>{r.st}</td><td><span className={`bf-chip ${r.s === "gru" ? "ok" : "bad"}`}>{r.s === "gru" ? "Em GRU" : "Em trânsito"}</span></td><td>{r.m}</td></tr>)}
+            {!rows.length && <tr><td colSpan={9} className="bf-empty">Nenhuma placa com esses filtros.</td></tr>}</tbody></table></div>
+        {rows.length > 400 && <small className="bf-tag">Mostrando 400 de {numberInt.format(rows.length)} · use os filtros ou extraia o Excel para ver todas.</small>}</section>
+    </>}
+  </div>;
 }
 
 function BufferGru() {
@@ -5931,6 +6010,7 @@ function EqPick({ value, options, onChange, label }) {
 function GestaoEquipes({ perm }) {
   const ro = perm ? !perm.canEdit : false;
   const [tab, setTab] = useState("resumo");
+  const [drill, setDrill] = useState(null); const [drillQ, setDrillQ] = useState("");
   const [base, setBase] = useState(() => { const s = lsLoad("equipes_base"); return s && Array.isArray(s.rows) ? s : { rows: [], label: "", updatedAt: null }; });
   const [ov, setOv] = useState(() => lsLoad("equipes_veic")?.items ?? {});
   const [fleet, setFleet] = useState(() => {
@@ -6365,6 +6445,38 @@ function GestaoEquipes({ perm }) {
   }, [vlist, vFilter, search]);
   const semVeicAll = useMemo(() => people.filter((p) => !p.vkey && !p.afastado).sort((a, b) => a.eq.localeCompare(b.eq, "pt-BR") || EQ_FT_ORDER[a.ft] - EQ_FT_ORDER[b.ft] || a.nome.localeCompare(b.nome, "pt-BR")), [people]);
   const semVeic = useMemo(() => people.filter((p) => !p.vkey && !p.afastado && p.ft !== "adm").sort((a, b) => EQ_FT_ORDER[a.ft] - EQ_FT_ORDER[b.ft] || a.eq.localeCompare(b.eq) || a.nome.localeCompare(b.nome, "pt-BR")), [people]);
+  const drillView = (() => {
+    if (!drill) return null;
+    const sit = (p) => (p.afastado ? "Afastado" : p.fer?.estado === "hoje" ? "Em férias hoje" : p.fer?.estado === "prog" && p.fer.ini ? `Férias a partir de ${eqFmtFull(p.fer.ini)}` : "Ativo");
+    const pHead = ["Colaborador", "Função", "Equipe / setor", "Veículo", "Situação"];
+    const pRow = (p) => [p.nome, p.func, p.eq, p.vkey && veh.get(p.vkey) ? veh.get(p.vkey).label : "Sem veículo", sit(p)];
+    const ppl = (title, sub, l) => ({ grp: "p", title, sub, head: pHead, rows: l.map(pRow) });
+    const vg = (title, sub, l) => ({ grp: "v", title, sub, head: ["Função", "Tipo de vaga", "Qtd", "Regularizadas", "Pendentes", "Quem entrou", "Motivo / detalhe", "Observações"], rows: l.map((v) => [v.func, v.tipo, v.qtd, v.feitas, v.pend, v.regs.filter(Boolean).join(" / ") || "—", v.motivo || "", v.obs || ""]) });
+    switch (drill) {
+      case "total": return ppl("Todos os colaboradores", "CDC Distribuição, por equipe", people);
+      case "emVeic": return ppl("Colaboradores em veículo", "com placa definida", people.filter((p) => p.vkey && !p.afastado));
+      case "sem": return ppl("Colaboradores sem veículo", "inclui administrativo/apoio; operacionais = Ajudante, Conferente e Motorista", semVeicAll);
+      case "afast": return ppl("Afastados", "veículo \"AFASTADO\"", people.filter((p) => p.afastado));
+      case "alertas": return { grp: "p", title: "Veículos fora da regra de lotação", sub: "excesso de colaboradores ou mais de um motorista", head: ["Veículo", "Colaboradores", "Problema"], rows: vlist.filter((v) => v.issues.length).map((v) => [v.label, v.members.map((m) => m.nome).join(" · "), v.issues.join("; ")]) };
+      case "vagos": return { grp: "p", title: "Placas do Diagnóstico sem equipe", sub: "sem nenhum colaborador alocado", head: ["Placa", "Tipo / categoria", "Status", "Situação", "Motorista no Diagnóstico"], rows: vlist.filter((v) => v.r && !v.members.length).map((v) => [v.label, v.r.categoria || v.tipo || "", v.r.status || "", v.r.situacao || "", v.r.motorista || "—"]) };
+      case "vagasTotal": return vg("Vagas no quadro", "todas as linhas de reposição / aumento de quadro", vagas);
+      case "vagasPend": return vg("Vagas pendentes", "ainda a regularizar", vagas.filter((v) => v.pend > 0));
+      case "vagasFeitas": return vg("Vagas regularizadas", "com ou sem nome", vagas.filter((v) => v.feitas > 0));
+      default: return null;
+    }
+  })();
+  const drillPanel = (grp) => {
+    if (!drillView || drillView.grp !== grp) return null;
+    const q = drillQ.trim().toUpperCase(); const rows = drillView.rows.filter((r) => !q || r.join(" ").toUpperCase().includes(q));
+    const exportDrill = () => { const wb = XLSX.utils.book_new(); const ws = XLSX.utils.aoa_to_sheet([drillView.head, ...rows]); ws["!cols"] = drillView.head.map((h, i) => ({ wch: i === 0 ? 34 : 24 })); XLSX.utils.book_append_sheet(wb, ws, drillView.title.slice(0, 30)); XLSX.writeFile(wb, `${drillView.title.replace(/[^A-Za-z0-9]+/g, "_")}.xlsx`); };
+    return <section className="eq-card eq-drill" aria-live="polite">
+      <div className="eq-drill-h"><div><h3 style={{ margin: 0 }}>{drillView.title} ({rows.length}{rows.length !== drillView.rows.length ? ` de ${drillView.rows.length}` : ""})</h3><div className="eq-note" style={{ margin: 0 }}>{drillView.sub}</div></div>
+        <div className="eq-drill-a"><input className="eq-search" placeholder="Filtrar…" value={drillQ} onChange={(e) => setDrillQ(e.target.value)} /><button type="button" className="secondary-action" onClick={exportDrill}><FileDown size={14} /> Extrair</button><button type="button" className="secondary-action" onClick={() => setDrill(null)}>Fechar</button></div></div>
+      <div className="eq-drill-s"><table className="eq-table"><thead><tr>{drillView.head.map((h) => <th key={h}>{h}</th>)}</tr></thead>
+        <tbody>{rows.map((r, i) => <tr key={i}>{r.map((c, j) => <td key={j}>{j === 0 ? <b>{c}</b> : c}</td>)}</tr>)}{!rows.length && <tr><td colSpan={drillView.head.length} className="eq-z">Nada encontrado.</td></tr>}</tbody></table></div>
+    </section>;
+  };
+  const pick = (k) => { setDrillQ(""); setDrill(drill === k ? null : k); };
 
   function exportEquipes() {
     const wb = XLSX.utils.book_new();
@@ -6445,18 +6557,19 @@ function GestaoEquipes({ perm }) {
 
     {empty ? <div className="eq-empty"><strong>{ro ? "Ainda não há planilha carregada." : "Suba a planilha CDC para começar."}</strong><span>{ro ? "Peça ao coordenador para carregar a planilha." : 'Use "Atualizar planilha CDC" e escolha o arquivo CDC - OPL GERAL (a aba CDC DISTRIBUIÇÃO é lida). Depois "Atualizar férias" com a planilha de férias. Nomes e matrículas ficam guardados na base compartilhada do painel.'}</span></div> : <>
       <div className="view-tabs" role="tablist">
-        {[["resumo", "Resumo das equipes"], ["veic", "Veículos e equipes"], ["ferias", "Férias"], ["freq", "Frequência"], ["aloc", "Alocação (CDC GERAL)"], ["repos", `RDCAD - Pendente${repTot.pend ? ` (${repTot.pend})` : ""}`]].map(([k, l]) => <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? "active" : ""} onClick={() => setTab(k)}>{l}</button>)}
+        {[["resumo", "Resumo das equipes"], ["veic", "Veículos e equipes"], ["ferias", "Férias"], ["freq", "Frequência"], ["aloc", "Alocação (CDC GERAL)"], ["repos", `RDCAD - Pendente${repTot.pend ? ` (${repTot.pend})` : ""}`]].map(([k, l]) => <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? "active" : ""} onClick={() => { setTab(k); setDrill(null); }}>{l}</button>)}
       </div>
 
       <div className="diag-kpi-grid eq-kpis">
-        <div className="diag-kpi static"><span>Colaboradores</span><strong>{numberInt.format(T.total)}</strong><small>CDC Distribuição</small></div>
-        <div className="diag-kpi static"><span>Em veículo</span><strong>{numberInt.format(T.emVeic)}</strong><small>{T.vcom} veículo(s) com equipe</small></div>
-        <div className="diag-kpi static"><span>Sem veículo</span><strong>{numberInt.format(T.sem)}</strong><small>{semVeic.length} operacional(is)</small></div>
-        {T.afast > 0 && <div className="diag-kpi static"><span>Afastados</span><strong>{T.afast}</strong><small>veículo "AFASTADO"</small></div>}
-        <div className={`diag-kpi static ${T.alertas ? "eq-bad" : ""}`}><span>Fora da regra</span><strong>{T.alertas}</strong><small>veículos com excesso</small></div>
-        <div className="diag-kpi static"><span>Placas sem equipe</span><strong>{T.vagos}</strong><small>no Diagnóstico</small></div>
+        <button type="button" className={`diag-kpi ${drill === "total" ? "on" : ""}`} onClick={() => pick("total")}><span>Colaboradores</span><strong>{numberInt.format(T.total)}</strong><small>CDC Distribuição · clique para ver quem são</small></button>
+        <button type="button" className={`diag-kpi ${drill === "emVeic" ? "on" : ""}`} onClick={() => pick("emVeic")}><span>Em veículo</span><strong>{numberInt.format(T.emVeic)}</strong><small>{T.vcom} veículo(s) com equipe</small></button>
+        <button type="button" className={`diag-kpi ${drill === "sem" ? "on" : ""}`} onClick={() => pick("sem")}><span>Sem veículo</span><strong>{numberInt.format(T.sem)}</strong><small>{semVeic.length} operacional(is)</small></button>
+        {T.afast > 0 && <button type="button" className={`diag-kpi ${drill === "afast" ? "on" : ""}`} onClick={() => pick("afast")}><span>Afastados</span><strong>{T.afast}</strong><small>veículo "AFASTADO"</small></button>}
+        <button type="button" className={`diag-kpi ${T.alertas ? "eq-bad" : ""} ${drill === "alertas" ? "on" : ""}`} onClick={() => pick("alertas")}><span>Fora da regra</span><strong>{T.alertas}</strong><small>veículos com excesso</small></button>
+        <button type="button" className={`diag-kpi ${drill === "vagos" ? "on" : ""}`} onClick={() => pick("vagos")}><span>Placas sem equipe</span><strong>{T.vagos}</strong><small>no Diagnóstico</small></button>
         {hasFer ? <button type="button" className="diag-kpi" onClick={() => setTab("ferias")}><span>Em férias hoje</span><strong>{F.hoje.length}</strong><small>{F.prox30.length} saem em 30 dias</small></button> : <div className="diag-kpi static eq-na"><span>Férias</span><strong>suba a planilha</strong><small>Atualizar férias</small></div>}
       </div>
+      {drillPanel("p")}
 
       {tab === "resumo" && (() => {
         const list = people.filter((p) => (rEq === "todos" || p.eq === rEq) && (rCargo === "todos" || eqCargoKey(p) === rCargo)).sort((a, b) => ["motc", "mot", "conf", "ajud", "adm"].indexOf(eqCargoKey(a)) - ["motc", "mot", "conf", "ajud", "adm"].indexOf(eqCargoKey(b)) || a.func.localeCompare(b.func, "pt-BR") || a.nome.localeCompare(b.nome, "pt-BR"));
@@ -6571,10 +6684,11 @@ function GestaoEquipes({ perm }) {
 
       {tab === "repos" && <div className="eq-repos">
         <div className="diag-kpi-grid eq-kpis">
-          <div className="diag-kpi static"><span>Vagas no quadro</span><strong>{repTot.total}</strong><small>{vagas.length} linha(s)</small></div>
-          <div className={`diag-kpi static ${repTot.pend ? "eq-bad" : ""}`}><span>Pendentes</span><strong>{repTot.pend}</strong><small>a regularizar</small></div>
-          <div className="diag-kpi static"><span>Regularizadas</span><strong>{repTot.feitas}</strong><small>com ou sem nome</small></div>
+          <button type="button" className={`diag-kpi ${drill === "vagasTotal" ? "on" : ""}`} onClick={() => pick("vagasTotal")}><span>Vagas no quadro</span><strong>{repTot.total}</strong><small>{vagas.length} linha(s) · clique para ver quais são</small></button>
+          <button type="button" className={`diag-kpi ${repTot.pend ? "eq-bad" : ""} ${drill === "vagasPend" ? "on" : ""}`} onClick={() => pick("vagasPend")}><span>Pendentes</span><strong>{repTot.pend}</strong><small>a regularizar</small></button>
+          <button type="button" className={`diag-kpi ${drill === "vagasFeitas" ? "on" : ""}`} onClick={() => pick("vagasFeitas")}><span>Regularizadas</span><strong>{repTot.feitas}</strong><small>com ou sem nome</small></button>
         </div>
+        {drillPanel("v")}
         {!vagas.length ? <div className="eq-empty"><strong>Nenhuma vaga carregada.</strong><span>{ro ? "Peça ao coordenador para carregar a planilha CDC." : 'A aba "Reposição" da planilha CDC é lida junto com o "Atualizar planilha CDC". Você também pode usar "Incluir vaga".'}</span></div> : <>
         <section className="eq-card">
           <h3>Por função</h3>
